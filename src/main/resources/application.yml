@@ -1,6 +1,15 @@
 spring:
   datasource:
-    username: myadmin
+    username: root
     password: dlwjdals1*
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/shopping_mall?rewriteBatchedStatements=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
