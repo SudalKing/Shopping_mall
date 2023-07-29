@@ -1,7 +1,6 @@
 package com.example.shoppingmall.domain.user.service;
 
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
-import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

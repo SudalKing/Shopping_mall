@@ -1,7 +1,11 @@
 package com.example.shoppingmall.application.controller;
 
+import com.example.shoppingmall.domain.user.dto.AddressCommand;
+import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
 import com.example.shoppingmall.domain.user.dto.UserDto;
+import com.example.shoppingmall.domain.user.service.AddressReadService;
+import com.example.shoppingmall.domain.user.service.AddressWriteService;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.domain.user.service.UserWriteService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,8 @@ public class UserController {
 
     private final UserReadService userReadService;
     private final UserWriteService userWriteService;
+    private final AddressReadService addressReadService;
+    private final AddressWriteService addressWriteService;
 
     @PostMapping("/signup")
     public UserDto register(RegisterUserCommand registerUserCommand){
@@ -48,6 +54,22 @@ public class UserController {
     public UserDto changePassword(@PathVariable Long id, String password){
         userWriteService.changePassword(id, password);
         return userReadService.getUser(id);
+    }
+
+    @PostMapping("/{userId}/address")
+    public AddressDto addAddress(@PathVariable Long userId, AddressCommand addressCommand){
+        var address = addressWriteService.createAddress(userId, addressCommand);
+        return addressReadService.toDto(address);
+    }
+
+    @GetMapping("/{userId}/address")
+    public List<AddressDto> getUserAllAddresses(@PathVariable Long userId){
+        return addressReadService.getAllAddress(userId);
+    }
+
+    @DeleteMapping("/{id}/address")
+    public void deleteAddress(@PathVariable Long id){
+        addressWriteService.deleteAddress(id);
     }
 
 }
