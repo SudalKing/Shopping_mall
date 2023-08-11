@@ -1,10 +1,11 @@
 package com.example.shoppingmall.domain.product.service;
 
 import com.example.shoppingmall.domain.product.dto.ProductDto;
-import com.example.shoppingmall.domain.product.entity.Category;
 import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product.repository.ProductLikeRepository;
 import com.example.shoppingmall.domain.product.repository.ProductRepository;
+import com.example.shoppingmall.util.CursorRequest;
+import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +30,23 @@ public class ProductReadService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductDto> getAllProductsByCategory(Category category){
-        return productRepository.findAllByCategory(category)
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public PageCursor<Product> getProductsByCursor(CursorRequest cursorRequest){
+//        var products = productRepository.findProductsByCursor(cursorRequest.getKey(), cursorRequest.getSize());
+//        var nextKey = getNextKey(products);
+//
+//        return new PageCursor<>(cursorRequest.next(nextKey), products);
+        var products = findAllBy(cursorRequest);
+        var nextKey = getNextKey(products);
+
+        return new PageCursor<>(cursorRequest.next(nextKey), products);
+    }
+
+    private List<Product> findAllBy(CursorRequest cursorRequest) {
+        if(cursorRequest.hasKey()){
+            return productRepository.findAllProductsByCursorHasKey(cursorRequest.getKey(), cursorRequest.getSize());
+        } else{
+            return productRepository.findAllProductsByCursorNoKey(cursorRequest.getSize());
+        }
     }
 
     public ProductDto toDto(Product product){
@@ -44,10 +57,17 @@ public class ProductReadService {
                 product.getPrice(),
                 product.getStock(),
                 product.getDescription(),
-                product.getCategory(),
+                product.getCategoryId(),
                 product.isDeleted(),
                 productLikeRepository.countAllByProductId(product.getId())
         );
+    }
+
+    private Long getNextKey(List<Product> products){
+        return products.stream()
+                .mapToLong(Product::getId)
+                .min()
+                .orElse(CursorRequest.NONE_KEY);
     }
 
 }

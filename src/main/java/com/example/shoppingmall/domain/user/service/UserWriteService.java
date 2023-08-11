@@ -16,6 +16,7 @@ public class UserWriteService {
     @Transactional
     public User createUser(RegisterUserCommand registerUserCommand){
         var user = User.builder()
+                .nickname(registerUserCommand.getNickName())
                 .email(registerUserCommand.getEmail())
                 .password(registerUserCommand.getPassword())
                 .build();
@@ -27,16 +28,9 @@ public class UserWriteService {
     }
 
     @Transactional
-    public void changeEmail(Long id, String email){
+    public void changeNickName(Long id, String nickName){
         var user = userRepository.findUserById(id);
-        user.changeEmail(email);
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public void changePassword(Long id, String password){
-        var user = userRepository.findUserById(id);
-        user.changePassword(password);
+        user.changeNickname(nickName);
         userRepository.save(user);
     }
 }

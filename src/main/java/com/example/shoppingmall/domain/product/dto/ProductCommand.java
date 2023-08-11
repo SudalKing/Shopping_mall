@@ -1,6 +1,5 @@
 package com.example.shoppingmall.domain.product.dto;
 
-import com.example.shoppingmall.domain.product.entity.Category;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,5 +11,5 @@ public class ProductCommand {
     private int price;
     private int stock;
     private String description;
-    private Category category;
+    private Long categoryId;
 }

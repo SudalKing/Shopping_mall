@@ -2,7 +2,7 @@ spring:
   datasource:
     username: root
     password: dlwjdals1*
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/shopping_mall?rewriteBatchedStatements=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
 
   jpa:

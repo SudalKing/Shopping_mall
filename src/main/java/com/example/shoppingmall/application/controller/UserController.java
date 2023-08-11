@@ -44,15 +44,9 @@ public class UserController {
         userWriteService.deleteUser(id);
     }
 
-    @PostMapping("/{id}/email")
-    public UserDto changeEmail(@PathVariable Long id, String email){
-        userWriteService.changeEmail(id, email);
-        return userReadService.getUser(id);
-    }
-
-    @PostMapping("/{id}/password")
-    public UserDto changePassword(@PathVariable Long id, String password){
-        userWriteService.changePassword(id, password);
+    @PostMapping("/{id}/nickname")
+    public UserDto changeNickName(@PathVariable Long id, String nickName){
+        userWriteService.changeNickName(id, nickName);
         return userReadService.getUser(id);
     }
 

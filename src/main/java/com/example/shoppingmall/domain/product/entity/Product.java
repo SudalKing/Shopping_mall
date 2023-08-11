@@ -5,43 +5,56 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @NoArgsConstructor
 @Getter
 @Entity
+//@Table(uniqueConstraints =
+//        @UniqueConstraint(name = "MODELNAME_UNIQUE", columnNames = {"modelName"})
+//)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
 
-    @Column(unique = true)
+    @NotNull
     private String modelName;
+
     private Integer price;
     private Integer stock;
+
+    @NotBlank
     private String description;
 
-    @Enumerated(value = EnumType.STRING)
-    private Category category;
+    @NotNull
+    private Long categoryId;
 
+    @NotNull
     private LocalDateTime createdAt;
+
+    @NotNull
     private boolean deleted;
 
     @Version
     private Long version;
 
     @Builder
-    public Product(Long id, String name, String modelName, Integer price, Integer stock, String description, Category category, LocalDateTime createdAt, boolean deleted, Long version) {
+    public Product(Long id, String name, String modelName, Integer price, Integer stock,
+                   String description, Long categoryId, LocalDateTime createdAt, boolean deleted, Long version) {
         this.id = id;
         this.name = Objects.requireNonNull(name);
         this.modelName = Objects.requireNonNull(modelName);
         this.price = price;
         this.stock = stock;
         this.description = Objects.requireNonNull(description);
-        this.category = category;
+        this.categoryId = Objects.requireNonNull(categoryId);
         this.createdAt = createdAt == null ? LocalDateTime.now() : createdAt;
         this.deleted = deleted;
         this.version = version == null ? 0 : version;

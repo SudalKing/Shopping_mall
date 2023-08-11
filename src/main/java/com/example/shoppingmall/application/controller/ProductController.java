@@ -1,14 +1,18 @@
 package com.example.shoppingmall.application.controller;
 
+import com.example.shoppingmall.domain.post.service.PostReadService;
 import com.example.shoppingmall.domain.product.dto.ProductCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentDto;
 import com.example.shoppingmall.domain.product.dto.ProductDto;
 import com.example.shoppingmall.domain.product.entity.Category;
+import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product.service.ProductCommentReadService;
 import com.example.shoppingmall.domain.product.service.ProductCommentWriteService;
 import com.example.shoppingmall.domain.product.service.ProductReadService;
 import com.example.shoppingmall.domain.product.service.ProductWriteService;
+import com.example.shoppingmall.util.CursorRequest;
+import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +40,6 @@ public class ProductController {
         return productReadService.getAllProducts();
     }
 
-    @GetMapping("/category")
-    public List<ProductDto> getAllProductsByCategory(@RequestParam Category category){
-        return productReadService.getAllProductsByCategory(category);
-    }
-
     @PutMapping("/{productId}")
     public ProductDto updateProduct(@PathVariable Long productId, ProductCommand productCommand){
         var product = productWriteService.updateProduct(productId, productCommand);
@@ -52,6 +51,10 @@ public class ProductController {
         productWriteService.deleteProduct(productId);
     }
 
+    @GetMapping("/byCursor")
+    public PageCursor<Product> getProductsByCursor(CursorRequest cursorRequest){
+        return productReadService.getProductsByCursor(cursorRequest);
+    }
 
     @PostMapping("/{userId}/comment")
     public ProductCommentDto createComment(@PathVariable Long userId, ProductCommentCommand productCommentCommand){

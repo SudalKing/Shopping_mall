@@ -20,7 +20,7 @@ public class ProductWriteService {
                 .price(productCommand.getPrice())
                 .stock(productCommand.getStock())
                 .description(productCommand.getDescription())
-                .category(productCommand.getCategory())
+                .categoryId(productCommand.getCategoryId())
                 .build();
         product.validateStockAndPrice();
 
