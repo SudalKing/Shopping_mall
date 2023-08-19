@@ -20,6 +20,10 @@ public class UserReadService {
         return toDto(user);
     }
 
+    public User getUserEntity(Long userId){
+        return userRepository.findUserById(userId);
+    }
+
     public List<UserDto> getAllUsers(){
         return userRepository.findAll()
                 .stream()
@@ -27,12 +31,27 @@ public class UserReadService {
                 .collect(Collectors.toList());
     }
 
-    public User getUserByEmail(String email){
-        return userRepository.findUserByEmail(email);
+    public UserDto toDto(User user){
+        return new UserDto(
+                user.getId(),
+                user.getNickname(),
+                user.getPhoneNumber(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getCreatedAt(),
+                user.isEnabled());
     }
 
-    public UserDto toDto(User user){
-        return new UserDto(user.getId(), user.getEmail(), user.getPassword(), user.getCreatedAt());
+    public User toEntity(UserDto userDto){
+        return User.builder()
+                .id(userDto.getId())
+                .nickname(userDto.getNickname())
+                .phoneNumber(userDto.getPhoneNumber())
+                .email(userDto.getEmail())
+                .password(userDto.getPassword())
+                .createdAt(userDto.getCreatedAt())
+                .enabled(userDto.isEnabled())
+                .build();
     }
 
 }

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class UserWriteService {
@@ -16,11 +18,16 @@ public class UserWriteService {
     @Transactional
     public User createUser(RegisterUserCommand registerUserCommand){
         var user = User.builder()
-                .nickname(registerUserCommand.getNickName())
+                .nickname(registerUserCommand.getNickname())
+                .phoneNumber(registerUserCommand.getPhoneNumber())
                 .email(registerUserCommand.getEmail())
                 .password(registerUserCommand.getPassword())
+                .createdAt(LocalDateTime.now())
+                .enabled(true)
                 .build();
-        return userRepository.save(user);
+
+        var savedUser = userRepository.save(user);
+        return userRepository.save(savedUser);
     }
 
     public void deleteUser(Long id){
@@ -33,4 +40,6 @@ public class UserWriteService {
         user.changeNickname(nickName);
         userRepository.save(user);
     }
+
+
 }

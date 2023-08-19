@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RegisterUserCommand {
-    private String nickName;
+    private String nickname;
     private String email;
     private String password;
+    private String phoneNumber;
 }
