@@ -1,21 +1,25 @@
 package com.example.shoppingmall.domain.user.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.shoppingmall.domain.cart.entity.Cart;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "NICKNAME_EMAIL_UNIQUE", columnNames = {"nickname", "email"})
-})
-public class User{
+//@Table(uniqueConstraints = {
+//        @UniqueConstraint(name = "NICKNAME_EMAIL_UNIQUE", columnNames = {"nickname", "email"})
+//})
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +27,10 @@ public class User{
     @NotNull
     private String nickname;
 
-    @NotNull
+    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$",message = "핸드폰 번호의 양식과 맞지 않습니다. 01x-xxx(x)-xxxx")
+    private String phoneNumber;
+
+    @Email
     private String email;
 
     @Column(nullable = false)
@@ -32,14 +39,12 @@ public class User{
     @NotNull
     private LocalDateTime createdAt;
 
-    @Builder
-    public User(Long id, String nickname, String email, String password, LocalDateTime createdAt) {
-        this.id = id;
-        this.nickname = Objects.requireNonNull(nickname);
-        this.email = Objects.requireNonNull(email);
-        this.password = Objects.requireNonNull(password);
-        this.createdAt = createdAt == null ? LocalDateTime.now() : createdAt;
-    }
+    private boolean enabled;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Cart cart;
 
     @PrePersist
     public void setCreatedAt(){

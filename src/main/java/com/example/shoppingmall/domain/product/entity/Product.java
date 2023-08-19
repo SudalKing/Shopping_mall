@@ -1,17 +1,21 @@
 package com.example.shoppingmall.domain.product.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.example.shoppingmall.domain.cart.entity.CartProduct;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 @Entity
 //@Table(uniqueConstraints =
 //        @UniqueConstraint(name = "MODELNAME_UNIQUE", columnNames = {"modelName"})
@@ -45,20 +49,10 @@ public class Product {
     @Version
     private Long version;
 
-    @Builder
-    public Product(Long id, String name, String modelName, Integer price, Integer stock,
-                   String description, Long categoryId, LocalDateTime createdAt, boolean deleted, Long version) {
-        this.id = id;
-        this.name = Objects.requireNonNull(name);
-        this.modelName = Objects.requireNonNull(modelName);
-        this.price = price;
-        this.stock = stock;
-        this.description = Objects.requireNonNull(description);
-        this.categoryId = Objects.requireNonNull(categoryId);
-        this.createdAt = createdAt == null ? LocalDateTime.now() : createdAt;
-        this.deleted = deleted;
-        this.version = version == null ? 0 : version;
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<CartProduct> cartProducts = new ArrayList<>();
 
     public void update(String newName, String newModelName, int newPrice, String newDescription){
         name = newName;

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class ProductWriteService {
@@ -21,6 +23,8 @@ public class ProductWriteService {
                 .stock(productCommand.getStock())
                 .description(productCommand.getDescription())
                 .categoryId(productCommand.getCategoryId())
+                .deleted(false)
+                .createdAt(LocalDateTime.now())
                 .build();
         product.validateStockAndPrice();
 

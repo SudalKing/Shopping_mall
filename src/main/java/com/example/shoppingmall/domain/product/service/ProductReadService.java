@@ -23,6 +23,10 @@ public class ProductReadService {
         return toDto(product);
     }
 
+    public Product getProductEntity(Long productId){
+        return productRepository.findProductById(productId);
+    }
+
     public List<ProductDto> getAllProducts() {
         return productRepository.findAll()
                 .stream()
@@ -61,6 +65,19 @@ public class ProductReadService {
                 product.isDeleted(),
                 productLikeRepository.countAllByProductId(product.getId())
         );
+    }
+
+    public Product toEntity(ProductDto productDto){
+        return Product.builder()
+                .id(productDto.getId())
+                .name(productDto.getName())
+                .modelName(productDto.getModelName())
+                .price(productDto.getPrice())
+                .stock(productDto.getStock())
+                .description(productDto.getDescription())
+                .categoryId(productDto.getCategoryId())
+                .deleted(productDto.isDeleted())
+                .build();
     }
 
     private Long getNextKey(List<Product> products){
