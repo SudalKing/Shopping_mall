@@ -24,15 +24,10 @@ public class PostReadService {
                 .orElseThrow();
     }
 
-    public List<PostDto> getPostsByUserId(Long userId){
-        return postRepository.findAllByUserId(userId)
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
 
-    public PageCursor<Post> getPostsByCursor(CursorRequest cursorRequest){
-        var posts = findAllBy(cursorRequest);
+
+    public PageCursor<PostDto> getPostsByCursor(CursorRequest cursorRequest){
+        var posts = toDtoList(findAllBy(cursorRequest));
         var nextKey = getNextKey(posts);
 
         return new PageCursor<>(cursorRequest.next(nextKey), posts);
@@ -47,18 +42,26 @@ public class PostReadService {
     }
 
     public PostDto toDto(Post post){
+        Long likeCount = postLikeRepository.countAllByPostId(post.getId());
+
         return new PostDto(
                 post.getId(),
                 post.getTitle(),
                 post.getContents(),
                 post.getCreatedAt(),
-                postLikeRepository.countAllByPostId(post.getId())
+                likeCount
         );
     }
 
-    private Long getNextKey(List<Post> posts){
+    public List<PostDto> toDtoList(List<Post> posts){
         return posts.stream()
-                .mapToLong(Post::getId)
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private Long getNextKey(List<PostDto> posts){
+        return posts.stream()
+                .mapToLong(PostDto::getId)
                 .min()
                 .orElse(CursorRequest.NONE_KEY);
     }

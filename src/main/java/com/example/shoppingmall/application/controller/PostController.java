@@ -3,6 +3,7 @@ package com.example.shoppingmall.application.controller;
 import com.example.shoppingmall.domain.post.dto.PostCommand;
 import com.example.shoppingmall.domain.post.dto.PostDto;
 import com.example.shoppingmall.domain.post.entity.Post;
+import com.example.shoppingmall.domain.post.service.PostLikeWriteService;
 import com.example.shoppingmall.domain.post.service.PostReadService;
 import com.example.shoppingmall.domain.post.service.PostWriteService;
 import com.example.shoppingmall.util.CursorRequest;
@@ -23,11 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     private final PostWriteService postWriteService;
     private final PostReadService postReadService;
-
-//    @GetMapping("/users/{userId}")
-//    public PostDto readPosts(@PathVariable Long userId) {
-//
-//    }
+    private final PostLikeWriteService postLikeWriteService;
 
     @ApiOperation(value = "게시글 작성")
     @ApiImplicitParams({
@@ -56,8 +53,25 @@ public class PostController {
     })
     @Operation(responses = @ApiResponse(responseCode = "200", description = "key 값을 받아 size 만큼 post 반환"))
     @GetMapping("/all")
-    public PageCursor<Post> readAllPosts(CursorRequest cursorRequest){
+    public PageCursor<PostDto> readAllPosts(CursorRequest cursorRequest){
         return postReadService.getPostsByCursor(cursorRequest);
+    }
+
+    /**
+     * Like 테이블을 따로 분리 했기에 조회 시 toDto 함수를 통해 count 가 집계되며 이는 쓰기 성능을 향상시키지만
+     * 동시에 읽기 성능은 나빠진다. -> redis나 스케쥴러를 통해 배치로 업로드 하면 해결 가능!
+     * @param postId
+     * @param userId
+     */
+    @ApiOperation(value = "게시글 좋아요")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "postId", value = "현재 게시글의 id", dataType = "Long"),
+            @ApiImplicitParam(name = "userId", value = "현재 사용자의 id", dataType = "Long"),
+    })
+    @Operation(description = "게시글과 사용자의 id를 받아 좋아요 생성")
+    @PostMapping("/{postId}/like")
+    public void createPostLike(@PathVariable Long postId, @RequestParam Long userId){
+        postLikeWriteService.createPostLike(userId, postId);
     }
 
 }

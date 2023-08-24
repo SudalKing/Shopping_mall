@@ -1,5 +1,6 @@
 package com.example.shoppingmall.domain.product.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity
@@ -28,12 +30,4 @@ public class ProductLike {
 
     @NotNull
     private LocalDateTime createdAt;
-
-    @Builder
-    public ProductLike(Long id, Long userId, Long productId, LocalDateTime createdAt) {
-        this.id = id;
-        this.userId = Objects.requireNonNull(userId);
-        this.productId = Objects.requireNonNull(productId);
-        this.createdAt = createdAt == null ? LocalDateTime.now() : createdAt;
-    }
 }
