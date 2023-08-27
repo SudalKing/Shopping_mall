@@ -13,8 +13,10 @@ spring:
         format_sql: true
         show_sql: true
 
+
 # swagger 경로 설정
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
+server:
+  port: 5000

@@ -21,16 +21,22 @@
 
     <div class="links">
 
-        <div class="link" sec:authorize="!authenticated">
+        <div class="link" sec:authorize="!isAuthenticated()">
             <a href="/login">  로그인 </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
+        <div class="link" sec:authorize="!isAuthenticated()">
+            <a href="/register">  회원가입 </a>
+        </div>
+        <div class="link" sec:authorize="isAuthenticated()">
             <a href="/user-page">  유저 페이지  </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
-            <a href="/admin-page">  관리자 로그인 </a>
+        <div class="link" sec:authorize="isAuthenticated()">
+            <a href="/manager-page">  매니저 페이지  </a>
         </div>
-        <div class="link" sec:authorize="authenticated">
+        <div class="link" sec:authorize="isAuthenticated()">
+            <a href="/admin-page">  관리자 페이지 </a>
+        </div>
+        <div class="link" sec:authorize="isAuthenticated()">
             <form th:action="@{/logout}" method="post">
                 <button class="btn btn-info" type="submit">  로그아웃 </button>
             </form>

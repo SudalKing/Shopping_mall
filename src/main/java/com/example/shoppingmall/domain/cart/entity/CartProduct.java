@@ -23,7 +23,7 @@ public class CartProduct {
     @ToString.Exclude
     private Cart cart;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     @ToString.Exclude
     private Product product;

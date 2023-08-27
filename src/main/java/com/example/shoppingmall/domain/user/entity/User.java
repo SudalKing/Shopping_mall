@@ -1,6 +1,7 @@
 package com.example.shoppingmall.domain.user.entity;
 
 import com.example.shoppingmall.domain.cart.entity.Cart;
+import com.example.shoppingmall.domain.user.auth.CustomAuthority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -9,7 +10,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,6 +49,10 @@ public class User {
     @ToString.Exclude
     private Cart cart;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<CustomAuthority> authorities = new HashSet<>();
+
     @PrePersist
     public void setCreatedAt(){
         createdAt = LocalDateTime.now();
@@ -54,5 +61,9 @@ public class User {
     public void changeNickname(String newNickname){
         Objects.requireNonNull(newNickname);
         nickname = newNickname;
+    }
+
+    public void setAuthorities(Set<CustomAuthority> authorities){
+        this.authorities = authorities;
     }
 }
