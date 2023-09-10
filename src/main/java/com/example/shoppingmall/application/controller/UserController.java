@@ -1,9 +1,8 @@
 package com.example.shoppingmall.application.controller;
 
-import com.example.shoppingmall.application.usecase.CreateUserCartProductUseCase;
-import com.example.shoppingmall.application.usecase.ReadUserCartProductUseCase;
+import com.example.shoppingmall.application.usecase.user.CreateUserCartProductUseCase;
+import com.example.shoppingmall.application.usecase.user.ReadUserCartProductUseCase;
 import com.example.shoppingmall.domain.cart.dto.CartProductDto;
-import com.example.shoppingmall.domain.cart.entity.CartProduct;
 import com.example.shoppingmall.domain.user.dto.AddressCommand;
 import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
@@ -53,14 +52,14 @@ public class UserController {
 
 
     @ApiOperation(value = "사용자 조회")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 user 조회",
+    @ApiImplicitParam(name = "userId", value = "사용자의 Id", dataType = "Long")
+    @Operation(description = "userId를 통해 user 조회",
             responses = @ApiResponse(responseCode = "200", description = "UserDto class 반환"
                     , content = @Content(schema = @Schema(implementation = UserDto.class)))
     )
-    @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable Long id){
-        return userReadService.getUser(id);
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId){
+        return userReadService.getUser(userId);
     }
 
 
@@ -74,11 +73,11 @@ public class UserController {
     }
 
     @ApiOperation(value = "사용자 삭제")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 user 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id){
-        userWriteService.deleteUser(id);
+    @ApiImplicitParam(name = "userId", value = "사용자의 Id", dataType = "Long")
+    @Operation(description = "userId를 통해 user 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Long userId){
+        userWriteService.deleteUser(userId);
     }
 
 //    @PostMapping("/{id}/nickname")
@@ -106,12 +105,12 @@ public class UserController {
         return addressReadService.getAllAddress(userId);
     }
 
-    @ApiOperation(value = "id를 통해 address 삭제")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 주소 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
-    @DeleteMapping("/{id}/address")
-    public void deleteAddress(@PathVariable Long id){
-        addressWriteService.deleteAddress(id);
+    @ApiOperation(value = "userId를 통해 address 삭제")
+    @ApiImplicitParam(name = "userId", value = "사용자의 Id", dataType = "Long")
+    @Operation(description = "userId를 통해 주소 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
+    @DeleteMapping("/{userId}/address")
+    public void deleteAddress(@PathVariable Long userId){
+        addressWriteService.deleteAddress(userId);
     }
 
 

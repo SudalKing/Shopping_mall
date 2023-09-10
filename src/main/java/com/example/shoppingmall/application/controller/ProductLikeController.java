@@ -1,7 +1,7 @@
 package com.example.shoppingmall.application.controller;
 
-import com.example.shoppingmall.application.usecase.CreateProductCommentLikeUseCase;
-import com.example.shoppingmall.application.usecase.CreateProductLikeUseCase;
+import com.example.shoppingmall.application.usecase.product.CreateProductCommentLikeUseCase;
+import com.example.shoppingmall.application.usecase.product.CreateProductLikeUseCase;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

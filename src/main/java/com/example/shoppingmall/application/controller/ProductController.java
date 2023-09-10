@@ -1,5 +1,7 @@
 package com.example.shoppingmall.application.controller;
 
+import com.example.shoppingmall.application.usecase.product.CreateProductUseCase;
+import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase;
 import com.example.shoppingmall.domain.product.dto.ProductCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentDto;
@@ -19,7 +21,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,6 +38,9 @@ public class ProductController {
     private final ProductReadService productReadService;
     private final ProductCommentWriteService productCommentWriteService;
     private final ProductCommentReadService productCommentReadService;
+    private final CreateProductUseCase createProductUseCase;
+    private final DeleteProductUseCase deleteProductUseCase;
+
 
     @ApiOperation(value = "상품 등록")
     @ApiImplicitParams({
@@ -45,9 +53,14 @@ public class ProductController {
     })
     @Operation(description = "name, modelName, price, stock, description, categoryId를 받아 ProductCommand class 변환 후 상품 등록")
     @PostMapping("/add")
-    public ProductDto addProduct(ProductCommand productCommand){
-        var product = productWriteService.createProduct(productCommand);
-        return productReadService.toDto(product);
+    public ResponseEntity<Object> uploadProduct(
+            ProductCommand productCommand,
+            @RequestParam(value = "fileType") String fileType,
+            @RequestPart(value = "files")List<MultipartFile> multipartFiles
+    ){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(createProductUseCase.execute(productCommand, fileType, multipartFiles));
     }
 
 //    @ApiOperation(value = "모든 상품 조회-")
@@ -80,7 +93,7 @@ public class ProductController {
     @Operation(description = "상품 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
     @DeleteMapping("/{productId}")
     public void deleteProduct(@PathVariable Long productId){
-        productWriteService.deleteProduct(productId);
+        deleteProductUseCase.execute(productId);
     }
 
     @ApiOperation(value = "모든 상품 조회 - cursor 기반 pagination")

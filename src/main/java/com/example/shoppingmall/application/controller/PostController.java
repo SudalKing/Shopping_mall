@@ -1,8 +1,8 @@
 package com.example.shoppingmall.application.controller;
 
+import com.example.shoppingmall.application.usecase.post.CreatePostUseCase;
 import com.example.shoppingmall.domain.post.dto.PostCommand;
 import com.example.shoppingmall.domain.post.dto.PostDto;
-import com.example.shoppingmall.domain.post.entity.Post;
 import com.example.shoppingmall.domain.post.service.PostLikeWriteService;
 import com.example.shoppingmall.domain.post.service.PostReadService;
 import com.example.shoppingmall.domain.post.service.PostWriteService;
@@ -15,7 +15,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Api(tags = "지구를 지키는 팁 커뮤니티")
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class PostController {
     private final PostWriteService postWriteService;
     private final PostReadService postReadService;
     private final PostLikeWriteService postLikeWriteService;
+    private final CreatePostUseCase createPostUseCase;
 
     @ApiOperation(value = "게시글 작성")
     @ApiImplicitParams({
@@ -34,9 +40,14 @@ public class PostController {
     })
     @Operation(description = "postCommand를 받아 커뮤니티 게시글 등록")
     @PostMapping("/add")
-    public PostDto createPost(PostCommand postCommand){
-        var post = postWriteService.createPost(postCommand);
-        return postReadService.toDto(post);
+    public ResponseEntity<Object> uploadProduct(
+            PostCommand postCommand,
+            @RequestParam(value = "fileType") String fileType,
+            @RequestPart(value = "files") List<MultipartFile> multipartFiles
+    ){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(createPostUseCase.execute(postCommand, fileType, multipartFiles));
     }
 
     @ApiOperation(value = "게시글 상세 조회")

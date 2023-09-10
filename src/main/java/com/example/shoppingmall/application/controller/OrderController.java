@@ -1,7 +1,6 @@
 package com.example.shoppingmall.application.controller;
 
-import com.example.shoppingmall.application.usecase.CreateOrderUseCase;
-import com.example.shoppingmall.domain.order.dto.OrderDto;
+import com.example.shoppingmall.application.usecase.order.CreateOrderUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;

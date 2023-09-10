@@ -4,6 +4,9 @@ import com.example.shoppingmall.domain.product.entity.Category;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Builder
 @Getter
 public class ProductDto {
@@ -16,9 +19,10 @@ public class ProductDto {
     private Long categoryId;
     private boolean deleted;
     private Long likeCount;
+    private List<String> urls = new ArrayList<>();
 
     public ProductDto(Long id, String name, String modelName, int price, int stock,
-                      String description, Long categoryId, boolean deleted, Long likeCount) {
+                      String description, Long categoryId, boolean deleted, Long likeCount, List<String> urls) {
         this.id = id;
         this.name = name;
         this.modelName = modelName;
@@ -28,5 +32,6 @@ public class ProductDto {
         this.categoryId = categoryId;
         this.deleted = deleted;
         this.likeCount = likeCount;
+        this.urls = urls;
     }
 }

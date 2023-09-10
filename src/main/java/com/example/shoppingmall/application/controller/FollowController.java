@@ -1,6 +1,6 @@
 package com.example.shoppingmall.application.controller;
 
-import com.example.shoppingmall.application.usecase.CreateUserFollowUseCase;
+import com.example.shoppingmall.application.usecase.user.CreateUserFollowUseCase;
 import com.example.shoppingmall.domain.follow.service.FollowReadService;
 import com.example.shoppingmall.domain.follow.service.FollowWriteService;
 import io.swagger.annotations.Api;
