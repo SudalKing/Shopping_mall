@@ -69,7 +69,7 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: my-shopping-mall
+      bucket: {bucket}
     credentials:
       access-key: {access-key}
       secret-key: {secret-key}
