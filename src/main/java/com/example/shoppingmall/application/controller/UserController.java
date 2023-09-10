@@ -1,9 +1,8 @@
 package com.example.shoppingmall.application.controller;
 
-import com.example.shoppingmall.application.usecase.CreateUserCartProductUseCase;
-import com.example.shoppingmall.application.usecase.ReadUserCartProductUseCase;
+import com.example.shoppingmall.application.usecase.user.CreateUserCartProductUseCase;
+import com.example.shoppingmall.application.usecase.user.ReadUserCartProductUseCase;
 import com.example.shoppingmall.domain.cart.dto.CartProductDto;
-import com.example.shoppingmall.domain.cart.entity.CartProduct;
 import com.example.shoppingmall.domain.user.dto.AddressCommand;
 import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
@@ -12,20 +11,19 @@ import com.example.shoppingmall.domain.user.service.AddressReadService;
 import com.example.shoppingmall.domain.user.service.AddressWriteService;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.domain.user.service.UserWriteService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = {"회원 관리"})
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
@@ -37,89 +35,140 @@ public class UserController {
     private final CreateUserCartProductUseCase createUserCartProductUseCase;
     private final ReadUserCartProductUseCase readUserCartProductUseCase;
 
-    @ApiOperation(value = "회원가입")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", value = "xxx@xxx.com 형식", dataType = "String"),
-            @ApiImplicitParam(name = "nickname", dataType = "String"),
-            @ApiImplicitParam(name = "password", dataType = "String"),
-            @ApiImplicitParam(name = "phoneNumber", value = "010-xxx(x)-xxxx", dataType = "String")
+    @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"USER_ROLE"})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = UserDto.class
+                            )
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+            @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
     })
-    @Operation(description = "nickname, email, password, phoneNumber를 받아 RegisterUserCommand class로 감싼 후 회원가입")
     @PostMapping("/signup")
-    public UserDto register(RegisterUserCommand registerUserCommand){
+    public ResponseEntity<UserDto> register(RegisterUserCommand registerUserCommand){
         var user = userWriteService.createUser(registerUserCommand);
-        return userReadService.toDto(user);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userReadService.toDto(user));
     }
 
 
-    @ApiOperation(value = "사용자 조회")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 user 조회",
-            responses = @ApiResponse(responseCode = "200", description = "UserDto class 반환"
-                    , content = @Content(schema = @Schema(implementation = UserDto.class)))
-    )
-    @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable Long id){
-        return userReadService.getUser(id);
+    @Operation(summary = "사용자 조회", description = "userId를 통한 사용자 조회 기능", tags = {"ADMIN_ROLE"})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = UserDto.class
+                            )
+                    )
+            )
+    })
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId){
+        return userReadService.getUser(userId);
     }
 
 
-    @ApiOperation(value = "모든 사용자 조회")
-    @Operation(responses = @ApiResponse(responseCode = "200", description = "UserDto class List형 반환"
-                    , content = @Content(schema = @Schema(implementation = UserDto.class)))
+    @Operation(summary = "모든 사용자 조회", description = "모든 사용자 조회 기능", tags = {"ADMIN_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK",
+            content = @Content(
+                    array = @ArraySchema(
+                            schema = @Schema(implementation = UserDto.class)
+                    )
+            )
     )
     @GetMapping("/users")
     public List<UserDto> getAllUsers(){
         return userReadService.getAllUsers();
     }
 
-    @ApiOperation(value = "사용자 삭제")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 user 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id){
-        userWriteService.deleteUser(id);
+
+    @Operation(summary = "사용자 삭제", description = "userId를 통한 사용자 삭제 기능", tags = {"ADMIN_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK"
+    )
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Long userId){
+        userWriteService.deleteUser(userId);
     }
 
-//    @PostMapping("/{id}/nickname")
-//    public UserDto changeNickName(@PathVariable Long id, String nickName){
-//        userWriteService.changeNickName(id, nickName);
-//        return userReadService.getUser(id);
-//    }
 
-    @ApiOperation(value = "주소 등록- 우편번호를 통해 주소를 제공해주는 api를 사용해 재구현 예정")
-    @Operation(description = "nickname, email, password, phoneNumber를 받아 RegisterUserCommand class로 감싼 후 회원가입")
+    @Operation(summary = "사용자 주소 생성", description = "userId와 AddressCommand를 받아 사용자의 주소 생성", tags = {"USER_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK",
+            content = @Content(
+                    schema = @Schema(implementation = AddressDto.class)
+            )
+    )
     @PostMapping("/{userId}/address")
     public AddressDto addAddress(@PathVariable Long userId, AddressCommand addressCommand){
         var address = addressWriteService.createAddress(userId, addressCommand);
         return addressReadService.toDto(address);
     }
 
-    @ApiOperation(value = "사용자의 주소 조회")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 사용자의 주소 조회",
-            responses = @ApiResponse(responseCode = "200", description = "AddressDto class List형 반환"
-                    , content = @Content(schema = @Schema(implementation = AddressDto.class)))
+
+    @Operation(summary = "사용자 주소 조회", description = "userId를 받아 사용자의 주소 List 조회", tags = {"USER_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK",
+            content = @Content(
+                    array = @ArraySchema(
+                            schema = @Schema(implementation = AddressDto.class)
+                    )
+            )
     )
     @GetMapping("/{userId}/address")
     public List<AddressDto> getUserAllAddresses(@PathVariable Long userId){
         return addressReadService.getAllAddress(userId);
     }
 
-    @ApiOperation(value = "id를 통해 address 삭제")
-    @ApiImplicitParam(name = "id", value = "사용자의 Id", dataType = "Long")
-    @Operation(description = "id를 통해 주소 삭제", responses = @ApiResponse(responseCode = "200", description = "반환값 없음"))
-    @DeleteMapping("/{id}/address")
-    public void deleteAddress(@PathVariable Long id){
-        addressWriteService.deleteAddress(id);
+
+    @Operation(summary = "사용자 주소 삭제", description = "addressId를 받아 사용자의 주소 삭제", tags = {"USER_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK"
+    )
+    @DeleteMapping("/{addressId}/address")
+    public void deleteAddress(@PathVariable Long addressId){
+        addressWriteService.deleteAddress(addressId);
     }
 
 
+    @Operation(summary = "장바구니 조회", description = "userId를 받아 사용자의 장바구니 품목 조회", tags = {"USER_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK",
+            content = @Content(
+                    array = @ArraySchema(
+                            schema = @Schema(implementation = CartProductDto.class)
+                    )
+            )
+    )
     @GetMapping("/cart/{userId}")
     public List<CartProductDto> getUserCartProduct(@PathVariable Long userId){
         return readUserCartProductUseCase.execute(userId);
     }
 
+
+    @Operation(summary = "장바구니 생성",
+            description = "현재 사용자의 userId와 장바구니에 담으려는 productId를 받아 장바구니 생성",
+            tags = {"USER_ROLE"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "OK"
+    )
     @GetMapping("/cart/{userId}/{productId}")
     public void createCart(@PathVariable Long userId, @PathVariable Long productId, @RequestParam int count){
         createUserCartProductUseCase.execute(userId, productId, count);

@@ -1,5 +1,6 @@
 package com.example.shoppingmall.domain.post.service;
 
+import com.example.shoppingmall.domain.awsS3.service.PostImageReadService;
 import com.example.shoppingmall.domain.post.dto.PostDto;
 import com.example.shoppingmall.domain.post.entity.Post;
 import com.example.shoppingmall.domain.post.repository.PostLikeRepository;
@@ -9,6 +10,7 @@ import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,14 +19,13 @@ import java.util.stream.Collectors;
 public class PostReadService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostImageReadService postImageReadService;
 
     public PostDto getPost(Long postId){
         return postRepository.findById(postId)
                 .map(this::toDto)
                 .orElseThrow();
     }
-
-
 
     public PageCursor<PostDto> getPostsByCursor(CursorRequest cursorRequest){
         var posts = toDtoList(findAllBy(cursorRequest));
@@ -35,9 +36,9 @@ public class PostReadService {
 
     private List<Post> findAllBy(CursorRequest cursorRequest) {
         if(cursorRequest.hasKey()){
-            return postRepository.findAllProductsByCursorHasKey(cursorRequest.getKey(), cursorRequest.getSize());
+            return postRepository.findAllPostsByCursorHasKey(cursorRequest.getKey(), cursorRequest.getSize());
         } else{
-            return postRepository.findAllProductsByCursorNoKey(cursorRequest.getSize());
+            return postRepository.findAllPostsByCursorNoKey(cursorRequest.getSize());
         }
     }
 
@@ -49,8 +50,20 @@ public class PostReadService {
                 post.getTitle(),
                 post.getContents(),
                 post.getCreatedAt(),
-                likeCount
+                likeCount,
+                getUrls(post.getId())
         );
+    }
+
+    private List<String> getUrls(Long postId){
+        var postImages = postImageReadService.readImages(postId);
+        List<String> urls = new ArrayList<>();
+
+        for (var postImage: postImages) {
+            urls.add(postImage.getUploadFileUrl());
+        }
+
+        return urls;
     }
 
     public List<PostDto> toDtoList(List<Post> posts){

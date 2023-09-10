@@ -1,5 +1,6 @@
 package com.example.shoppingmall.domain.user.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@Schema(description = "회원 Response class")
 public class UserDto {
     private Long id;
     private String nickname;

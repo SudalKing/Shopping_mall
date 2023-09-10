@@ -1,5 +1,6 @@
 package com.example.shoppingmall.domain.product.service;
 
+import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
 import com.example.shoppingmall.domain.product.dto.ProductDto;
 import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product.repository.ProductLikeRepository;
@@ -9,6 +10,7 @@ import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class ProductReadService {
     private final ProductRepository productRepository;
     private final ProductLikeRepository productLikeRepository;
+    private final ProductImageReadService productImageReadService;
 
     public ProductDto getProduct(Long productId) {
         var product = productRepository.findProductById(productId);
@@ -63,8 +66,20 @@ public class ProductReadService {
                 product.getDescription(),
                 product.getCategoryId(),
                 product.isDeleted(),
-                productLikeRepository.countAllByProductId(product.getId())
+                productLikeRepository.countAllByProductId(product.getId()),
+                getUrls(product.getId())
         );
+    }
+
+    private List<String> getUrls(Long productId){
+        var productImages = productImageReadService.readImages(productId);
+        List<String> urls = new ArrayList<>();
+
+        for (var productImage: productImages) {
+            urls.add(productImage.getUploadFileUrl());
+        }
+
+        return urls;
     }
 
     public Product toEntity(ProductDto productDto){

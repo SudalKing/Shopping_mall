@@ -1,4 +1,15 @@
 spring:
+  profiles:
+    active: dev
+    group:
+      local: profiles-local
+      dev: profiles-dev
+
+  # swagger 경로 설정
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   datasource:
     username: root
     password: dlwjdals1*
@@ -13,10 +24,63 @@ spring:
         format_sql: true
         show_sql: true
 
+  devtools:
+    livereload:
+      enabled: true
+  thymeleaf:
+    cache: false
 
-# swagger 경로 설정
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
 server:
   port: 5000
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui/index.html
+    groups-order: DESC
+    doc-expansion: none
+    tags-sorter: alpha
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+---
+# AWS 설정
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
+---
+# Multipart 설정
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+---
+# LOCAL 설정
+spring:
+  config:
+    activate:
+      on-profile: "profiles-local"
+---
+# DEV 설정
+cloud:
+  aws:
+    s3:
+      bucket: my-shopping-mall
+    credentials:
+      access-key: AKIAXU3QKXXLQYASOJW6
+      secret-key: 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
