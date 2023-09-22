@@ -8,22 +8,22 @@ import com.example.shoppingmall.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class OrderReadService {
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
 
-//    public List<OrderDto> getAllOrders(Long userId){
-//        return orderRepository.findAllByUserId(userId)
-//                .stream()
-//                .map(this::toDto)
-//                .collect(Collectors.toList());
-//    }
-    public OrderDto getAllOrders(Long userId){
-        var orders = ordersRepository.findOrderByUserId(userId);
-        return toDto(orders);
+    public List<OrderDto> getAllOrders(Long userId){
+        return ordersRepository.findAllByUserId(userId)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
+
 
     public OrderDto getCurrentOrder(Long orderId, Long cartId){
         var orders = ordersRepository.findOrdersByIdAndCartId(orderId, cartId);
@@ -47,6 +47,7 @@ public class OrderReadService {
     public OrderDto toDto(Orders order){
         return new OrderDto(
                 order.getId(),
+                order.getCartId(),
                 order.getUserId(),
                 order.getOrderStatusId(),
                 order.getCreatedAt(),
