@@ -7,6 +7,7 @@ import com.example.shoppingmall.domain.user.dto.AddressCommand;
 import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
 import com.example.shoppingmall.domain.user.dto.UserDto;
+import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.AddressReadService;
 import com.example.shoppingmall.domain.user.service.AddressWriteService;
 import com.example.shoppingmall.domain.user.service.UserReadService;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -38,24 +40,18 @@ public class UserController {
     @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"USER_ROLE"})
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(
-                            schema = @Schema(
-                                    implementation = UserDto.class
-                            )
-                    )
-            ),
+                    responseCode = "201",
+                    description = "CREATED",
+                    content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
             @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
             @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
     })
     @PostMapping("/signup")
     public ResponseEntity<UserDto> register(RegisterUserCommand registerUserCommand){
-        var user = userWriteService.createUser(registerUserCommand);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userReadService.toDto(user));
+        var userDto = userWriteService.createUser(registerUserCommand);
+        return ResponseEntity.created(URI.create("/user/" + userDto.getId()))
+                .body(userDto);
     }
 
 
@@ -64,11 +60,7 @@ public class UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "OK",
-                    content = @Content(
-                            schema = @Schema(
-                                    implementation = UserDto.class
-                            )
-                    )
+                    content = @Content(schema = @Schema(implementation = UserDto.class))
             )
     })
     @GetMapping("/{userId}")
@@ -81,11 +73,7 @@ public class UserController {
     @ApiResponse(
             responseCode = "200",
             description = "OK",
-            content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = UserDto.class)
-                    )
-            )
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
     )
     @GetMapping("/users")
     public List<UserDto> getAllUsers(){
@@ -106,16 +94,15 @@ public class UserController {
 
     @Operation(summary = "사용자 주소 생성", description = "userId와 AddressCommand를 받아 사용자의 주소 생성", tags = {"USER_ROLE"})
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "201",
             description = "OK",
-            content = @Content(
-                    schema = @Schema(implementation = AddressDto.class)
-            )
+            content = @Content(schema = @Schema(implementation = AddressDto.class))
     )
     @PostMapping("/{userId}/address")
-    public AddressDto addAddress(@PathVariable Long userId, AddressCommand addressCommand){
-        var address = addressWriteService.createAddress(userId, addressCommand);
-        return addressReadService.toDto(address);
+    public ResponseEntity<AddressDto> addAddress(@PathVariable Long userId, AddressCommand addressCommand){
+        var addressDto = addressWriteService.createAddress(userId, addressCommand);
+        return ResponseEntity.created(URI.create("/" + userId + "/address/" + addressDto.getId()))
+                .body(addressDto);
     }
 
 
@@ -123,11 +110,7 @@ public class UserController {
     @ApiResponse(
             responseCode = "200",
             description = "OK",
-            content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = AddressDto.class)
-                    )
-            )
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = AddressDto.class)))
     )
     @GetMapping("/{userId}/address")
     public List<AddressDto> getUserAllAddresses(@PathVariable Long userId){
@@ -150,11 +133,7 @@ public class UserController {
     @ApiResponse(
             responseCode = "200",
             description = "OK",
-            content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = CartProductDto.class)
-                    )
-            )
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CartProductDto.class)))
     )
     @GetMapping("/cart/{userId}")
     public List<CartProductDto> getUserCartProduct(@PathVariable Long userId){

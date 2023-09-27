@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation' // Entity 검증
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
@@ -35,13 +36,20 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14' // swagger api docs
 
+    implementation 'com.google.code.gson:gson:2.8.7' // Gson 사용
+
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' // aws s3 서버 사용
 
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // test code Jackson time 처리 모듈
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.10.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.jeasy:easy-random-core:5.0.0'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '5.5.2'
+
 }
 
 tasks.named('test') {

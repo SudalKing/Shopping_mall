@@ -2,6 +2,7 @@ package com.example.shoppingmall.domain.user.service;
 
 import com.example.shoppingmall.domain.user.auth.CustomAuthority;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
+import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.AuthRepository;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
@@ -22,7 +23,7 @@ public class UserWriteService {
     private final AuthRepository authRepository;
 
 //    @Transactional
-    public User createUser(RegisterUserCommand registerUserCommand){
+    public UserDto createUser(RegisterUserCommand registerUserCommand){
         var user = User.builder()
                 .nickname(registerUserCommand.getNickname())
                 .phoneNumber(registerUserCommand.getPhoneNumber())
@@ -37,7 +38,7 @@ public class UserWriteService {
         auth.add(authRepository.save(new CustomAuthority("ROLE_USER", savedUser)));
         savedUser.setAuthorities(auth);
 
-        return userRepository.save(savedUser);
+        return toDto(userRepository.save(savedUser));
     }
 
     public void deleteUser(Long id){
@@ -49,6 +50,17 @@ public class UserWriteService {
         var user = userRepository.findUserById(id);
         user.changeNickname(nickName);
         userRepository.save(user);
+    }
+
+    public UserDto toDto(User user){
+        return new UserDto(
+                user.getId(),
+                user.getNickname(),
+                user.getPhoneNumber(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getCreatedAt(),
+                user.isEnabled());
     }
 
 

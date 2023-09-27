@@ -3,9 +3,11 @@ package com.example.shoppingmall.domain.user.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @Getter
 @Builder
 @Schema(description = "회원 Response class")
