@@ -23,6 +23,12 @@ public class ProductCommand {
     @Schema(description = "상품 설명")
     private String description;
 
+    @Schema(description = "상품 타입 아이디")
+    private Long typeId;
+
     @Schema(description = "상품 카테고리 아이디")
     private Long categoryId;
+
+    @Schema(description = "할인 적용 여부")
+    private boolean saled;
 }

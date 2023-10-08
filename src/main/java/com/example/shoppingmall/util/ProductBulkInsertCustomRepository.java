@@ -1,6 +1,5 @@
 package com.example.shoppingmall.util;
 
-import com.example.shoppingmall.domain.product.entity.Category;
 import com.example.shoppingmall.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-public class BulkInsertCustomRepository {
+public class ProductBulkInsertCustomRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     final static private String TABLE_PRODUCT = "Product";
@@ -35,8 +34,8 @@ public class BulkInsertCustomRepository {
 
     public void bulkInsertProduct(List<Product> products){
         var sql = String.format(
-                "INSERT INTO %s (name, model_name, price, stock, description, category_id, created_at, deleted) " +
-                "VALUES (:name, :modelName, :price, :stock, :description, :categoryId, :createdAt, :deleted)" ,
+                "INSERT INTO %s (name, model_name, price, stock, description, brand_id, category_id, created_at, deleted) " +
+                "VALUES (:name, :modelName, :price, :stock, :description, :brandId, :categoryId, :createdAt, :deleted)" ,
                 TABLE_PRODUCT);
 
         SqlParameterSource[] params = products

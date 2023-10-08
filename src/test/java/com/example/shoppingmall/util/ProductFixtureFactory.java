@@ -1,12 +1,8 @@
 package com.example.shoppingmall.util;
 
-import com.example.shoppingmall.domain.product.entity.Category;
 import com.example.shoppingmall.domain.product.entity.Product;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.randomizers.collection.EnumSetRandomizer;
-import org.jeasy.random.randomizers.misc.EnumRandomizer;
-import org.jeasy.random.randomizers.number.IntegerRandomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
 import org.jeasy.random.randomizers.range.LongRangeRandomizer;
 
@@ -36,6 +32,9 @@ public class ProductFixtureFactory {
                 .and(ofType(Long.class))
                 .and(inClass(Product.class));
 
+        var brandIdPredicate = named("brandId")
+                .and(ofType(Long.class))
+                .and(inClass(Product.class));
 //        var memberIdPredicate = named("memberId")
 //                .and(ofType(Long.class))
 //                .and(inClass(Product.class));
@@ -45,7 +44,8 @@ public class ProductFixtureFactory {
                 .dateRange(firstDate, lastDate) // 날짜 범위
                 .randomize(pricePredicate, new IntegerRangeRandomizer(100000, 10000000))
                 .randomize(stockPredicate, new IntegerRangeRandomizer(1, 30))
-                .randomize(categoryIdPredicate, new LongRangeRandomizer(1L, 4L));
+                .randomize(categoryIdPredicate, new LongRangeRandomizer(1L, 4L))
+                .randomize(brandIdPredicate, new LongRangeRandomizer(1L, 4L));
 
 //                .randomize(memberIdPredicate, () -> memberId); // 고정
 

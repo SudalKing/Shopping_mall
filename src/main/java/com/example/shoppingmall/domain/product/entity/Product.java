@@ -38,10 +38,16 @@ public class Product {
     private String description;
 
     @NotNull
+    private Long typeId;
+
+    @NotNull
     private Long categoryId;
 
     @NotNull
     private LocalDateTime createdAt;
+
+    @NotNull
+    private boolean saled;
 
     @NotNull
     private boolean deleted;
@@ -64,7 +70,13 @@ public class Product {
     public void addStock(int count){
         stock += count;
     }
+    public void minusStock(int count){
+        stock -= count;
+    }
     public void validateStockAndPrice(){
         if(stock <= 0 || price <= 0) deleted = true;
+    }
+    public void doSale(){
+        saled = true;
     }
 }

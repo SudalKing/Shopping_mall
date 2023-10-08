@@ -6,7 +6,6 @@ import com.example.shoppingmall.domain.product.dto.ProductCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentDto;
 import com.example.shoppingmall.domain.product.dto.ProductDto;
-import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product.service.ProductCommentReadService;
 import com.example.shoppingmall.domain.product.service.ProductCommentWriteService;
 import com.example.shoppingmall.domain.product.service.ProductReadService;
@@ -54,7 +53,7 @@ public class ProductController {
             )
     })
     @PostMapping("/add")
-    public ResponseEntity<Object> uploadProduct(
+    public ResponseEntity<Object> createProduct(
             ProductCommand productCommand,
             @RequestParam(value = "fileType") String fileType,
             @RequestPart(value = "files")List<MultipartFile> multipartFiles
@@ -90,21 +89,89 @@ public class ProductController {
     }
 
 
+// =============================================상품 조회=====================================================
+
     @Operation(summary = "모든 상품 조회",
             description = "모든 상품 조회(무한 스크롤 방식)",
             tags = {"USER_ROLE"})
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = PageCursor.class)))
-    })
     @GetMapping("/all")
-    public PageCursor<Product> getProductsByCursor(CursorRequest cursorRequest){
-        return productReadService.getProductsByCursor(cursorRequest);
+    public PageCursor<ProductDto> readAllProducts(CursorRequest cursorRequest, Long sortId){
+        return productReadService.getProductsByCursor(cursorRequest, sortId);
     }
 
+    @Operation(summary = "NEW 상품 조회",
+            description = "NEW 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/new/all")
+    public PageCursor<ProductDto> readNEWProducts(CursorRequest cursorRequest, Long sortId){
+        return productReadService.getNewProducts(cursorRequest, sortId);
+    }
 
+    @Operation(summary = "Sale 상품 조회",
+            description = "Sale 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/sale/all")
+    public PageCursor<ProductDto> readSaleProducts(CursorRequest cursorRequest, Long sortId){
+        return productReadService.getSaleProducts(cursorRequest, sortId);
+    }
+
+    @Operation(summary = "Best 상품 조회",
+            description = "Best 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/best/all")
+    public PageCursor<ProductDto> readBestProducts(CursorRequest cursorRequest, Long sortId){
+        return productReadService.getBestProducts(cursorRequest);
+    }
+
+    @Operation(summary = "의류 상품 조회",
+            description = "의류 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/clothes/all")
+    public PageCursor<ProductDto> readClothesProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+        return productReadService.getClothesProducts(cursorRequest, categoryId, sortId);
+    }
+
+    @Operation(summary = "소품 상품 조회",
+            description = "소품 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/prop/all")
+    public PageCursor<ProductDto> readPropProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+        return productReadService.getPropProducts(cursorRequest, categoryId, sortId);
+    }
+
+    @Operation(summary = "잡화 상품 조회",
+            description = "잡화 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/goods/all")
+    public PageCursor<ProductDto> readGoodsProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+        return productReadService.getGoodsProducts(cursorRequest, categoryId, sortId);
+    }
+
+    @Operation(summary = "홈리빙 상품 조회",
+            description = "홈리빙 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/home-living/all")
+    public PageCursor<ProductDto> readHomeLivingProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+        return productReadService.getHomeLivingProducts(cursorRequest, categoryId, sortId);
+    }
+
+    @Operation(summary = "뷰티 상품 조회",
+            description = "뷰티 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/beauty/all")
+    public PageCursor<ProductDto> readBeautyProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+        return productReadService.getBeautyProducts(cursorRequest, categoryId, sortId);
+    }
+
+    @Operation(summary = "브랜드별 상품 조회",
+            description = "브랜드별 상품 조회",
+            tags = {"USER_ROLE"})
+    @GetMapping("/brand/all")
+    public PageCursor<ProductDto> readBrandProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+        return productReadService.getBrandProducts(cursorRequest, categoryId, sortId);
+    }
+// ==================================================================================================================
+// ====================================================== 상품 댓글 =====================================================
     @Operation(summary = "상품 댓글 생성",
             description = "사용자의 userId와 ProductCommentCommand를 받아 제품 댓글 생성",
             tags = {"USER_ROLE"})
@@ -133,7 +200,7 @@ public class ProductController {
             )
     )
     @GetMapping("/{productId}/comments")
-    public List<ProductCommentDto> getAllCommentsByProductId(@PathVariable Long productId){
+    public List<ProductCommentDto> readAllCommentsByProductId(@PathVariable Long productId){
         return productCommentReadService.getAllComments(productId);
     }
 
@@ -144,4 +211,9 @@ public class ProductController {
     public void deleteComment(@PathVariable Long commentId, @RequestParam Long userId){
         productCommentWriteService.deleteProductComment(commentId, userId);
     }
+//
+//    @PostMapping("/brand")
+//    public BrandCategory createBrand(String brandName){
+//        return productWriteService.registerBrand(brandName);
+//    }
 }

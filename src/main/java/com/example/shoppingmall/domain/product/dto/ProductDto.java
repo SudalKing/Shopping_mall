@@ -1,12 +1,14 @@
 package com.example.shoppingmall.domain.product.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Builder
 @Getter
 @Schema(description = "상품 Response class")
@@ -30,29 +32,22 @@ public class ProductDto {
     @Schema(description = "상품 설명")
     private String description;
 
-    @Schema(description = "상품 카테고리 아이디")
+    @Schema(description = "상품 타입 아이디(여러 탭)")
+    private Long typeId;
+
+    @Schema(description = "상품 카테고리 아이디(탭 하위의 카테고리)")
     private Long categoryId;
+
+    @Schema(description = "할인 적용 여부")
+    private boolean saled;
 
     @Schema(description = "soft delete")
     private boolean deleted;
 
     @Schema(description = "상품 좋아요 수")
-    private Long likeCount;
+    private int likeCount;
 
     @Schema(description = "상품 업로드 이미지 url")
     private List<String> urls = new ArrayList<>();
 
-    public ProductDto(Long id, String name, String modelName, int price, int stock,
-                      String description, Long categoryId, boolean deleted, Long likeCount, List<String> urls) {
-        this.id = id;
-        this.name = name;
-        this.modelName = modelName;
-        this.price = price;
-        this.stock = stock;
-        this.description = description;
-        this.categoryId = categoryId;
-        this.deleted = deleted;
-        this.likeCount = likeCount;
-        this.urls = urls;
-    }
 }

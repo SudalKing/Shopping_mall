@@ -1,5 +1,6 @@
-package com.example.shoppingmall.domain.product.entity;
+package com.example.shoppingmall.domain.product_util.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,18 +10,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 @Entity
-public class Category {
+public class ClothesCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String categoryName;
+    private String name;
 
-    @Builder
-    public Category(Long id, String categoryName) {
-        this.id = id;
-        this.categoryName = categoryName;
-    }
 }

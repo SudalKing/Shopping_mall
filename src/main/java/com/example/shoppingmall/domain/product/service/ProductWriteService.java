@@ -1,7 +1,9 @@
 package com.example.shoppingmall.domain.product.service;
 
 import com.example.shoppingmall.domain.product.dto.ProductCommand;
+import com.example.shoppingmall.domain.product_util.dto.BrandCategory;
 import com.example.shoppingmall.domain.product.entity.Product;
+import com.example.shoppingmall.domain.product_util.repository.BrandRepository;
 import com.example.shoppingmall.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Service
 public class ProductWriteService {
     private final ProductRepository productRepository;
+    private final BrandRepository brandRepository;
 
     @Transactional
     public Product createProduct(ProductCommand productCommand){
@@ -23,6 +26,7 @@ public class ProductWriteService {
                 .stock(productCommand.getStock())
                 .description(productCommand.getDescription())
                 .categoryId(productCommand.getCategoryId())
+                .saled(productCommand.isSaled())
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -45,6 +49,14 @@ public class ProductWriteService {
                 productCommand.getDescription()
         );
         return product;
+    }
+
+    public BrandCategory registerBrand(String brandName){
+        var brand = BrandCategory.builder()
+                .name(brandName)
+                .createdAt(LocalDateTime.now())
+                .build();
+        return brandRepository.save(brand);
     }
 
 }

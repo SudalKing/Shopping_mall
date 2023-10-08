@@ -40,12 +40,12 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = OrderDto.class)))
     })
-    @GetMapping("/{cartId}")
+    @GetMapping("/{cartId}/add")
     public OrderDto readOrder(@PathVariable Long cartId, @RequestParam Long orderId){
         return orderReadService.getCurrentOrder(orderId, cartId);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/all")
     public List<OrderDto> readAllOrders(@PathVariable Long userId){
         return orderReadService.getAllOrders(userId);
     }
