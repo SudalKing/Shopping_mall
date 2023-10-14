@@ -2,16 +2,13 @@ package com.example.shoppingmall.application.controller;
 
 import com.example.shoppingmall.application.usecase.user.CreateUserCartProductUseCase;
 import com.example.shoppingmall.application.usecase.user.ReadUserCartProductUseCase;
+import com.example.shoppingmall.configuration.security.jwt.LoginRequest;
 import com.example.shoppingmall.domain.cart.dto.CartProductDto;
 import com.example.shoppingmall.domain.user.dto.AddressCommand;
 import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
 import com.example.shoppingmall.domain.user.dto.UserDto;
-import com.example.shoppingmall.domain.user.entity.User;
-import com.example.shoppingmall.domain.user.service.AddressReadService;
-import com.example.shoppingmall.domain.user.service.AddressWriteService;
-import com.example.shoppingmall.domain.user.service.UserReadService;
-import com.example.shoppingmall.domain.user.service.UserWriteService;
+import com.example.shoppingmall.domain.user.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,8 +16,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,6 +33,8 @@ public class UserController {
     private final AddressWriteService addressWriteService;
     private final CreateUserCartProductUseCase createUserCartProductUseCase;
     private final ReadUserCartProductUseCase readUserCartProductUseCase;
+
+    private final CustomUserDetailService customUserDetailService;
 
     @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"USER_ROLE"})
     @ApiResponses(value = {
@@ -54,6 +53,11 @@ public class UserController {
                 .body(userDto);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
+        return ResponseEntity.ok()
+                .body(userReadService.login(loginRequest));
+    }
 
     @Operation(summary = "사용자 조회", description = "userId를 통한 사용자 조회 기능", tags = {"ADMIN_ROLE"})
     @ApiResponses(value = {
@@ -75,6 +79,7 @@ public class UserController {
             description = "OK",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
     )
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/users")
     public List<UserDto> getAllUsers(){
         return userReadService.getAllUsers();

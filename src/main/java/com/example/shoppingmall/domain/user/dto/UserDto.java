@@ -1,12 +1,14 @@
 package com.example.shoppingmall.domain.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
@@ -20,13 +22,5 @@ public class UserDto {
     private LocalDateTime createdAt;
     private boolean enabled;
 
-    public UserDto(Long id, String nickname, String phoneNumber, String email, String password, LocalDateTime createdAt, boolean enabled) {
-        this.id = id;
-        this.nickname = nickname;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-        this.createdAt = createdAt;
-        this.enabled = enabled;
-    }
+
 }

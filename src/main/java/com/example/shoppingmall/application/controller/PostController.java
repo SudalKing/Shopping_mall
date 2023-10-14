@@ -40,7 +40,7 @@ public class PostController {
     @PostMapping("/add")
     public ResponseEntity<Object> uploadProduct(
             PostCommand postCommand,
-            @RequestParam(value = "fileType") String fileType,
+            @RequestParam(value = "fileType", required = false) String fileType,
             @RequestPart(value = "files") List<MultipartFile> multipartFiles
     ){
         return ResponseEntity

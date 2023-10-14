@@ -60,7 +60,9 @@ public class UserWriteService {
                 user.getEmail(),
                 user.getPassword(),
                 user.getCreatedAt(),
-                user.isEnabled());
+                user.isEnabled()
+        );
+
     }
 
 

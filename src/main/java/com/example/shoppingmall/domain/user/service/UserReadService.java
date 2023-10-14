@@ -1,9 +1,15 @@
 package com.example.shoppingmall.domain.user.service;
 
+import com.example.shoppingmall.configuration.security.jwt.JwtUtil;
+import com.example.shoppingmall.configuration.security.jwt.LoginRequest;
 import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +19,27 @@ import java.util.stream.Collectors;
 @Service
 public class UserReadService {
 
+    @Value("${jwt.secret}")
+    private String secretKey;
+    private static final Long EXPIRED_AT = 1000 * 60 * 60L;
+
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public String login(LoginRequest loginRequest){
+        // 인증 과정
+        // 1. 없는 유저
+        // 2. 이메일과 비밀번호 매치
+        // 3. 로그인 성공 후 jwt 발급
+        var user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 이메일입니다."));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
+            throw new BadCredentialsException("잘못된 비밀번호입니다.");
+        }
+
+        return JwtUtil.createJwt(loginRequest.getEmail(), secretKey, EXPIRED_AT);
+    }
 
     public UserDto getUser(Long id){
         var user = userRepository.findUserById(id);
