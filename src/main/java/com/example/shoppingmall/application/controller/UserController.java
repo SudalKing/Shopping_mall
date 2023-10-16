@@ -34,8 +34,6 @@ public class UserController {
     private final CreateUserCartProductUseCase createUserCartProductUseCase;
     private final ReadUserCartProductUseCase readUserCartProductUseCase;
 
-    private final CustomUserDetailService customUserDetailService;
-
     @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"USER_ROLE"})
     @ApiResponses(value = {
             @ApiResponse(
@@ -47,16 +45,10 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
     })
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> register(RegisterUserCommand registerUserCommand){
+    public ResponseEntity<UserDto> register(@RequestBody RegisterUserCommand registerUserCommand){
         var userDto = userWriteService.createUser(registerUserCommand);
         return ResponseEntity.created(URI.create("/user/" + userDto.getId()))
                 .body(userDto);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest){
-        return ResponseEntity.ok()
-                .body(userReadService.login(loginRequest));
     }
 
     @Operation(summary = "사용자 조회", description = "userId를 통한 사용자 조회 기능", tags = {"ADMIN_ROLE"})

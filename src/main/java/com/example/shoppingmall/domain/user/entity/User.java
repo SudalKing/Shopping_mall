@@ -1,7 +1,8 @@
 package com.example.shoppingmall.domain.user.entity;
 
 import com.example.shoppingmall.domain.cart.entity.Cart;
-import com.example.shoppingmall.domain.user.auth.CustomAuthority;
+import com.example.shoppingmall.domain.user.util.Role;
+import com.example.shoppingmall.domain.user.util.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -10,9 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,16 +41,22 @@ public class User {
     @NotNull
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
+    private Long socialId;
+
+    private String refreshToken;
+
     private boolean enabled;
 
     @JsonIgnore
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private Cart cart;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private Set<CustomAuthority> authorities = new HashSet<>();
 
     @PrePersist
     public void setCreatedAt(){
@@ -63,7 +68,7 @@ public class User {
         nickname = newNickname;
     }
 
-    public void setAuthorities(Set<CustomAuthority> authorities){
-        this.authorities = authorities;
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
