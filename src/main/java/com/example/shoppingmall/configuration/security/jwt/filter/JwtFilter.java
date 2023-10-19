@@ -1,6 +1,7 @@
 package com.example.shoppingmall.configuration.security.jwt.filter;
 
-import com.example.shoppingmall.configuration.security.jwt.util.JwtService;
+import com.example.shoppingmall.configuration.security.jwt.service.JwtService;
+import com.example.shoppingmall.configuration.security.jwt.util.PasswordUtil;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     @Override
@@ -84,8 +84,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private void saveAuthentication(User user) {
         String password = user.getPassword();
-        if (password == null) password = passwordEncoder.encode(user.getEmail()); // email 을 통한 임시 비밀번호
-
+        if (password == null) {
+            password = PasswordUtil.generateRandomPassword();
+        }
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(password)

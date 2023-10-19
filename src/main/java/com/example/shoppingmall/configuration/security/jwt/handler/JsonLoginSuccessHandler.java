@@ -1,6 +1,6 @@
 package com.example.shoppingmall.configuration.security.jwt.handler;
 
-import com.example.shoppingmall.configuration.security.jwt.util.JwtService;
+import com.example.shoppingmall.configuration.security.jwt.service.JwtService;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

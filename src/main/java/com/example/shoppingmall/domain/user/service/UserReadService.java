@@ -1,15 +1,9 @@
 package com.example.shoppingmall.domain.user.service;
 
-import com.example.shoppingmall.configuration.security.jwt.util.JwtService;
-import com.example.shoppingmall.configuration.security.jwt.LoginRequest;
 import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

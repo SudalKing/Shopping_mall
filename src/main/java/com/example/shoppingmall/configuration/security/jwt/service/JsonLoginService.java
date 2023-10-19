@@ -1,4 +1,4 @@
-package com.example.shoppingmall.configuration.security.jwt.util;
+package com.example.shoppingmall.configuration.security.jwt.service;
 
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

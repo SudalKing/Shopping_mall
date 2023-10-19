@@ -47,7 +47,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    private Long socialId;
+    private String socialId;
 
     private String refreshToken;
 
@@ -68,6 +68,9 @@ public class User {
         nickname = newNickname;
     }
 
+    public void updateUserRole() {
+        this.role = Role.USER;
+    }
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }

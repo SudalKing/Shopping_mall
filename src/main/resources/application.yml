@@ -48,14 +48,6 @@ springdoc:
     operationsSorter: method
     disable-swagger-default-url: true
     display-request-duration: true
-
-logging:
-  level:
-    com:
-      amazonaws:
-        util:
-          EC2MetadataUtils: error
-
 ---
 # Multipart 설정
 spring:

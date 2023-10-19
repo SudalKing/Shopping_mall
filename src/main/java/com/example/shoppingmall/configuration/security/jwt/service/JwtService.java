@@ -1,12 +1,12 @@
-package com.example.shoppingmall.configuration.security.jwt.util;
+package com.example.shoppingmall.configuration.security.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
 import java.util.Optional;
 
-@Service
-@Slf4j
 @RequiredArgsConstructor
+@Service
+@Getter
+@Slf4j
 public class JwtService {
 
     @Value("${jwt.secretKey}")

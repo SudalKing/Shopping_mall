@@ -4,12 +4,14 @@ import com.example.shoppingmall.configuration.security.jwt.filter.CustomUsername
 import com.example.shoppingmall.configuration.security.jwt.filter.JwtFilter;
 import com.example.shoppingmall.configuration.security.jwt.handler.JsonLoginFailureHandler;
 import com.example.shoppingmall.configuration.security.jwt.handler.JsonLoginSuccessHandler;
-import com.example.shoppingmall.configuration.security.jwt.util.JsonLoginService;
-import com.example.shoppingmall.configuration.security.jwt.util.JwtService;
+import com.example.shoppingmall.configuration.security.jwt.service.JsonLoginService;
+import com.example.shoppingmall.configuration.security.jwt.service.JwtService;
+import com.example.shoppingmall.configuration.security.oauth2.handler.OAuth2LoginFailureHandler;
+import com.example.shoppingmall.configuration.security.oauth2.handler.OAuth2LoginSuccessHandler;
+import com.example.shoppingmall.configuration.security.oauth2.service.CustomOAuth2UserService;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +28,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @RequiredArgsConstructor
@@ -38,6 +39,9 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final JsonLoginService jsonLoginService;
     private final JwtService jwtService;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
 
     @Bean
@@ -49,14 +53,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
+                .cors().disable()
+                .headers().frameOptions().disable()
+                .and()
                 .httpBasic().disable()
                 .formLogin().disable()
-                .cors().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/user/signup").permitAll()
+                .antMatchers("/", "/login/oauth2/code/**", "/user/signup").permitAll() // 다시 해보자
                 .anyRequest().authenticated() // denyAll() 옵션을 주면 토큰이 있어도 막아버림
+                .and()
+                // OAuth2 Login
+                .oauth2Login()
+                .successHandler(oAuth2LoginSuccessHandler)
+                .failureHandler(oAuth2LoginFailureHandler)
+                .userInfoEndpoint().userService(customOAuth2UserService);
                 ;
 
         httpSecurity.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
@@ -115,7 +127,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtFilter jwtFilter() {
-        return new JwtFilter(jwtService, userRepository, passwordEncoder());
+        return new JwtFilter(jwtService, userRepository);
     }
 
     @Bean
@@ -126,13 +138,6 @@ public class SecurityConfig {
                 )
                 .antMatchers("/swagger-ui/**")
                 ;
-    }
-
-    @Bean
-    public RoleHierarchy roleHierarchy(){
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
-        return roleHierarchy;
     }
 
 }
