@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/login/oauth2/code/**", "/user/signup").permitAll() // 다시 해보자
+                .antMatchers("/", "/login/oauth2/code/**", "/user/signup", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated() // denyAll() 옵션을 주면 토큰이 있어도 막아버림
                 .and()
                 // OAuth2 Login

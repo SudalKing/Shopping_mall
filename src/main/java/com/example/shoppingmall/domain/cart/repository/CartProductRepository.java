@@ -12,8 +12,12 @@ import java.util.List;
 public interface CartProductRepository extends JpaRepository<CartProduct, Long> {
     CartProduct findCartProductByProductIdAndCartId(Long productId, Long cartId);
 
+    List<CartProduct> findCartProductsByCartIdAndEnabledTrue(Long cartId);
+
+    void deleteByCartIdAndProductId(Long cartId, Long productId);
+
     @Transactional
-    @Modifying
-    @Query(value = "delete from cart_product where cart_id in :cartIds", nativeQuery = true)
-    void deleteAllByCartId(@Param("cartIds") List<Long> cartIds);
+    @Modifying(clearAutomatically = true)
+    @Query(value = "delete from cart_product where cart_id = :cartId", nativeQuery = true)
+    void deleteAllCartProductsByCartId(@Param("cartId") Long cartId);
 }

@@ -1,12 +1,14 @@
 package com.example.shoppingmall.domain.order.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -19,19 +21,7 @@ public class OrderProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    private Long orderId;
     private Long productId;
-    private Long cartId;
     private int count;
-    private LocalDateTime createdAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orders_id")
-    @JsonIgnore
-    private Orders orders;
-
-    public void setOrders(Orders orders){
-        this.orders = orders;
-    }
-
 }

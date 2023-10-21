@@ -21,18 +21,12 @@ public class Orders {
     private Long id;
 
     private Long userId;
-    private Long cartId;
+    private Long versionCount;
     private Long orderStatusId;
+    private int priceSum;
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "orders", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    private List<OrderProduct> orderProducts = new ArrayList<>();
-
-    public void setOrderStatusId(Long orderStatusId){
-        this.orderStatusId = orderStatusId;
+    public void setPriceSum(int priceSum) {
+        this.priceSum = priceSum;
     }
-    public void setOrderProducts(OrderProduct orderProduct){
-        this.orderProducts.add(orderProduct);
-    }
-
 }

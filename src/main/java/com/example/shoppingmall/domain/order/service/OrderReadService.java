@@ -3,8 +3,10 @@ package com.example.shoppingmall.domain.order.service;
 import com.example.shoppingmall.domain.order.dto.OrderDto;
 import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import com.example.shoppingmall.domain.order.entity.Orders;
+import com.example.shoppingmall.domain.order.repository.OrderProductRepository;
 import com.example.shoppingmall.domain.order.repository.OrdersRepository;
 import com.example.shoppingmall.domain.product.repository.ProductRepository;
+import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,26 +17,35 @@ import java.util.stream.Collectors;
 @Service
 public class OrderReadService {
     private final OrdersRepository ordersRepository;
+    private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
 
-    public List<OrderDto> getAllOrders(Long userId){
-        return ordersRepository.findAllByUserId(userId)
+    public List<OrderDto> getAllOrders(User user){
+        return ordersRepository.findAllByUserId(user.getId())
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-
-    public OrderDto getCurrentOrder(Long orderId, Long cartId){
-        var orders = ordersRepository.findOrdersByIdAndCartId(orderId, cartId);
+    public OrderDto getCurrentOrder(Long orderId){
+        var orders = ordersRepository.findOrdersById(orderId);
         return toDto(orders);
-        // 1. OrdersId로 찾는다?
-        // 2. Orders의 주문 상태를 바꾼다
     }
 
-    public int getTotalPrice(Orders order) {
+    public OrderDto toDto(Orders order){
+        return new OrderDto(
+                order.getId(),
+                order.getUserId(),
+                order.getOrderStatusId(),
+                order.getCreatedAt(),
+                order.getVersionCount(),
+                getTotalPrice(order)
+        );
+    }
+
+    private int getTotalPrice(Orders order) {
         int totalPrice = 0;
-        var orderProducts = order.getOrderProducts();
+        List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(order.getId());
 
         for (OrderProduct orderProduct: orderProducts) {
             var product = productRepository.findProductById(orderProduct.getProductId());
@@ -42,16 +53,5 @@ public class OrderReadService {
         }
 
         return totalPrice;
-    }
-
-    public OrderDto toDto(Orders order){
-        return new OrderDto(
-                order.getId(),
-                order.getCartId(),
-                order.getUserId(),
-                order.getOrderStatusId(),
-                order.getCreatedAt(),
-                getTotalPrice(order)
-        );
     }
 }

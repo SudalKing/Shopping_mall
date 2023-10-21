@@ -35,6 +35,10 @@ public class UserReadService {
         return toDto(user);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
     public User getUserEntity(Long userId){
         return userRepository.findUserById(userId);
     }

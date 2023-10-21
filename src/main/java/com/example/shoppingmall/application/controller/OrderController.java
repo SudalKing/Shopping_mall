@@ -3,6 +3,8 @@ package com.example.shoppingmall.application.controller;
 import com.example.shoppingmall.application.usecase.order.CreateOrderUseCase;
 import com.example.shoppingmall.domain.order.dto.OrderDto;
 import com.example.shoppingmall.domain.order.service.OrderReadService;
+import com.example.shoppingmall.domain.user.entity.User;
+import com.example.shoppingmall.domain.user.service.UserReadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,32 +24,30 @@ import java.util.List;
 public class OrderController {
     private final CreateOrderUseCase createOrderUseCase;
     private final OrderReadService orderReadService;
+    private final UserReadService userReadService;
 
 
-    @Operation(summary = "주문 생성"
-            , description = "userId를 받아 주문 생성", tags = {"USER_ROLE"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK")
-    })
-    @GetMapping("/{userId}")
-    public void createOrder(@PathVariable Long userId){
-        createOrderUseCase.execute(userId);
+    @Operation(summary = "주문 생성", description = "주문 생성", tags = {"인증 필요"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @GetMapping("/add")
+    public void createOrder(Principal principal){
+        User user = userReadService.getUserByEmail(principal.getName());
+        createOrderUseCase.execute(user);
     }
-
 
     @Operation(summary = "주문 상세 조회"
-            , description = "조회하려는 주문의 orderId와 이 주문의 장바구니 cartId를 받아 주문 상세 조회", tags = {"USER_ROLE"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = OrderDto.class)))
-    })
-    @GetMapping("/{cartId}/add")
-    public OrderDto readOrder(@PathVariable Long cartId, @RequestParam Long orderId){
-        return orderReadService.getCurrentOrder(orderId, cartId);
+            , description = "조회하려는 주문의 orderId를 받아 주문 상세 조회", tags = {"인증 필요"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @GetMapping("/get/{orderId}")
+    public OrderDto readOrder(@PathVariable Long orderId){
+        return orderReadService.getCurrentOrder(orderId);
     }
 
-    @GetMapping("/{userId}/all")
-    public List<OrderDto> readAllOrders(@PathVariable Long userId){
-        return orderReadService.getAllOrders(userId);
+    @Operation(summary = "사용자 주문 전체 조회", description = "사용자의 주문 전체 조회", tags = {"인증 필요"})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @GetMapping("/get/all")
+    public List<OrderDto> readAllOrders(Principal principal){
+        User user = userReadService.getUserByEmail(principal.getName());
+        return orderReadService.getAllOrders(user);
     }
 }

@@ -12,19 +12,19 @@ public class CartWriteService {
     private final CartRepository cartRepository;
 
     public Cart createCart(User user) {
-        if(user.getCart() == null){
-            var cart = Cart.builder()
-                    .user(user)
-                    .cartProducts(null)
-                    .build();
-            return cartRepository.save(cart);
+        var findCart = cartRepository.findByUserId(user.getId());
+        if(findCart.isPresent()){
+            return findCart.get();
         }else {
-            return user.getCart();
-        }
+            var cart = Cart.builder()
+                    .userId(user.getId())
+                    .enabled(true)
+                    .build();
+            return cartRepository.save(cart);}
     }
 
     public void deleteCart(User user){
-        cartRepository.deleteById(user.getCart().getId());
+        cartRepository.deleteByUserId(user.getId());
     }
 
 }

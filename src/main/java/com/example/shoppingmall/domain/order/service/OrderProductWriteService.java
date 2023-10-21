@@ -18,12 +18,9 @@ public class OrderProductWriteService {
     @Transactional
     public OrderProduct createOrderProduct(CartProduct cartProduct, Orders orders){
         var orderProduct = OrderProduct.builder()
-                .userId(cartProduct.getCart().getUser().getId())
-                .productId(cartProduct.getProduct().getId())
-                .cartId(cartProduct.getCart().getId())
+                .orderId(orders.getId())
+                .productId(cartProduct.getProductId())
                 .count(cartProduct.getCount())
-                .createdAt(LocalDateTime.now())
-                .orders(orders)
                 .build();
         return orderProductRepository.save(orderProduct);
     }

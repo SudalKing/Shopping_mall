@@ -55,11 +55,6 @@ public class Product {
     @Version
     private Long version;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private List<CartProduct> cartProducts = new ArrayList<>();
-
     public void update(String newName, String newModelName, int newPrice, String newDescription){
         name = newName;
         modelName = newModelName;

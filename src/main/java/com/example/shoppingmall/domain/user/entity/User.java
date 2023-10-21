@@ -1,10 +1,11 @@
 package com.example.shoppingmall.domain.user.entity;
 
-import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.user.util.Role;
 import com.example.shoppingmall.domain.user.util.SocialType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -52,11 +53,6 @@ public class User {
     private String refreshToken;
 
     private boolean enabled;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private Cart cart;
 
     @PrePersist
     public void setCreatedAt(){

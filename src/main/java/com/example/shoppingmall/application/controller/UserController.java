@@ -1,14 +1,13 @@
 package com.example.shoppingmall.application.controller;
 
-import com.example.shoppingmall.application.usecase.user.CreateUserCartProductUseCase;
-import com.example.shoppingmall.application.usecase.user.ReadUserCartProductUseCase;
-import com.example.shoppingmall.configuration.security.jwt.LoginRequest;
-import com.example.shoppingmall.domain.cart.dto.CartProductDto;
 import com.example.shoppingmall.domain.user.dto.AddressCommand;
 import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
 import com.example.shoppingmall.domain.user.dto.UserDto;
-import com.example.shoppingmall.domain.user.service.*;
+import com.example.shoppingmall.domain.user.service.AddressReadService;
+import com.example.shoppingmall.domain.user.service.AddressWriteService;
+import com.example.shoppingmall.domain.user.service.UserReadService;
+import com.example.shoppingmall.domain.user.service.UserWriteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
@@ -31,8 +32,6 @@ public class UserController {
     private final UserWriteService userWriteService;
     private final AddressReadService addressReadService;
     private final AddressWriteService addressWriteService;
-    private final CreateUserCartProductUseCase createUserCartProductUseCase;
-    private final ReadUserCartProductUseCase readUserCartProductUseCase;
 
     @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"USER_ROLE"})
     @ApiResponses(value = {
@@ -47,6 +46,8 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<UserDto> register(@RequestBody RegisterUserCommand registerUserCommand){
         var userDto = userWriteService.createUser(registerUserCommand);
+        log.info("회원 가입 성공");
+
         return ResponseEntity.created(URI.create("/user/" + userDto.getId()))
                 .body(userDto);
     }
@@ -123,30 +124,5 @@ public class UserController {
     @DeleteMapping("/{addressId}/address")
     public void deleteAddress(@PathVariable Long addressId){
         addressWriteService.deleteAddress(addressId);
-    }
-
-
-    @Operation(summary = "장바구니 조회", description = "userId를 받아 사용자의 장바구니 품목 조회", tags = {"USER_ROLE"})
-    @ApiResponse(
-            responseCode = "200",
-            description = "OK",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CartProductDto.class)))
-    )
-    @GetMapping("/cart/{userId}")
-    public List<CartProductDto> getUserCartProduct(@PathVariable Long userId){
-        return readUserCartProductUseCase.execute(userId);
-    }
-
-
-    @Operation(summary = "장바구니 생성",
-            description = "현재 사용자의 userId와 장바구니에 담으려는 productId를 받아 장바구니 생성",
-            tags = {"USER_ROLE"})
-    @ApiResponse(
-            responseCode = "200",
-            description = "OK"
-    )
-    @GetMapping("/cart/{userId}/{productId}")
-    public void createCart(@PathVariable Long userId, @PathVariable Long productId, @RequestParam int count){
-        createUserCartProductUseCase.execute(userId, productId, count);
     }
 }

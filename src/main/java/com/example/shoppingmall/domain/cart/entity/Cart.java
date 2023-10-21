@@ -1,11 +1,14 @@
 package com.example.shoppingmall.domain.cart.entity;
 
-import com.example.shoppingmall.domain.user.entity.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,12 +20,6 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @ToString.Exclude
-    private User user;
-
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @ToString.Exclude
-    private List<CartProduct> cartProducts = new ArrayList<>();
+    private Long userId;
+    private boolean enabled;
 }

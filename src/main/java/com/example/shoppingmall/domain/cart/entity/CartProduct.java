@@ -1,10 +1,14 @@
 package com.example.shoppingmall.domain.cart.entity;
 
-import com.example.shoppingmall.domain.product.entity.Product;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -17,23 +21,18 @@ public class CartProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cart_id")
-    @ToString.Exclude
-    private Cart cart;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    @ToString.Exclude
-    private Product product;
-
+    private Long cartId;
+    private Long productId;
     private int count;
-
     private LocalDateTime createdAt;
+    private boolean enabled;
 
     public void addCount(int count){
         this.count += count;
+    }
+
+    public void minusCount(int count){
+        this.count -= count;
     }
 
 }
