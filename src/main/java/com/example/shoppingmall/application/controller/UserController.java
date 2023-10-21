@@ -4,6 +4,7 @@ import com.example.shoppingmall.domain.user.dto.AddressCommand;
 import com.example.shoppingmall.domain.user.dto.AddressDto;
 import com.example.shoppingmall.domain.user.dto.RegisterUserCommand;
 import com.example.shoppingmall.domain.user.dto.UserDto;
+import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.AddressReadService;
 import com.example.shoppingmall.domain.user.service.AddressWriteService;
 import com.example.shoppingmall.domain.user.service.UserReadService;
@@ -21,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -33,15 +35,14 @@ public class UserController {
     private final AddressReadService addressReadService;
     private final AddressWriteService addressWriteService;
 
-    @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"USER_ROLE"})
+    @Operation(summary = "회원가입", description = "RegisterUserCommand를 받아 회원 생성", tags = {"인증 불필요"})
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
                     description = "CREATED",
                     content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
-            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
-            @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND")
     })
     @PostMapping("/signup")
     public ResponseEntity<UserDto> register(@RequestBody RegisterUserCommand registerUserCommand){
@@ -52,7 +53,7 @@ public class UserController {
                 .body(userDto);
     }
 
-    @Operation(summary = "사용자 조회", description = "userId를 통한 사용자 조회 기능", tags = {"ADMIN_ROLE"})
+    @Operation(summary = "사용자 조회", description = "userId를 통한 사용자 조회 기능", tags = {"인증 필요(ADMIN)"})
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -66,20 +67,19 @@ public class UserController {
     }
 
 
-    @Operation(summary = "모든 사용자 조회", description = "모든 사용자 조회 기능", tags = {"ADMIN_ROLE"})
+    @Operation(summary = "모든 사용자 조회", description = "모든 사용자 조회 기능", tags = {"인증 필요(ADMIN)"})
     @ApiResponse(
             responseCode = "200",
             description = "OK",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))
     )
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/users")
     public List<UserDto> getAllUsers(){
         return userReadService.getAllUsers();
     }
 
 
-    @Operation(summary = "사용자 삭제", description = "userId를 통한 사용자 삭제 기능", tags = {"ADMIN_ROLE"})
+    @Operation(summary = "사용자 삭제", description = "userId를 통한 사용자 삭제 기능", tags = {"인증 필요(ADMIN)"})
     @ApiResponse(
             responseCode = "200",
             description = "OK"
@@ -90,37 +90,37 @@ public class UserController {
     }
 
 
-    @Operation(summary = "사용자 주소 생성", description = "userId와 AddressCommand를 받아 사용자의 주소 생성", tags = {"USER_ROLE"})
+    @Operation(summary = "사용자 주소 생성", description = "AddressCommand를 받아 사용자의 주소 생성", tags = {"인증 필요"})
     @ApiResponse(
             responseCode = "201",
             description = "OK",
             content = @Content(schema = @Schema(implementation = AddressDto.class))
     )
-    @PostMapping("/{userId}/address")
-    public ResponseEntity<AddressDto> addAddress(@PathVariable Long userId, AddressCommand addressCommand){
+    @PostMapping("/add/address")
+    public ResponseEntity<AddressDto> addAddress(Principal principal, AddressCommand addressCommand){
+        User user = userReadService.getUserByEmail(principal.getName());
+        Long userId = user.getId();
+
         var addressDto = addressWriteService.createAddress(userId, addressCommand);
         return ResponseEntity.created(URI.create("/" + userId + "/address/" + addressDto.getId()))
                 .body(addressDto);
     }
 
 
-    @Operation(summary = "사용자 주소 조회", description = "userId를 받아 사용자의 주소 List 조회", tags = {"USER_ROLE"})
+    @Operation(summary = "사용자 주소 조회", description = "사용자의 주소 List 조회", tags = {"인증 필요"})
     @ApiResponse(
             responseCode = "200",
             description = "OK",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = AddressDto.class)))
     )
-    @GetMapping("/{userId}/address")
-    public List<AddressDto> getUserAllAddresses(@PathVariable Long userId){
-        return addressReadService.getAllAddress(userId);
+    @GetMapping("/read/addresses")
+    public List<AddressDto> getUserAllAddresses(Principal principal){
+        User user = userReadService.getUserByEmail(principal.getName());
+        return addressReadService.getAllAddress(user.getId());
     }
 
-
-    @Operation(summary = "사용자 주소 삭제", description = "addressId를 받아 사용자의 주소 삭제", tags = {"USER_ROLE"})
-    @ApiResponse(
-            responseCode = "200",
-            description = "OK"
-    )
+    @Operation(summary = "사용자 주소 삭제", description = "addressId를 받아 사용자의 주소 삭제", tags = {"인증 필요"})
+    @ApiResponse(responseCode = "200", description = "OK")
     @DeleteMapping("/{addressId}/address")
     public void deleteAddress(@PathVariable Long addressId){
         addressWriteService.deleteAddress(addressId);

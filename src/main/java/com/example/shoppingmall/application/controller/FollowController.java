@@ -22,8 +22,7 @@ public class FollowController {
     private final FollowWriteService followWriteService;
     private final CreateUserFollowUseCase createUserFollowUseCase;
 
-
-    @Operation(summary = "팔로우 생성", description = "followerId와 followingId를 받아 팔로우 관계 생성", tags = {"USER_ROLE"})
+    @Operation(summary = "팔로우 생성", description = "followerId와 followingId를 받아 팔로우 관계 생성", tags = {"인증 필요"})
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     @PostMapping("/{followerId}/{followingId}")
     public void createFollow(@PathVariable Long followerId, @PathVariable Long followingId){

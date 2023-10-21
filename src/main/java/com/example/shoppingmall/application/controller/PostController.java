@@ -6,6 +6,8 @@ import com.example.shoppingmall.domain.post.dto.PostDto;
 import com.example.shoppingmall.domain.post.service.PostLikeWriteService;
 import com.example.shoppingmall.domain.post.service.PostReadService;
 import com.example.shoppingmall.domain.post.service.PostWriteService;
+import com.example.shoppingmall.domain.user.entity.User;
+import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -29,10 +32,11 @@ public class PostController {
     private final PostReadService postReadService;
     private final PostLikeWriteService postLikeWriteService;
     private final CreatePostUseCase createPostUseCase;
+    private final UserReadService userReadService;
 
 
     @Operation(summary = "게시글 생성"
-            , description = "PostCommand와 fileType(=image), multipartFiles(이미지들)을 받아 게시글 생성", tags = {"USER_ROLE"})
+            , description = "PostCommand와 fileType(=image), multipartFiles(이미지들)을 받아 게시글 생성", tags = {"인증 필요"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = PostDto.class)))
@@ -49,7 +53,7 @@ public class PostController {
     }
 
 
-    @Operation(summary = "게시글 상세 조회", description = "postId를 받아 게시글 상세보기", tags = {"USER_ROLE"})
+    @Operation(summary = "게시글 상세 조회", description = "postId를 받아 게시글 상세보기", tags = {"인증 불필요"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = PostDto.class)))
@@ -60,7 +64,7 @@ public class PostController {
     }
 
 
-    @Operation(summary = "모든 게시글 조회", description = "모든 게시글 조회(Cursor 기반 무한 스크롤 방식)", tags = {"USER_ROLE"})
+    @Operation(summary = "모든 게시글 조회", description = "모든 게시글 조회(Cursor 기반 무한 스크롤 방식)", tags = {"인증 불필요"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = PageCursor.class)))
@@ -74,16 +78,15 @@ public class PostController {
     /**
      * Like 테이블을 따로 분리 했기에 조회 시 toDto 함수를 통해 count 가 집계되며 이는 쓰기 성능을 향상시키지만
      * 동시에 읽기 성능은 나빠진다. -> redis나 스케쥴러를 통해 배치로 업로드 하면 해결 가능!
-     * @param postId
-     * @param userId
      */
-    @Operation(summary = "게시글 좋아요 생성", description = "postId와 userId를 받아 좋아요 관계 생성", tags = {"USER_ROLE"})
+    @Operation(summary = "게시글 좋아요 생성", description = "postId와 userId를 받아 좋아요 관계 생성", tags = {"인증 필요"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK")
     })
     @PostMapping("/{postId}/like")
-    public void createPostLike(@PathVariable Long postId, @RequestParam Long userId){
-        postLikeWriteService.createPostLike(userId, postId);
+    public void createPostLike(@PathVariable Long postId, Principal principal){
+        User user = userReadService.getUserByEmail(principal.getName());
+        postLikeWriteService.createPostLike(user.getId(), postId);
     }
 
 }
