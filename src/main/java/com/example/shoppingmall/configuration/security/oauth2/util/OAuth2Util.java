@@ -53,9 +53,13 @@ public class OAuth2Util {
         return User.builder()
                 .socialType(socialType)
                 .socialId(oAuth2UserInfo.getId())
-                .email(UUID.randomUUID() + "@social.com")
-                .password(PasswordUtil.generateRandomPassword())
-                .nickname(oAuth2UserInfo.getNickname())
+                .email(oAuth2UserInfo.getEmail())
+//                .password(PasswordUtil.generateRandomPassword())
+                .password("0*!llpqasdp")
+                .name(oAuth2UserInfo.getNickname())
+                .phoneNumber("-")
+                .enabled(true)
+                .infoSet(false)
                 .role(Role.GUEST)
                 .build();
     }

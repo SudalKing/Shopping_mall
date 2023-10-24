@@ -37,7 +37,7 @@ public class CartController {
     private final ReadUserCartProductUseCase readUserCartProductUseCase;
     private final UserReadService userReadService;
 
-    @Operation(summary = "장바구니 상품 조회", description = "장바구니 품목 조회", tags = {"인증 필요"})
+    @Operation(summary = "장바구니 상품 조회", description = "장바구니 품목 조회 - [인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = CartProductDto.class)))
     )
@@ -47,21 +47,32 @@ public class CartController {
         return readUserCartProductUseCase.execute(user);
     }
 
-    @Operation(summary = "장바구니 상품 개수 감소", description = "상품 id를 받아 장바구니의 상품 개수 감소", tags = {"인증 필요"})
+    @Operation(summary = "장바구니 상품 개수 감소", description = "상품 id를 받아 장바구니의 상품 개수 감소 - [인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping("/product/minus/{productId}")
+    @PutMapping("/product/minus/{productId}")
     public void createCartProduct(Principal principal, @PathVariable Long productId) throws Exception {
         User user = userReadService.getUserByEmail(principal.getName());
         Cart cart = cartReadService.getCartInfo(user.getId());
         Product product = productReadService.getProductEntity(productId);
 
-        cartProductWriteService.minusCartProductCount(cart, product);
+        cartProductWriteService.decreaseCartProductCount(cart, product);
     }
 
-    @Operation(summary = "장바구니 상품 추가", description = "상품 id를 받아 장바구니에 추가", tags = {"인증 필요"})
+    @Operation(summary = "장바구니 상품 개수 증가", description = "상품 id를 받아 장바구니의 상품 개수 증가 - [인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @PutMapping("/product/plus/{productId}")
+    public void increaseCartProduct(Principal principal, @PathVariable Long productId) throws Exception {
+        User user = userReadService.getUserByEmail(principal.getName());
+        Cart cart = cartReadService.getCartInfo(user.getId());
+        Product product = productReadService.getProductEntity(productId);
+
+        cartProductWriteService.increaseCartProductCount(cart, product);
+    }
+
+    @Operation(summary = "장바구니 상품 추가", description = "상품 id를 받아 장바구니에 추가 - [인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/product/{productId}")
-    public void minusCartProductCount(Principal principal, @PathVariable Long productId){
+    public void decreaseCartProductCount(Principal principal, @PathVariable Long productId){
         User user = userReadService.getUserByEmail(principal.getName());
         Cart cart = cartReadService.getCartInfo(user.getId());
         Product product = productReadService.getProductEntity(productId);

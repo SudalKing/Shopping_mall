@@ -1,6 +1,6 @@
 package com.example.shoppingmall.domain.product.service;
 
-import com.example.shoppingmall.domain.product.dto.ProductCommentCommand;
+import com.example.shoppingmall.domain.product.dto.req.ProductCommentCommand;
 import com.example.shoppingmall.domain.product.entity.ProductComment;
 import com.example.shoppingmall.domain.product.repository.ProductCommentRepository;
 import lombok.RequiredArgsConstructor;

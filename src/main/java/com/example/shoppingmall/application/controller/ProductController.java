@@ -2,10 +2,12 @@ package com.example.shoppingmall.application.controller;
 
 import com.example.shoppingmall.application.usecase.product.CreateProductUseCase;
 import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase;
-import com.example.shoppingmall.domain.product.dto.ProductCommand;
-import com.example.shoppingmall.domain.product.dto.ProductCommentCommand;
+import com.example.shoppingmall.domain.brand.dto.req.BrandProductRequest;
+import com.example.shoppingmall.domain.product.dto.req.ProductCommand;
+import com.example.shoppingmall.domain.product.dto.req.ProductCommentCommand;
 import com.example.shoppingmall.domain.product.dto.ProductCommentDto;
 import com.example.shoppingmall.domain.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.dto.res.BrandProductResponse;
 import com.example.shoppingmall.domain.product.service.ProductCommentReadService;
 import com.example.shoppingmall.domain.product.service.ProductCommentWriteService;
 import com.example.shoppingmall.domain.product.service.ProductReadService;
@@ -16,9 +18,6 @@ import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
 import java.util.List;
 
-@Api(tags = "상품과 댓글 기능")
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -46,16 +44,8 @@ public class ProductController {
     private final UserReadService userReadService;
 
 
-    @Operation(summary = "상품 등록",
-            description = "ProductCommand와 fileType(=image), multipartFiles(이미지들)을 받아 상품 생성",
-            tags = {"인증 필요(ADMIN)"})
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = ProductDto.class))
-            )
-    })
+    @Operation(summary = "ProductCommand와 fileType(=image), multipartFiles(이미지들)을 받아 상품 생성", description = "[인증 필요(ADMIN)]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @PostMapping("/add")
     public ResponseEntity<Object> createProduct(
             ProductCommand productCommand,
@@ -66,26 +56,8 @@ public class ProductController {
                 .body(createProductUseCase.execute(productCommand, "image", multipartFiles));
     }
 
-
-    @Operation(summary = "상품 수정",
-            description = "수정하려는 상품의 productId와 ProductCommand를 받아 상품 수정",
-            tags = {"인증 필요(ADMIN)"})
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = ProductDto.class))
-            )
-    })
-    @PutMapping("/{productId}")
-    public ProductDto updateProduct(@PathVariable Long productId, ProductCommand productCommand){
-        var product = productWriteService.updateProduct(productId, productCommand);
-        return productReadService.toDto(product);
-    }
-
-
-    @Operation(summary = "상품 삭제", description = "상품의 productId를 받아 상품 삭제", tags = {"인증 필요(ADMIN)"})
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @Operation(summary = "상품 삭제", description = "[인증 필요(ADMIN)]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @DeleteMapping("/{productId}")
     public void deleteProduct(@PathVariable Long productId){
         deleteProductUseCase.execute(productId);
@@ -94,97 +66,84 @@ public class ProductController {
 
 // =============================================상품 조회=====================================================
 
-    @Operation(summary = "모든 상품 조회",
-            description = "모든 상품 조회(무한 스크롤 방식)",
-            tags = {"인증 불필요"})
-    @GetMapping("/all")
-    public PageCursor<ProductDto> readAllProducts(CursorRequest cursorRequest, Long sortId){
+    @Operation(summary = "모든 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/all")
+    public PageCursor<ProductDto> readAllProducts(Long key, int size, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getProductsByCursor(cursorRequest, sortId);
     }
 
-    @Operation(summary = "NEW 상품 조회",
-            description = "NEW 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/new/all")
-    public PageCursor<ProductDto> readNEWProducts(CursorRequest cursorRequest, Long sortId){
+    @Operation(summary = "NEW 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/new")
+    public PageCursor<ProductDto> readNEWProducts(Long key, int size, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getNewProducts(cursorRequest, sortId);
     }
 
-    @Operation(summary = "Sale 상품 조회",
-            description = "Sale 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/sale/all")
-    public PageCursor<ProductDto> readSaleProducts(CursorRequest cursorRequest, Long sortId){
+    @Operation(summary = "Sale 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/sale")
+    public PageCursor<ProductDto> readSaleProducts(Long key, int size, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getSaleProducts(cursorRequest, sortId);
     }
 
-    @Operation(summary = "Best 상품 조회",
-            description = "Best 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/best/all")
-    public PageCursor<ProductDto> readBestProducts(CursorRequest cursorRequest, Long sortId){
+    @Operation(summary = "Best 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/best")
+    public PageCursor<ProductDto> readBestProducts(Long key, int size, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getBestProducts(cursorRequest);
     }
 
-    @Operation(summary = "의류 상품 조회",
-            description = "의류 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/clothes/all")
-    public PageCursor<ProductDto> readClothesProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+    @Operation(summary = "의류 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/clothes")
+    public PageCursor<ProductDto> readClothesProducts(Long key, int size, Long categoryId, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getClothesProducts(cursorRequest, categoryId, sortId);
     }
 
-    @Operation(summary = "소품 상품 조회",
-            description = "소품 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/prop/all")
-    public PageCursor<ProductDto> readPropProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+    @Operation(summary = "소품 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/prop")
+    public PageCursor<ProductDto> readPropProducts(Long key, int size, Long categoryId, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getPropProducts(cursorRequest, categoryId, sortId);
     }
 
-    @Operation(summary = "잡화 상품 조회",
-            description = "잡화 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/goods/all")
-    public PageCursor<ProductDto> readGoodsProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+    @Operation(summary = "잡화 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/goods")
+    public PageCursor<ProductDto> readGoodsProducts(Long key, int size, Long categoryId, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getGoodsProducts(cursorRequest, categoryId, sortId);
     }
 
-    @Operation(summary = "홈리빙 상품 조회",
-            description = "홈리빙 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/home-living/all")
-    public PageCursor<ProductDto> readHomeLivingProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+    @Operation(summary = "홈리빙 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/home-living")
+    public PageCursor<ProductDto> readHomeLivingProducts(Long key, int size, Long categoryId, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getHomeLivingProducts(cursorRequest, categoryId, sortId);
     }
 
-    @Operation(summary = "뷰티 상품 조회",
-            description = "뷰티 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/beauty/all")
-    public PageCursor<ProductDto> readBeautyProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
+    @Operation(summary = "뷰티 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/beauty")
+    public PageCursor<ProductDto> readBeautyProducts(Long key, int size, Long categoryId, Long sortId){
+        CursorRequest cursorRequest = new CursorRequest(key, size);
         return productReadService.getBeautyProducts(cursorRequest, categoryId, sortId);
     }
 
-    @Operation(summary = "브랜드별 상품 조회",
-            description = "브랜드별 상품 조회",
-            tags = {"인증 불필요"})
-    @GetMapping("/brand/all")
-    public PageCursor<ProductDto> readBrandProducts(CursorRequest cursorRequest, Long categoryId, Long sortId){
-        return productReadService.getBrandProducts(cursorRequest, categoryId, sortId);
+    @Operation(summary = "브랜드별 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/brand")
+    public PageCursor<BrandProductResponse> readBrandProducts(Long key, int size, Long brandId, Long brandCategoryId, Long sortId) throws Exception {
+        BrandProductRequest brandProductRequest = BrandProductRequest.builder()
+                .cursorRequest(new CursorRequest(key, size))
+                .brandId(brandId)
+                .brandCategoryId(brandCategoryId)
+                .sortId(sortId)
+                .build();
+        return productReadService.getBrandProducts(brandProductRequest);
     }
 // ==================================================================================================================
 // ====================================================== 상품 댓글 =====================================================
-    @Operation(summary = "상품 댓글 생성",
-            description = "사용자의 userId와 ProductCommentCommand를 받아 제품 댓글 생성",
-            tags = {"인증 필요"})
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = ProductCommentDto.class))
-            )
-    })
+    @Operation(summary = "상품 댓글 생성", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @PostMapping("/comment/add")
     public ProductCommentDto createComment(Principal principal, ProductCommentCommand productCommentCommand){
         User user = userReadService.getUserByEmail(principal.getName());
@@ -192,25 +151,15 @@ public class ProductController {
         return productCommentReadService.toDto(comment);
     }
 
-
-    @Operation(summary = "상품의 모든 댓글 조회", description = "productId를 받아 상품의 모든 댓글을 읽어 List형 반환", tags = {"인증 불필요"})
-    @ApiResponse(
-            responseCode = "200",
-            description = "OK",
-            content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = ProductCommentDto.class)
-                    )
-            )
-    )
+    @Operation(summary = "상품의 모든 댓글 조회", description = "[인증 불필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/{productId}/comments")
     public List<ProductCommentDto> readAllCommentsByProductId(@PathVariable Long productId){
         return productCommentReadService.getAllComments(productId);
     }
 
-
-    @Operation(summary = "상품 댓글 삭제", description = "userId와 commentId를 받아 댓글을 작성한 사용자가 맞다면 댓글 삭제", tags = {"인증 필요"})
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @Operation(summary = "상품 댓글 삭제", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @DeleteMapping("/{commentId}/comments")
     public void deleteComment(@PathVariable Long commentId, @RequestParam Long userId){
         productCommentWriteService.deleteProductComment(commentId, userId);

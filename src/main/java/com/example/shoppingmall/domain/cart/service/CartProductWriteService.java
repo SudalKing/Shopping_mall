@@ -40,7 +40,7 @@ public class CartProductWriteService {
     }
 
     @Transactional
-    public void minusCartProductCount(Cart cart, Product product) throws Exception {
+    public void decreaseCartProductCount(Cart cart, Product product) throws Exception {
         var findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
         if (findCartProduct.getCount() > 1) {
@@ -48,6 +48,12 @@ public class CartProductWriteService {
         } else {
             throw new Exception("Can not minus!!");
         }
+    }
+
+    @Transactional
+    public void increaseCartProductCount(Cart cart, Product product) throws Exception {
+        var findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+        findCartProduct.addCount(1);
     }
 
     @Transactional

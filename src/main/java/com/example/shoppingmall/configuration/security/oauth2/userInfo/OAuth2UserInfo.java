@@ -11,4 +11,5 @@ public abstract class OAuth2UserInfo {
 
     public abstract String getId(); // Google: sub, Naver: id, Kakao: id
     public abstract String getNickname();
+    public abstract String getEmail();
 }

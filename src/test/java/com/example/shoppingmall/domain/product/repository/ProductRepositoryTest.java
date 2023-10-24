@@ -1,5 +1,6 @@
 package com.example.shoppingmall.domain.product.repository;
 
+import com.example.shoppingmall.domain.product.dto.res.BrandProductResponse;
 import com.example.shoppingmall.domain.product.entity.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,4 +31,19 @@ class ProductRepositoryTest {
                 }
         );
     }
+
+    @Test
+    void findProductsByBrandIdNoKeyOrderByScore() {
+    }
+//
+//    @Test
+//    void findProductsByBrandIdHasKeyOrderByPriceAsc() {
+//        List<BrandProductResponse> brandProductResponseList = productRepository.findProductsByBrandIdHasKeyOrderByPriceAsc(400L, 0L, 1L, 10);
+//        brandProductResponseList.forEach(
+//                brandProductResponse -> {
+//                    System.out.println("response Id: " + brandProductResponse.getId());
+//                    System.out.println("response BrandCategoryId: " + brandProductResponse.getBrandCategoryId());
+//                }
+//        );
+//    }
 }

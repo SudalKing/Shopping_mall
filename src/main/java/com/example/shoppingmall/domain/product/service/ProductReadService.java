@@ -1,7 +1,10 @@
 package com.example.shoppingmall.domain.product.service;
 
 import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
+import com.example.shoppingmall.domain.brand.dto.req.BrandProductRequest;
+import com.example.shoppingmall.domain.brand.entity.Brand;
 import com.example.shoppingmall.domain.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.dto.res.BrandProductResponse;
 import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product.repository.ProductLikeRepository;
 import com.example.shoppingmall.domain.product.repository.ProductRepository;
@@ -168,21 +171,23 @@ public class ProductReadService {
         return new PageCursor<>(cursorRequest.next(nextKey), productsDtos);
     }
 
-    /**
-     * 브랜드별 상품 조회
-     * @param cursorRequest
-     * @param categoryId
-     * @return
-     */
-    public PageCursor<ProductDto> getBrandProducts(CursorRequest cursorRequest, Long categoryId, Long sortId) {
-        var products = findAllTypeProduct(cursorRequest, 6L, categoryId, sortId);
-        var productsDtos = products.stream()
-                .map(this::toDto)
+    public PageCursor<BrandProductResponse> getBrandProducts(BrandProductRequest brandProductRequest) throws Exception {
+        CursorRequest cursorRequest = brandProductRequest.getCursorRequest();
+        
+        List<Product> products = findBrandProducts(cursorRequest,
+                                    brandProductRequest.getBrandId(), 
+                                    brandProductRequest.getBrandCategoryId(), 
+                                    brandProductRequest.getSortId());
+
+        List<BrandProductResponse> brandProductResponseList = products.stream()
+                .map(this::toResponse)
                 .collect(Collectors.toList());
+
         var nextKey = getNextKey(products);
 
-        return new PageCursor<>(cursorRequest.next(nextKey), productsDtos);
+        return new PageCursor<>(cursorRequest.next(nextKey), brandProductResponseList);
     }
+
 
 // ===========================================메소드========================================================
     /**
@@ -224,7 +229,7 @@ public class ProductReadService {
      * new 탭
      * @param
      */
-    public List<Product> findAllNewProduct(CursorRequest cursorRequest, Long sortId){
+    private List<Product> findAllNewProduct(CursorRequest cursorRequest, Long sortId){
         if (sortId.equals(0L)) {
             if (cursorRequest.hasKey()) {
                 return productRepository.findAllProductsBetween7DaysByCursorHasKey(
@@ -286,7 +291,7 @@ public class ProductReadService {
      * Best 탭
      * @return
      */
-    public List<Product> findAllBestProduct(CursorRequest cursorRequest){
+    private List<Product> findAllBestProduct(CursorRequest cursorRequest){
         return null;
     }
 
@@ -294,7 +299,7 @@ public class ProductReadService {
      * Sale 탭
      * @return
      */
-    public List<Product> findAllSaledProduct(CursorRequest cursorRequest, Long sortId){
+    private List<Product> findAllSaledProduct(CursorRequest cursorRequest, Long sortId){
         if (sortId.equals(0L)) {
             if (cursorRequest.hasKey()) {
                 return productRepository.findAllSaleProductsHasKey(cursorRequest.getKey(), cursorRequest.getSize());
@@ -325,14 +330,14 @@ public class ProductReadService {
     }
 
     /**
-     * 의류, 소품, 잡화, 홈리빙, 브랜드 :
+     * 의류, 소품, 잡화, 홈리빙 :
      * categoryId = 0 이면 해당 타입 상품 전체 / 그 외에는 해당하는 카테고리 상품품
      *@param cursorRequest
      * @param typeId
      * @param categoryId
      * @return
      */
-    public List<Product> findAllTypeProduct(CursorRequest cursorRequest, Long typeId, Long categoryId, Long sortId){
+    private List<Product> findAllTypeProduct(CursorRequest cursorRequest, Long typeId, Long categoryId, Long sortId){
         if(sortId.equals(0L)) {
             if (categoryId.equals(0L)) {
                 if (cursorRequest.hasKey()) {
@@ -439,23 +444,103 @@ public class ProductReadService {
         }
     }
 
+    private List<Product> findBrandProducts(CursorRequest cursorRequest, Long brandId, Long brandCategoryId, Long sortId) throws Exception {
+        if (brandCategoryId == 0L) {
+            if (sortId == 0L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllProductsByBrandIdHasKeyOrderByRecent(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllProductsByBrandIdNoKeyOrderByRecent(brandId, cursorRequest.getSize());
+                }
+            } else if (sortId == 1L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllProductsByBrandIdHasKeyOrderByScore(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllProductsByBrandIdNoKeyOrderByScore(brandId, cursorRequest.getSize());
+                }
+            } else if (sortId == 2L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllProductsByBrandIdHasKeyOrderByPriceAsc(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllProductsByBrandIdNoKeyOrderByPriceAsc(brandId, cursorRequest.getSize());
+                }
+            } else if (sortId == 3L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllProductsByBrandIdHasKeyOrderByPriceDesc(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllProductsByBrandIdNoKeyOrderByPriceDesc(brandId, cursorRequest.getSize());
+                }
+            } else {
+                throw new Exception("Wrong sortId!!");
+            }
+        } else {
+            if (sortId == 0L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findProductsByBrandIdHasKeyOrderByRecent(cursorRequest.getKey(), brandCategoryId, brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findProductsByBrandIdNoKeyOrderByRecent(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                }
+            } else if (sortId == 1L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findProductsByBrandIdHasKeyOrderByScore(cursorRequest.getKey(), brandCategoryId, brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findProductsByBrandIdNoKeyOrderByScore(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                }
+
+            } else if (sortId == 2L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findProductsByBrandIdHasKeyOrderByPriceAsc(cursorRequest.getKey(), brandCategoryId, brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findProductsByBrandIdNoKeyOrderByPriceAsc(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                }
+
+            } else if (sortId == 3L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findProductsByBrandIdHasKeyOrderByPriceDesc(cursorRequest.getKey(), brandCategoryId, brandId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findProductsByBrandIdNoKeyOrderByPriceDesc(cursorRequest.getKey(), brandId, cursorRequest.getSize());
+                }
+
+            } else {
+                throw new Exception("Wrong sortId!!");
+            }
+        }
+    }
 
 
     public ProductDto toDto(Product product){
         return new ProductDto(
                 product.getId(),
                 product.getName(),
-                product.getModelName(),
                 product.getPrice(),
                 product.getStock(),
                 product.getDescription(),
                 product.getTypeId(),
-                product.getCategoryId(),
                 product.isSaled(),
                 product.isDeleted(),
                 productLikeRepository.countAllByProductId(product.getId()),
                 getUrls(product.getId())
         );
+    }
+
+    public BrandProductResponse toResponse(Product product) {
+        return new BrandProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getStock(),
+                product.getDescription(),
+                product.getTypeId(),
+                getBrandCategoryId(product.getId()),
+                product.isSaled(),
+                product.isDeleted(),
+                productLikeRepository.countAllByProductId(product.getId()),
+                getUrls(product.getId())
+        );
+    }
+
+    private Long getBrandCategoryId(Long productId) {
+        return productRepository.findBrandCategoryId(productId);
     }
 
     private List<String> getUrls(Long productId){
@@ -473,12 +558,10 @@ public class ProductReadService {
         return Product.builder()
                 .id(productDto.getId())
                 .name(productDto.getName())
-                .modelName(productDto.getModelName())
                 .price(productDto.getPrice())
                 .stock(productDto.getStock())
                 .description(productDto.getDescription())
                 .typeId(productDto.getTypeId())
-                .categoryId(productDto.getCategoryId())
                 .saled(productDto.isSaled())
                 .deleted(productDto.isDeleted())
                 .build();

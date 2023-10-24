@@ -1,7 +1,10 @@
 package com.example.shoppingmall.configuration.security.oauth2.service;
 
+import com.example.shoppingmall.application.usecase.user.CreateUserInfoSetUseCase;
 import com.example.shoppingmall.configuration.security.oauth2.CustomOAuth2User;
 import com.example.shoppingmall.configuration.security.oauth2.util.OAuth2Util;
+import com.example.shoppingmall.domain.user.dto.AddressInfo;
+import com.example.shoppingmall.domain.user.dto.BirthDate;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import com.example.shoppingmall.domain.user.util.SocialType;
@@ -24,6 +27,8 @@ import java.util.Map;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
+
+    private final CreateUserInfoSetUseCase createUserInfoSetUseCase;
 
     private static final String NAVER = "naver";
 
@@ -78,6 +83,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private User saveUser(OAuth2Util attributes, SocialType socialType) {
         User user = attributes.toEntity(socialType, attributes.getOAuth2UserInfo());
-        return userRepository.save(user);
+        var savedUser = userRepository.save(user);
+
+        AddressInfo addressInfo = AddressInfo.builder()
+                .postcode("-")
+                .address("-")
+                .addressDetail("-")
+                .build();
+
+        BirthDate birthDate = BirthDate.builder()
+                .year("-")
+                .month("-")
+                .day("-")
+                .build();
+
+        createUserInfoSetUseCase.createUserInfoSet(savedUser, addressInfo, birthDate);
+
+        return savedUser;
     }
 }

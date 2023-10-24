@@ -28,39 +28,25 @@ public class Product {
     @NotNull
     private String name;
 
-    @NotNull
-    private String modelName;
-
     private Integer price;
     private Integer stock;
 
-    @NotBlank
+    @Column(nullable = false)
     private String description;
 
-    @NotNull
+    @Column(nullable = false)
     private Long typeId;
 
-    @NotNull
-    private Long categoryId;
-
-    @NotNull
     private LocalDateTime createdAt;
 
-    @NotNull
+    @Column(nullable = false)
     private boolean saled;
 
-    @NotNull
+    @Column(nullable = false)
     private boolean deleted;
 
     @Version
     private Long version;
-
-    public void update(String newName, String newModelName, int newPrice, String newDescription){
-        name = newName;
-        modelName = newModelName;
-        price = newPrice;
-        description = newDescription;
-    }
 
     public void addStock(int count){
         stock += count;

@@ -1,7 +1,14 @@
 package com.example.shoppingmall.domain.user.service;
 
+import com.example.shoppingmall.domain.user.dto.AddressInfo;
+import com.example.shoppingmall.domain.user.dto.BirthDate;
 import com.example.shoppingmall.domain.user.dto.UserDto;
+import com.example.shoppingmall.domain.user.dto.res.UserInfoResponse;
+import com.example.shoppingmall.domain.user.entity.UserAddress;
+import com.example.shoppingmall.domain.user.entity.UserBirth;
 import com.example.shoppingmall.domain.user.entity.User;
+import com.example.shoppingmall.domain.user.repository.AddressRepository;
+import com.example.shoppingmall.domain.user.repository.BirthRepository;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,21 +21,9 @@ import java.util.stream.Collectors;
 public class UserReadService {
 
     private final UserRepository userRepository;
-//
-//    public String login(LoginRequest loginRequest){
-//        // 인증 과정
-//        // 1. 없는 유저
-//        // 2. 이메일과 비밀번호 매치
-//        // 3. 로그인 성공 후 jwt 발급
-//        var user = userRepository.findByEmail(loginRequest.getEmail())
-//                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 이메일입니다."));
-//
-//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
-//            throw new BadCredentialsException("잘못된 비밀번호입니다.");
-//        }
-//
-//        return JwtService.createJwt(loginRequest.getEmail(), secretKey, EXPIRED_AT);
-//    }
+    private final AddressRepository addressRepository;
+    private final BirthRepository birthRepository;
+
 
     public UserDto getUser(Long id){
         var user = userRepository.findUserById(id);
@@ -50,10 +45,37 @@ public class UserReadService {
                 .collect(Collectors.toList());
     }
 
+    public UserInfoResponse findUserInfo(User user) {
+        UserAddress userAddress = addressRepository.findByUserId(user.getId());
+        AddressInfo addressInfo = AddressInfo.builder()
+                .postcode(userAddress.getPostcode())
+                .address(userAddress.getAddress())
+                .addressDetail(userAddress.getAddressDetail())
+                .build();
+
+        UserBirth userBirth = birthRepository.findByUserId(user.getId());
+        BirthDate birthDate = BirthDate.builder()
+                .year(userBirth.getYear())
+                .month(userBirth.getMonth())
+                .day(userBirth.getDay())
+                .build();
+
+        return new UserInfoResponse(
+                user.getId(),
+                user.getName(),
+                user.getPhoneNumber(),
+                user.getEmail(),
+                user.getSocialType().toString(),
+                user.isInfoSet(),
+                addressInfo,
+                birthDate
+        );
+    }
+
     public UserDto toDto(User user){
         return new UserDto(
                 user.getId(),
-                user.getNickname(),
+                user.getName(),
                 user.getPhoneNumber(),
                 user.getEmail(),
                 user.getPassword(),
@@ -64,7 +86,7 @@ public class UserReadService {
     public User toEntity(UserDto userDto){
         return User.builder()
                 .id(userDto.getId())
-                .nickname(userDto.getNickname())
+                .name(userDto.getName())
                 .phoneNumber(userDto.getPhoneNumber())
                 .email(userDto.getEmail())
                 .password(userDto.getPassword())
@@ -72,5 +94,4 @@ public class UserReadService {
                 .enabled(userDto.isEnabled())
                 .build();
     }
-
 }

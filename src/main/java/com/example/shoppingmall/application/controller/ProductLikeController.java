@@ -23,18 +23,16 @@ public class ProductLikeController {
     private final UserReadService userReadService;
 
 
-    @Operation(summary = "상품 좋아요",
-            description = "상품의 productId와 사용자의 userId를 받아 좋아요 생성", tags = {"인증 필요"})
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @Operation(summary = "상품 좋아요", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @PostMapping("/{productId}/like")
     public void productLike(@PathVariable Long productId, @RequestParam Long userId){
         createProductLikeUseCase.execute(productId, userId);
     }
 
 
-    @Operation(summary = "상품 댓글 좋아요",
-            description = "상품 댓글의 productCommentId와 사용자의 userId를 받아 좋아요 생성", tags = {"인증 필요"})
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @Operation(summary = "상품 댓글 좋아요", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
     @PostMapping("/{productCommentId}/comment/like")
     public void productCommentLike(Principal principal, @PathVariable Long productCommentId){
         User user = userReadService.getUserByEmail(principal.getName());

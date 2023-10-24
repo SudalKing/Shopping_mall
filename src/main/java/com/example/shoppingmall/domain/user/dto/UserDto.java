@@ -15,12 +15,10 @@ import java.time.LocalDateTime;
 @Schema(description = "회원 Response class")
 public class UserDto {
     private Long id;
-    private String nickname;
+    private String name;
     private String phoneNumber;
     private String email;
     private String password;
     private LocalDateTime createdAt;
     private boolean enabled;
-
-
 }
