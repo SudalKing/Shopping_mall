@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -50,7 +47,7 @@ public class BrandController {
 
     @Operation(summary = "브랜드 좋아요", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping("/like/{brandId}")
+    @PostMapping("/like/{brandId}")
     public ResponseEntity<Void> createOrDeleteBrandLike(Principal principal, @PathVariable Long brandId){
         User user = userReadService.getUserByEmail(principal.getName());
         brandWriteService.createOrDeleteBrandLike(user, brandId);
