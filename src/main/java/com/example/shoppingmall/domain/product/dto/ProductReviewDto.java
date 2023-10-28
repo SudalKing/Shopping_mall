@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Getter
 @Builder
-public class ProductCommentDto {
+public class ProductReviewDto {
     private Long id;
     private Long productId;
     private Long userId;
@@ -16,7 +16,7 @@ public class ProductCommentDto {
     private Long likeCount;
     private LocalDateTime createdAt;
 
-    public ProductCommentDto(Long id, Long productId, Long userId, String contents, Long likeCount, LocalDateTime createdAt) {
+    public ProductReviewDto(Long id, Long productId, Long userId, String contents, Long likeCount, LocalDateTime createdAt) {
         this.id = id;
         this.productId = Objects.requireNonNull(productId);
         this.userId = Objects.requireNonNull(userId);

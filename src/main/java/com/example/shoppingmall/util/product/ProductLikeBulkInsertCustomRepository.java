@@ -23,7 +23,6 @@ public class ProductLikeBulkInsertCustomRepository {
             .id(resultSet.getLong("id"))
             .productId(resultSet.getLong("productId"))
             .userId(resultSet.getLong("userId"))
-            .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
             .build();
 
     public void bulkInsertProductLike(List<ProductLike> productLikes){

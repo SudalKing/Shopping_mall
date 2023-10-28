@@ -22,12 +22,12 @@ public class Best {
     private Long productId;
     private int totalSales;
     private int totalLike;
-    private double score;
+    private Double score;
 
     public void updateTotalSales(int stock){
         totalSales += stock;
     }
-    public void updateScore(double score){
+    public void updateScore(Double score){
         this.score = score;
     }
     public void updateTotalLike(int likeCount) {

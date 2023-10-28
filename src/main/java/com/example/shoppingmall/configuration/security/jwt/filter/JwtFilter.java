@@ -40,9 +40,12 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
+//
+//        String refreshToken = jwtService.getRefreshToken(request)
+//                .filter(jwtService::verifyToken)
+//                .orElse(null);
         String refreshToken = jwtService.getRefreshToken(request)
-                .filter(jwtService::verifyToken)
+                .filter(token -> jwtService.verifyToken(token, response))
                 .orElse(null);
 
         if (refreshToken != null){
@@ -56,10 +59,13 @@ public class JwtFilter extends OncePerRequestFilter {
         userRepository.findByRefreshToken(refreshToken)
                 .ifPresent(user -> {
                     String renewRefreshToken = renewRefreshToken(user);
+                    log.info("renewRefreshToken: {}", renewRefreshToken);
                     jwtService.sendAccessTokenAndRefreshToken(response,
                             jwtService.createAccessToken(user.getEmail()),
                             renewRefreshToken);
+                    log.info("AccessToken 재발급");
                 });
+
     }
 
     private void authenticationAccessToken(HttpServletRequest request,
@@ -67,10 +73,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                            FilterChain filterChain) throws ServletException, IOException {
         log.info("authenticationAccessToken 호출");
         jwtService.getAccessToken(request)
-                .filter(jwtService::verifyToken)
-                .ifPresent(accessToken -> jwtService.getEmail(accessToken)
-                        .ifPresent(email -> userRepository.findByEmail(email)
-                                .ifPresent(this::saveAuthentication)));
+//                .filter(jwtService::verifyToken)
+                .filter(token -> jwtService.verifyToken(token, response))
+                .flatMap(jwtService::getEmail)
+                .flatMap(userRepository::findByEmail).ifPresent(this::saveAuthentication);
         filterChain.doFilter(request, response);
     }
 

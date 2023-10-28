@@ -1,14 +1,12 @@
 package com.example.shoppingmall.domain.product.repository;
 
-import com.example.shoppingmall.domain.product.dto.res.BrandProductResponse;
 import com.example.shoppingmall.domain.product.entity.Product;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProductRepositoryTest {
@@ -46,4 +44,13 @@ class ProductRepositoryTest {
 //                }
 //        );
 //    }
+
+    @DisplayName("[FindTop3]")
+    @Test
+    void test_1(){
+        var products = productRepository.findTop3ByTypeIdOrderByStockDesc(1L);
+        products.stream()
+                .map(Product::getId)
+                .forEach(System.out::println);
+    }
 }

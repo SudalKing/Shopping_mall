@@ -4,6 +4,8 @@ import com.example.shoppingmall.domain.product.entity.ProductLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface ProductLikeRepository extends JpaRepository<ProductLike, Long> {
     int countAllByProductId(Long productId);
 
@@ -15,4 +17,6 @@ public interface ProductLikeRepository extends JpaRepository<ProductLike, Long> 
 
     @Query(value = "select count(id) from product_like where product_id = :productId group by product_id", nativeQuery = true)
     int findLikeCountByProductId(Long productId);
+
+    Optional<ProductLike> findByUserIdAndProductId(Long userId, Long productId);
 }

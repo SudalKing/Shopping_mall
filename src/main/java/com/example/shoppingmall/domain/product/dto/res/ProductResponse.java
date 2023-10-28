@@ -1,5 +1,6 @@
 package com.example.shoppingmall.domain.product.dto.res;
 
+import com.example.shoppingmall.domain.brand.util.BrandInfoMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class BrandProductResponse {
+public class ProductResponse {
 
     @Schema(description = "상품 id")
     private Long id;
@@ -47,4 +48,10 @@ public class BrandProductResponse {
 
     @Schema(description = "상품 업로드 이미지 url")
     private List<String> imageUrls = new ArrayList<>();
+
+    @Schema(description = "좋아요 여부")
+    private boolean isLiked;
+
+    @Schema(description = "브랜드 정보")
+    private BrandInfoMapping brandInfo;
 }

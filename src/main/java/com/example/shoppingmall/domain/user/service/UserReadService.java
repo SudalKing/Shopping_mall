@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,15 +35,12 @@ public class UserReadService {
         return userRepository.findUserByEmail(email);
     }
 
-    public User getUserEntity(Long userId){
-        return userRepository.findUserById(userId);
+    public Optional<User> getUserPrincipal(String email) {
+        return userRepository.findByEmail(email);
     }
 
-    public List<UserDto> getAllUsers(){
-        return userRepository.findAll()
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public User getUserEntity(Long userId){
+        return userRepository.findUserById(userId);
     }
 
     public UserInfoResponse findUserInfo(User user) {

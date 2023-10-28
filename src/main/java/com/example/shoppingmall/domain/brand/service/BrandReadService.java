@@ -66,7 +66,6 @@ public class BrandReadService {
         return new BrandResponse(
                 brand.getId(),
                 brand.getName(),
-                brand.getPathName(),
                 brand.getImageUrl()
         );
     }

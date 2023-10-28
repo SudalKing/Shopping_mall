@@ -67,6 +67,7 @@ public class JwtService {
         response.setStatus(HttpServletResponse.SC_OK);
         setAccessTokenHeader(response, accessToken);
         setRefreshTokenHeader(response, refreshToken);
+//        sendAccessToken(response, accessToken);
         log.info("Access Token, Refresh Token 헤더 설정");
     }
 
@@ -103,12 +104,13 @@ public class JwtService {
                 );
     }
 
-    public boolean verifyToken(String token){
+    public boolean verifyToken(String token, HttpServletResponse response){
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
         } catch (Exception e) {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
     }

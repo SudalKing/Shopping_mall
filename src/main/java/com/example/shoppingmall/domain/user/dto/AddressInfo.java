@@ -13,5 +13,4 @@ public class AddressInfo {
     private String postcode;
     private String address;
     private String addressDetail;
-
 }

@@ -1,6 +1,8 @@
 package com.example.shoppingmall.domain.brand.service;
 
 import com.example.shoppingmall.domain.brand.dto.res.BrandDetailResponse;
+import com.example.shoppingmall.domain.brand.repository.BrandRepository;
+import com.example.shoppingmall.domain.brand.util.BrandInfoMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 class BrandReadServiceTest {
     @Autowired
     private BrandReadService brandReadService;
+
+    @Autowired
+    private BrandRepository brandRepository;
 
     private static final Long BRAND_ID = 1L;
 
@@ -29,5 +34,13 @@ class BrandReadServiceTest {
                    System.out.println(brandResponse.toString());
                }
        );
+    }
+
+    @DisplayName("3. [BrandInfo 조회]")
+    @Test
+    void getBrandInfo(){
+        BrandInfoMapping brandInfo = brandRepository.findBrandInfoByProductId(1L);
+        System.out.println("brandId: " + brandInfo.getId());
+        System.out.println("brandName: " + brandInfo.getName());
     }
 }

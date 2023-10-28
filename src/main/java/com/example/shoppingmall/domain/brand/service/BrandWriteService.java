@@ -18,8 +18,6 @@ public class BrandWriteService {
     private final BrandRepository brandRepository;
     private final BrandLikeRepository brandLikeRepository;
 
-    private final UserReadService userReadService;
-
     public Brand createBrand(BrandCommand brandCommand){
         Brand brand = Brand.builder()
                 .name(brandCommand.getName())

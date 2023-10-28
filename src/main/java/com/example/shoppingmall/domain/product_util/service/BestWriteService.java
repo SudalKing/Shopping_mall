@@ -21,14 +21,14 @@ public class BestWriteService {
                 .productId(productDto.getId())
                 .totalLike(0)
                 .totalSales(0)
-                .score(0)
+                .score(0.)
                 .build();
         return bestRepository.save(best);
     }
 
     public void updateScore(Long productId){
         var productBest = bestRepository.findBestByProductId(productId);
-        double score = calcScore(productId);
+        Double score = calcScore(productId);
         productBest.updateScore(score);
     }
 
@@ -43,7 +43,7 @@ public class BestWriteService {
         productBest.updateTotalLike(likeCount);
     }
 
-    public double calcScore(Long productId){
+    public Double calcScore(Long productId){
         var productBest = bestRepository.findBestByProductId(productId);
         var productDto = productReadService.getProduct(productId);
 
@@ -51,10 +51,9 @@ public class BestWriteService {
         int highestSales = bestRepository.findTopByOrderByTotalSalesDesc().getTotalSales();
         int highestLike = productLikeRepository.findLikeCountMostLike();
 
-        double score = (1 - productDto.getPrice() / highestPrice) * 0.2
+        return  (1 - productDto.getPrice() / highestPrice) * 0.2
                 + (productBest.getTotalSales() / highestSales) * 0.4
                 + (productBest.getTotalLike() / highestLike) * 0.4;
 
-        return score;
     }
 }

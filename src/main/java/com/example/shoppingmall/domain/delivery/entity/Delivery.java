@@ -1,4 +1,4 @@
-package com.example.shoppingmall.domain.product_util.entity;
+package com.example.shoppingmall.domain.delivery.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,12 +16,18 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Entity
-public class Sale {
+public class Delivery {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long productId;
-    private double discountRate;
-    private boolean deleted;
+    private String userName;
+    private String phoneNumber;
+    private String status;
+    private String deliveryRequest;
+
+    private String postcode;
+    private String address;
+    private String addressDetail;
+
     private LocalDateTime createdAt;
 }

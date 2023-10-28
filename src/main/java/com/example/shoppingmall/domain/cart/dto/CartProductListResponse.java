@@ -1,7 +1,5 @@
 package com.example.shoppingmall.domain.cart.dto;
 
-import com.example.shoppingmall.domain.cart.entity.Cart;
-import com.example.shoppingmall.domain.product.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Builder
-public class CartProductDto {
+public class CartProductListResponse {
     private Long id;
     private Long cartId;
     private Long productId;

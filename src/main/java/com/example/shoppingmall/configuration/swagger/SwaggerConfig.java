@@ -22,7 +22,7 @@ public class SwaggerConfig {
 
     private static final String API_TITLE = "쇼핑몰 프로젝트";
     private static final String API_DESCRIPTION = "쇼핑몰 프로젝트 API 명세서";
-    private static final String API_VERSION = "v0.4";
+    private static final String API_VERSION = "v0.7";
 
     @Bean
     public Docket docket(){
@@ -64,14 +64,14 @@ public class SwaggerConfig {
                 .build();
     }
 
-    @Bean
-    public GroupedOpenApi followGroupApi(){
-        String path = "/follow/**";
-        return GroupedOpenApi.builder()
-                .group("Follow")
-                .pathsToMatch(path)
-                .build();
-    }
+//    @Bean
+//    public GroupedOpenApi followGroupApi(){
+//        String path = "/follow/**";
+//        return GroupedOpenApi.builder()
+//                .group("Follow")
+//                .pathsToMatch(path)
+//                .build();
+//    }
 
     @Bean
     public GroupedOpenApi orderGroupApi(){
@@ -81,15 +81,15 @@ public class SwaggerConfig {
                 .pathsToMatch(path)
                 .build();
     }
-
-    @Bean
-    public GroupedOpenApi postGroupApi(){
-        String path = "/post/**";
-        return GroupedOpenApi.builder()
-                .group("Post")
-                .pathsToMatch(path)
-                .build();
-    }
+//
+//    @Bean
+//    public GroupedOpenApi postGroupApi(){
+//        String path = "/post/**";
+//        return GroupedOpenApi.builder()
+//                .group("Post")
+//                .pathsToMatch(path)
+//                .build();
+//    }
 
     @Bean
     public GroupedOpenApi productGroupApi(){

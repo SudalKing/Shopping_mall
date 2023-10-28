@@ -29,6 +29,9 @@ public class OrderWriteService {
         return ordersRepository.save(orders);
     }
 
+    public void updateOrderPriceSum(Orders order, int priceSum) {
+        order.setPriceSum(priceSum);
+    }
     // 1. userId 로 그룹화 한 후 행 개수 계산
     // 2. + 1 하여 반환
     private Long getMinVersionCount(User user) {

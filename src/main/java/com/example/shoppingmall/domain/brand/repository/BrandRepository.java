@@ -1,6 +1,7 @@
 package com.example.shoppingmall.domain.brand.repository;
 
 import com.example.shoppingmall.domain.brand.entity.Brand;
+import com.example.shoppingmall.domain.brand.util.BrandInfoMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,10 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
             "from brand_like as bl " +
             "where bl.user_id = :userId)", nativeQuery = true)
     List<Brand> findAllLikeBrandIds(@Param("userId") Long userId);
+
+    @Query(value = "select b.id, b.name from brand as b " +
+            "left join product_brand_category as pbc on b.id = pbc.brand_id " +
+            "left join product as p on pbc.product_id = p.id " +
+            "where p.id = :productId", nativeQuery = true)
+    BrandInfoMapping findBrandInfoByProductId(@Param("productId") Long productId);
 }
