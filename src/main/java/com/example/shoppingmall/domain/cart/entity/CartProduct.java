@@ -23,16 +23,16 @@ public class CartProduct {
 
     private Long cartId;
     private Long productId;
-    private int count;
+    private int amount;
     private LocalDateTime createdAt;
     private boolean enabled;
 
     public void addCount(int count){
-        this.count += count;
+        this.amount += count;
     }
 
     public void minusCount(int count){
-        this.count -= count;
+        this.amount -= count;
     }
 
 }

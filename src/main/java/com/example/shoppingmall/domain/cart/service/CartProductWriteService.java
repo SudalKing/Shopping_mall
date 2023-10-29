@@ -3,7 +3,7 @@ package com.example.shoppingmall.domain.cart.service;
 import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.cart.entity.CartProduct;
 import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
-import com.example.shoppingmall.domain.product.entity.Product;
+import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -19,31 +18,29 @@ import java.util.List;
 @Service
 public class CartProductWriteService {
     private final CartProductRepository cartProductRepository;
-
-    // 1. User 별로 Cart 부여
-    // 2. 주문이 완료되면 CartProducts 의 enabled = false 변경
+    private final CartReadService cartReadService;
 
     @Transactional
-    public void createCartProduct(Cart cart, Product product){
-        var findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+    public void createCartProduct(Cart cart, Product product, int amount){
+        CartProduct findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
         if(findCartProduct == null){
-            var cartProduct = CartProduct.builder()
+            CartProduct cartProduct = CartProduct.builder()
                     .cartId(cart.getId())
                     .productId(product.getId())
-                    .count(1)
+                    .amount(amount)
                     .createdAt(LocalDateTime.now())
                     .enabled(true)
                     .build();
             cartProductRepository.save(cartProduct);
-        } else {findCartProduct.addCount(1);}
+        } else {findCartProduct.addCount(amount);}
     }
 
     @Transactional
     public void decreaseCartProductCount(Cart cart, Product product) throws Exception {
-        var findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+        CartProduct findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
-        if (findCartProduct.getCount() > 1) {
+        if (findCartProduct.getAmount() > 1) {
             findCartProduct.minusCount(1);
         } else {
             throw new Exception("Can not minus!!");
@@ -52,13 +49,17 @@ public class CartProductWriteService {
 
     @Transactional
     public void increaseCartProductCount(Cart cart, Product product) throws Exception {
-        var findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+        CartProduct findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
         findCartProduct.addCount(1);
     }
 
     @Transactional
-    public void deleteCartProduct(Cart cart, Product product) {
-        cartProductRepository.deleteByCartIdAndProductId(cart.getId(), product.getId());
+    public void deleteCartProduct(User user, List<Long> productIds) {
+        Cart cart = cartReadService.getCartInfo(user.getId());
+
+        for (Long productId: productIds) {
+            cartProductRepository.deleteByCartIdAndProductId(cart.getId(), productId);
+        }
     }
 
     public void deleteAllCartProducts(Cart cart) {

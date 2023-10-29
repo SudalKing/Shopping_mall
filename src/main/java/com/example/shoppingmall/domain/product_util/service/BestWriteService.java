@@ -1,8 +1,8 @@
 package com.example.shoppingmall.domain.product_util.service;
 
-import com.example.shoppingmall.domain.product.dto.ProductDto;
-import com.example.shoppingmall.domain.product.service.ProductReadService;
-import com.example.shoppingmall.domain.product.repository.ProductLikeRepository;
+import com.example.shoppingmall.domain.product.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.repository.ProductLikeRepository;
 import com.example.shoppingmall.domain.product_util.entity.Best;
 import com.example.shoppingmall.domain.product_util.repository.BestRepository;
 import lombok.RequiredArgsConstructor;

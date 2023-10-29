@@ -1,11 +1,11 @@
 package com.example.shoppingmall.application.usecase.product;
 
 import com.example.shoppingmall.domain.awsS3.service.ProductImageWriteService;
-import com.example.shoppingmall.domain.product.dto.req.ProductCommand;
-import com.example.shoppingmall.domain.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
+import com.example.shoppingmall.domain.product.product.dto.ProductDto;
 import com.example.shoppingmall.domain.product_util.service.BestWriteService;
-import com.example.shoppingmall.domain.product.service.ProductReadService;
-import com.example.shoppingmall.domain.product.service.ProductWriteService;
+import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.service.ProductWriteService;
 import com.example.shoppingmall.util.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

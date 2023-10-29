@@ -37,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST")
     })
     @PostMapping("/signup")
-    public ResponseEntity<Void> register(@RequestBody RegisterUserCommand registerUserCommand) throws Exception {
+    public ResponseEntity<Void> createUser(@RequestBody RegisterUserCommand registerUserCommand) throws Exception {
         UserDto userDto = userWriteService.createUser(registerUserCommand);
         log.info("회원 가입 성공");
 
@@ -49,7 +49,7 @@ public class UserController {
     @Operation(summary = "사용자 조회", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/get/info")
-    public UserInfoResponse getUser(Principal principal){
+    public UserInfoResponse readUser(Principal principal){
         User user = userReadService.getUserByEmail(principal.getName());
         return userReadService.findUserInfo(user);
     }

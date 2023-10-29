@@ -5,7 +5,7 @@ import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.cart.entity.CartProduct;
 import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
 import com.example.shoppingmall.domain.cart.repository.CartRepository;
-import com.example.shoppingmall.domain.product.repository.ProductRepository;
+import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class CartReadService {
 
         for (CartProduct cartProduct: cartProducts) {
             var product = productRepository.findProductById(cartProduct.getProductId());
-            totalPrice += cartProduct.getCount() * product.getPrice();
+            totalPrice += cartProduct.getAmount() * product.getPrice();
         }
 
         return totalPrice;

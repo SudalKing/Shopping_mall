@@ -24,11 +24,19 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     List<Brand> findAllBrandsOrderByNameAsc();
     // ========================================
 
-    @Query(value = "select b.* from brand as b " +
-            "where b.id in (select bl.brand_id " +
-            "from brand_like as bl " +
-            "where bl.user_id = :userId)", nativeQuery = true)
-    List<Brand> findAllLikeBrandIds(@Param("userId") Long userId);
+    @Query(value = "select b.* from brand as b left join best_like as bl on b.id = bl.brand_id " +
+            "where bl.user_id = userId order by count(b.id) desc", nativeQuery = true)
+    List<Brand> findLikeBrandsOrderByLike(@Param("userId") Long userId);
+
+    @Query(value = "select b.* from brand as b left join best_like as bl on b.id = bl.brand_id " +
+            "where bl.user_id = userId order by b.name asc", nativeQuery = true)
+    List<Brand> findLikeBrandsOrderByNameAsc(@Param("userId") Long userId);
+
+    @Query(value = "select b.* from brand as b left join best_like as bl on b.id = bl.brand_id " +
+            "where bl.user_id = userId order by b.name desc", nativeQuery = true)
+    List<Brand> findLikeBrandsOrderByNameDesc(@Param("userId") Long userId);
+
+    // ==================================================================
 
     @Query(value = "select b.id, b.name from brand as b " +
             "left join product_brand_category as pbc on b.id = pbc.brand_id " +

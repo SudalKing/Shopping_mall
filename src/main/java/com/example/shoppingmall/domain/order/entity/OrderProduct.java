@@ -24,4 +24,9 @@ public class OrderProduct {
     private Long orderId;
     private Long productId;
     private int count;
+    private boolean reviewed;
+
+    public void setReviewed(){
+        this.reviewed = true;
+    }
 }

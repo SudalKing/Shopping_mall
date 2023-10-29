@@ -1,6 +1,6 @@
 package com.example.shoppingmall.domain.product.util;
 
-import com.example.shoppingmall.domain.product.entity.ProductLike;
+import com.example.shoppingmall.domain.product.product.entity.ProductLike;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.range.LongRangeRandomizer;

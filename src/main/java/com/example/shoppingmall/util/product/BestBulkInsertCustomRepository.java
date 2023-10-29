@@ -1,17 +1,14 @@
 package com.example.shoppingmall.util.product;
 
-import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product_util.entity.Best;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor

@@ -1,6 +1,7 @@
 package com.example.shoppingmall.domain.product.repository;
 
-import com.example.shoppingmall.domain.product.entity.Product;
+import com.example.shoppingmall.domain.product.product.entity.Product;
+import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,12 +2,13 @@ package com.example.shoppingmall.application.controller;
 
 import com.example.shoppingmall.application.usecase.product.CreateProductUseCase;
 import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase;
-import com.example.shoppingmall.domain.product.dto.ProductDto;
-import com.example.shoppingmall.domain.product.dto.ProductReviewDto;
-import com.example.shoppingmall.domain.product.dto.req.ProductCommand;
-import com.example.shoppingmall.domain.product.dto.req.ProductReviewRequest;
-import com.example.shoppingmall.domain.product.dto.res.ProductOrderResponse;
-import com.example.shoppingmall.domain.product.service.*;
+import com.example.shoppingmall.domain.product.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
+import com.example.shoppingmall.domain.product.product.service.*;
+import com.example.shoppingmall.domain.product.review.service.ProductReviewLikeWriteService;
+import com.example.shoppingmall.domain.product.review.service.ProductReviewReadService;
+import com.example.shoppingmall.domain.product.review.service.ProductReviewWriteService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.util.CursorRequest;
@@ -458,54 +459,20 @@ public class ProductController {
     }
     // ==================================================================================
 
-    @Operation(summary = "주문 창에 사용할 상품들 조회", description = "[인증 필요]")
+    @Operation(summary = "상품 List 조회", description = "[인증 불필요]")
     @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping("/get/order/product")
-    public List<ProductOrderResponse> getProducts(Principal principal, @RequestParam List<Long> productIds){
-        User user = userReadService.getUserByEmail(principal.getName());
+    @GetMapping("/get")
+    public List<ProductReadResponse> readProducts(@RequestParam List<Long> productIds){
         return productReadService.getProductsByIds(productIds);
-    }
-// ==================================================================================================================
-// ====================================================== 상품 댓글 =====================================================
-    @Operation(summary = "상품 댓글 생성", description = "[인증 필요]")
-    @ApiResponse(responseCode = "200", description = "OK")
-    @PostMapping("/comment/add")
-    public ProductReviewDto createComment(Principal principal, ProductReviewRequest productReviewRequest){
-        User user = userReadService.getUserByEmail(principal.getName());
-        var comment = productReviewWriteService.createProductReview(user.getId(), productReviewRequest);
-        return productReviewReadService.toDto(comment);
-    }
-
-    @Operation(summary = "상품의 모든 댓글 조회", description = "[인증 불필요]")
-    @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping("/{productId}/comments")
-    public List<ProductReviewDto> readAllCommentsByProductId(@PathVariable Long productId){
-        return productReviewReadService.getAllComments(productId);
-    }
-
-    @Operation(summary = "상품 댓글 삭제", description = "[인증 필요]")
-    @ApiResponse(responseCode = "200", description = "OK")
-    @DeleteMapping("/{commentId}/comments")
-    public void deleteComment(@PathVariable Long commentId, @RequestParam Long userId){
-        productReviewWriteService.deleteProductReview(commentId, userId);
     }
 
     // =================================== Like ================================================
     @Operation(summary = "상품 좋아요", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @PostMapping("/like/{productId}")
-    public void productLike(Principal principal, @PathVariable Long productId){
+    public void createOrDeleteProductLike(Principal principal, @PathVariable Long productId){
         User user = userReadService.getUserByEmail(principal.getName());
         productLikeWriteService.createOrDeleteProductLike(user, productId);
     }
-
-    @Operation(summary = "상품 리뷰 좋아요", description = "[인증 필요]")
-    @ApiResponse(responseCode = "200", description = "OK")
-    @PostMapping("/like/review/{productReviewId}")
-    public void productReviewLike(Principal principal, @PathVariable Long productReviewId){
-        User user = userReadService.getUserByEmail(principal.getName());
-        productReviewLikeWriteService.createOrDeleteProductReviewLike(user, productReviewId);
-    }
-    // ==========================================================================
 
 }

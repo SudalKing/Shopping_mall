@@ -19,8 +19,8 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Long> 
     @Query(value = "select product_id from cart_product where cart_id = :cartId", nativeQuery = true)
     List<Long> findProductIdsByCartId(Long cartId);
 
-    @Query(value = "select cp.count from cart_product as cp where cp.product_id = :productId", nativeQuery = true)
-    int findCountByProductId(Long productId);
+    @Query(value = "select cp.amount from cart_product as cp where cp.product_id = :productId", nativeQuery = true)
+    int findAmountByProductId(Long productId);
 
     @Transactional
     @Modifying(clearAutomatically = true)

@@ -1,6 +1,6 @@
 package com.example.shoppingmall.domain.product.util;
 
-import com.example.shoppingmall.domain.product.entity.ProductLike;
+import com.example.shoppingmall.domain.product.product.entity.ProductLike;
 import com.example.shoppingmall.util.product.ProductLikeBulkInsertCustomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

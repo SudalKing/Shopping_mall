@@ -13,7 +13,7 @@ import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderProductWriteService;
 import com.example.shoppingmall.domain.order.service.OrderWriteService;
-import com.example.shoppingmall.domain.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -65,11 +65,12 @@ public class CreateOrderUseCase {
         }
 
         if (!matchingProductIds.isEmpty()) {
-            for (Long matchingProductId: matchingProductIds) {
-                cartProductWriteService.deleteCartProduct(cart,
-                        productReadService.getProductEntity(matchingProductId)
-                );
-            }
+//            for (Long matchingProductId: matchingProductIds) {
+//                cartProductWriteService.deleteCartProduct(cart,
+//                        productReadService.getProductEntity(matchingProductId)
+//                );
+//            }
+            cartProductWriteService.deleteCartProduct(user, matchingProductIds);
         }
 
         orderWriteService.updateOrderPriceSum(order, orderProductReadService.getPriceSum(order));

@@ -15,6 +15,18 @@ import java.util.List;
 public class OrderProductReadService {
     private final OrderProductRepository orderProductRepository;
 
+    public List<Long> getOrderProductIdsByOrderIdNotReviewed(Long orderId) {
+        return orderProductRepository.findAllProductIdsByOrderIdAndNotReviewed(orderId);
+    }
+
+    public List<Long> getOrderProductIdsByOrderIdReviewed(Long orderId) {
+        return orderProductRepository.findAllProductIdsByOrderIdAndReviewed(orderId);
+    }
+
+    public OrderProduct getOrderProductByOrderIdAndProductId(Long orderId, Long productId) {
+        return orderProductRepository.findOrderProductByOrderIdAndProductId(orderId, productId);
+    }
+
     public Integer getPriceSum(Orders orders) {
         List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orders.getId());
 

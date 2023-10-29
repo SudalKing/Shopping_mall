@@ -17,4 +17,9 @@ public class BrandDetailResponse {
     private List<Long> categoryIds;
     private String logoUrl;
     private String imageUrl;
+    private boolean isLiked;
+
+    public void setLiked() {
+        this.isLiked = true;
+    }
 }

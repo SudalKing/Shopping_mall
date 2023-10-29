@@ -1,15 +1,10 @@
 package com.example.shoppingmall.domain.product.util;
 
-import com.example.shoppingmall.domain.product.entity.Product;
 import com.example.shoppingmall.domain.product_util.entity.Best;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
-import org.jeasy.random.randomizers.misc.BooleanRandomizer;
 import org.jeasy.random.randomizers.range.DoubleRangeRandomizer;
 import org.jeasy.random.randomizers.range.IntegerRangeRandomizer;
-import org.jeasy.random.randomizers.range.LongRangeRandomizer;
-
-import java.time.LocalDate;
 
 import static org.jeasy.random.FieldPredicates.*;
 
