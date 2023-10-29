@@ -9,4 +9,5 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
     ProductReview findProductReviewById(Long id);
     List<ProductReview> findAllByUserId(Long userId);
     List<ProductReview> findAllByProductId(Long productId);
+
 }

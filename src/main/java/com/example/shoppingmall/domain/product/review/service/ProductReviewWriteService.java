@@ -9,8 +9,11 @@ import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -19,15 +22,15 @@ public class ProductReviewWriteService {
     private final OrderProductReadService orderProductReadService;
 
     @Transactional
-    public void createProductReview(User user, ProductReviewRequest productReviewRequest){
+    public ProductReview createProductReview(User user, ProductReviewRequest productReviewRequest){
         var productReview = ProductReview.builder()
                 .orderId(productReviewRequest.getOrderId())
                 .productId(productReviewRequest.getProductId())
                 .userId(user.getId())
-                .contents(productReviewRequest.getContents())
+                .content(productReviewRequest.getContent())
                 .rating(productReviewRequest.getRating())
-                .imageUrl(productReviewRequest.getImageUrl())
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         ProductReview savedReview = productReviewRepository.save(productReview);
 
@@ -35,6 +38,8 @@ public class ProductReviewWriteService {
                 getOrderProductByOrderIdAndProductId(savedReview.getOrderId(), savedReview.getProductId());
 
         orderProduct.setReviewed();
+
+        return savedReview;
     }
 
     public void deleteProductReview(Long reviewId, Long userId){
@@ -42,4 +47,20 @@ public class ProductReviewWriteService {
         if(productReview.getUserId().equals(userId)) productReviewRepository.deleteById(reviewId);
         else throw new RuntimeException();
     }
+
+    @Transactional
+    public void updateReview(Long reviewId, Map<String, Object> updates) {
+        ProductReview productReview = productReviewRepository.findProductReviewById(reviewId);
+
+        if (updates.containsKey("content")) {
+            String content = updates.get("content").toString();
+            productReview.updateContent(content);
+        }
+
+        if (updates.containsKey("rating")) {
+            Integer rating = (Integer) updates.get("rating");
+            productReview.updateRating(rating);
+        }
+    }
+
 }

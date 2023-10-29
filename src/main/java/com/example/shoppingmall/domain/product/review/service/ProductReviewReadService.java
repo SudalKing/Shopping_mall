@@ -19,4 +19,8 @@ public class ProductReviewReadService {
     public List<ProductReview> getAllReviewsByUserId(Long userId) {
         return productReviewRepository.findAllByUserId(userId);
     }
+
+    public ProductReview getReviewByReviewId(Long reviewId) {
+        return productReviewRepository.findProductReviewById(reviewId);
+    }
 }

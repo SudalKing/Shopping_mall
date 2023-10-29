@@ -5,10 +5,8 @@ import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase
 import com.example.shoppingmall.domain.product.product.dto.ProductDto;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
-import com.example.shoppingmall.domain.product.product.service.*;
-import com.example.shoppingmall.domain.product.review.service.ProductReviewLikeWriteService;
-import com.example.shoppingmall.domain.product.review.service.ProductReviewReadService;
-import com.example.shoppingmall.domain.product.review.service.ProductReviewWriteService;
+import com.example.shoppingmall.domain.product.product.service.ProductLikeWriteService;
+import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.util.CursorRequest;
@@ -35,10 +33,7 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
     private final ProductReadService productReadService;
-    private final ProductReviewWriteService productReviewWriteService;
-    private final ProductReviewReadService productReviewReadService;
     private final ProductLikeWriteService productLikeWriteService;
-    private final ProductReviewLikeWriteService productReviewLikeWriteService;
     private final CreateProductUseCase createProductUseCase;
     private final DeleteProductUseCase deleteProductUseCase;
     private final UserReadService userReadService;
@@ -53,13 +48,12 @@ public class ProductController {
     private final static String GOODS = "goods";
     private final static String HOMELIVINGS = "homeLivings";
     private final static String BEAUTY = "beauty";
-    private final static String BRAND = "brand";
 
-    @Operation(summary = "ProductCommand와 fileType(=image), multipartFiles(이미지들)을 받아 상품 생성", description = "[인증 필요(ADMIN)]")
-    @ApiResponse(responseCode = "200", description = "OK")
+    @Operation(summary = "ProductCommand, multipartFiles(이미지들)을 받아 상품 생성", description = "[인증 필요(ADMIN)]")
+    @ApiResponse(responseCode = "201", description = "OK")
     @PostMapping("/add")
     public ResponseEntity<Object> createProduct(
-            ProductCommand productCommand,
+            @RequestPart ProductCommand productCommand,
             @RequestPart(value = "files")List<MultipartFile> multipartFiles
     ){
         return ResponseEntity

@@ -1,5 +1,6 @@
 package com.example.shoppingmall.application.usecase.product.review;
 
+import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.product.review.dto.res.ProductReviewWrittenResponse;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class ReadWrittenReviewUseCase {
     private final ProductReadService productReadService;
     private final ProductReviewReadService productReviewReadService;
+    private final ProductImageReadService productImageReadService;
 
     @Transactional
     public List<ProductReviewWrittenResponse> execute(User user) {
@@ -37,9 +39,8 @@ public class ReadWrittenReviewUseCase {
                     .name(product.getName())
                     .color(clothesInfo.get("color"))
                     .size(clothesInfo.get("size"))
-//                    .imageUrl(productReadService.getUrls(product.getId()))
-                    .imageUrl("URL")
-                    .content(review.getContents())
+                    .imageUrl(productImageReadService.getUrl(product.getId()))
+                    .content(review.getContent())
                     .rating(review.getRating())
                     .createdAt(review.getCreatedAt())
                     .build();

@@ -4,19 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,8 +22,21 @@ public class ProductReview {
     private Long userId;
     private Long productId;
     private Long orderId;
-    private String contents;
+    private String content;
     private Integer rating;
-    private String imageUrl;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PreUpdate
+    public void setUpdatedAt() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateRating(Integer rating) {
+        this.rating = rating;
+    }
 }

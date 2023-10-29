@@ -1,5 +1,7 @@
 package com.example.shoppingmall.application.usecase.product.review;
 
+import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
+import com.example.shoppingmall.domain.awsS3.service.ProductReviewImageReadService;
 import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderReadService;
@@ -19,6 +21,7 @@ import java.util.Map;
 @Service
 public class ReadWriteableReviewUseCase {
     private final ProductReadService productReadService;
+    private final ProductImageReadService productImageReadService;
     private final OrderReadService orderReadService;
     private final OrderProductReadService orderProductReadService;
 
@@ -38,8 +41,7 @@ public class ReadWriteableReviewUseCase {
                         .name(product.getName())
                         .color(clothesInfo.get("color"))
                         .size(clothesInfo.get("size"))
-//                        .imageUrl(productReadService.getUrls(productId))
-                        .imageUrl("URL")
+                        .imageUrl(productImageReadService.getUrl(productId))
                         .build();
                 productReviewWriteableResponses.add(response);
             }

@@ -612,8 +612,7 @@ public class ProductReadService {
                 .price(product.getPrice())
                 .score(getProductScore(product.getId()))
                 .description(product.getDescription())
-//                .imageUrl(getUrls(product.getId()).get(0))
-                .imageUrl("URL")
+                .imageUrl(productImageReadService.getUrl(product.getId()))
                 .isLiked(false)
                 .brandInfo(brandRepository.findBrandInfoByProductId(product.getId()))
                 .build();
@@ -649,16 +648,6 @@ public class ProductReadService {
     private Long getBrandCategoryId(Long productId) {
         return productRepository.findBrandCategoryId(productId);
     }
-    public List<String> getUrls(Long productId){
-        var productImages = productImageReadService.readImages(productId);
-        List<String> urls = new ArrayList<>();
-
-        for (var productImage: productImages) {
-            urls.add(productImage.getUploadFileUrl());
-        }
-
-        return urls;
-    }
 
     public Map<String, String> getClothesSizeAndColor(Product product) {
         Long typeId = product.getTypeId();
@@ -685,8 +674,7 @@ public class ProductReadService {
         return new ProductReadResponse(
                 product.getId(),
                 product.getName(),
-//              getUrls(product.getId()).get(0),
-                "URL",
+                productImageReadService.getUrl(product.getId()),
                 clothesInfo.get("color"),
                 clothesInfo.get("size"),
                 product.getPrice(),

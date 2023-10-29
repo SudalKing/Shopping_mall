@@ -10,7 +10,6 @@ import lombok.Getter;
 public class ProductReviewRequest {
     private Long orderId;
     private Long productId;
-    private String contents;
+    private String content;
     private Integer rating;
-    private String imageUrl;
 }

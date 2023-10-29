@@ -15,4 +15,15 @@ public class ProductImageReadService {
     public List<ProductImage> readImages(Long productId){
         return productImageRepository.findAllByProductId(productId);
     }
+
+    public String getUrl(Long productId) {
+        List<String> productsUrlList = productImageRepository
+                .findUploadFileUrlsByProductId(productId);
+
+        if (productsUrlList.isEmpty()) {
+            return "";
+        } else {
+            return productsUrlList.get(0);
+        }
+    }
 }
