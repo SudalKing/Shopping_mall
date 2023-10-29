@@ -21,6 +21,7 @@ bin/
 application-jwt.yml
 application-oauth.yml
 application-s3.yml
+application-db.yml
 
 src/test/java/com/example/shoppingmall/domain/
 
