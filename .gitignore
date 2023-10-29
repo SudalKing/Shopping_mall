@@ -22,6 +22,8 @@ application-jwt.yml
 application-oauth.yml
 application-s3.yml
 
+src/test/java/com/example/shoppingmall/domain/
+
 .idea
 *.iws
 *.iml
