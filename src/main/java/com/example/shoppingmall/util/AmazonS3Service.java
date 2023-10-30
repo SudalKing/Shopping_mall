@@ -27,6 +27,11 @@ public class AmazonS3Service {
 
     public List<S3FileDto> uploadFiles(String fileType, List<MultipartFile> multipartFiles){
         List<S3FileDto> s3FileDtoList = new ArrayList<>();
+
+        if (multipartFiles.isEmpty()) {
+            return s3FileDtoList;
+        }
+
         String uploadFilePath = fileType + "/" + getFolderName();
 
         for(MultipartFile multipartFile: multipartFiles){

@@ -44,7 +44,7 @@ public class ProductReviewController {
     @PostMapping("/review/add")
     public ResponseEntity<Long> createProductReview(Principal principal,
                                                     @RequestPart ProductReviewRequest productReviewRequest,
-                                                    @RequestPart(value = "image") List<MultipartFile> multipartFiles){
+                                                    @RequestPart(value = "image", required = false) List<MultipartFile> multipartFiles){
         User user = userReadService.getUserByEmail(principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createReviewUseCase.execute(user, productReviewRequest, multipartFiles));

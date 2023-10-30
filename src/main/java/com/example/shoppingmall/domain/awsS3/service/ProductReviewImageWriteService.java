@@ -46,7 +46,11 @@ public class ProductReviewImageWriteService {
     public void updateProductReviewImage(Long reviewId, List<MultipartFile> multipartFiles) {
         List<S3FileDto> s3FileDtoList = amazonS3Service.uploadFiles("image", multipartFiles);
 
-        deleteProductImage(reviewId);
+        if (s3FileDtoList.isEmpty()) {
+            deleteProductImage(reviewId);
+            return;
+        }
+
         createProductReviewImage(reviewId, s3FileDtoList);
     }
 
