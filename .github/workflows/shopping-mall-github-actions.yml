@@ -47,7 +47,7 @@ jobs:
           cd deployment && zip -r shopping-mall.zip .
 
       - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v20
+        uses: einaregilsson/beanstalk-deploy@v14
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
