@@ -52,7 +52,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: shopping-mall-action
-          environment_name: shopping-mall-action-env
+          environment_name: Shopping-mall-action-env
           version_label: shopping-mall-version-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: deployment/shopping-mall.zip
