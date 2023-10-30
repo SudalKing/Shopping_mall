@@ -1,5 +1,5 @@
 name: shopping-mall-github-actions
-run-name: ${{ github.actor }}의 쇼핑몰 깃허브
+run-name: ${{ github.actor }}의 쇼핑몰 깃허브 액션
 
 on:
   push:
