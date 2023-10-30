@@ -1,7 +1,9 @@
 name: shopping-mall-github-actions
 run-name: ${{ github.actor }}의 쇼핑몰 깃허브
 
-on: [push]
+on:
+  push:
+    branches: [ "main" ]
 
 jobs:
   shopping-mall:
@@ -24,5 +26,34 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build, Test with Gradle
-        run: ./gradlew clean build test
+      - name: Build with Gradle
+        run: ./gradlew clean build
+        shell: bash
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2.0.0
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss
+          utcOffset: "+09:00"
+
+      - name: Generate deployment package
+        run: |
+          mkdir -p deployment
+          cp build/libs/shopping-mall-0.0.1-SNAPSHOT.jar deployment/shopping-mall-0.0.1-SNAPSHOT.jar
+          cp Procfile deployment/Procfile
+          cp -r .ebextensions deployment/.ebextensions
+          cp -r .platform deployment/.platform
+          cd deployment && zip -r shopping-mall.zip .
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: shopping-mall-deploy-action
+          environment_name: shopping-mall-deploy-action-env
+          version_label: shopping-mall-deploy-version-${{steps.current-time.outputs.formattedTime}}
+          region: ap-northeast-2
+          deployment_package: deployment/shopping-mall.zip
+          wait_for_environment_recovery: 180
