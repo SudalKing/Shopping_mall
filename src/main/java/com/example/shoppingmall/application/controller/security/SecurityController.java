@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
 public class SecurityController {
 
-    @PostMapping("/review")
-    public ResponseEntity<String> review(Authentication authentication){
-        return ResponseEntity.ok(authentication.getName() + " 리뷰가 등록되었습니다.");
+    @PostMapping("/")
+    public ResponseEntity<Void> endPoint(){
+        return ResponseEntity.ok().build();
     }
 }
