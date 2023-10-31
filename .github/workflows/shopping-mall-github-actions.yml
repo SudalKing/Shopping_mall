@@ -39,21 +39,21 @@ jobs:
 
       - name: Generate deployment package
         run: |
-          mkdir -p deployment
-          cp build/libs/shopping-mall-0.0.1-SNAPSHOT.jar deployment/shopping-mall-0.0.1-SNAPSHOT.jar
-          cp Procfile deployment/Procfile
-          cp -r .ebextensions deployment/.ebextensions
-          cp -r .platform deployment/.platform
-          cd deployment && zip -r shopping-mall.zip .
+          mkdir -p deploy
+          cp build/libs/shopping-mall-0.0.1-SNAPSHOT.jar deploy/application.jar
+          cp Procfile deploy/Procfile
+          cp -r .ebextensions deploy/.ebextensions
+          cp -r .platform deploy/.platform
+          cd deploy && zip -r shopping.zip .
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: sudal-shopping-mall
-          environment_name: sudal-shopping-mall-env
-          version_label: sudal-shopping-mall-version-${{steps.current-time.outputs.formattedTime}}
+          application_name: sudal-shopping
+          environment_name: sudal-shopping-env
+          version_label: sudal-shopping-version-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
-          deployment_package: deployment/shopping-mall.zip
-          wait_for_environment_recovery: 300
+          deployment_package: deploy/shopping.zip
+          wait_for_environment_recovery: 600
