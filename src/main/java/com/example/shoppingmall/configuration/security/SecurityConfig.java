@@ -63,7 +63,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/", "/logout", "/login/oauth2/code/**", "/user/signup", "/login",
                         "/swagger-ui/**", "/v3/**", // /v3/api~ : swagger 리소스 url
-                        "/product/get/**" )
+                        "/product/get/**",
+                        "/health")
                 .permitAll()
                 .anyRequest().authenticated() // denyAll() 옵션을 주면 토큰이 있어도 막아버림
                 .and()
@@ -72,7 +73,7 @@ public class SecurityConfig {
                 .successHandler(oAuth2LoginSuccessHandler)
                 .failureHandler(oAuth2LoginFailureHandler)
                 .userInfoEndpoint().userService(customOAuth2UserService);
-                ;
+
 
         httpSecurity.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
         httpSecurity.addFilterBefore(jwtFilter(), CustomUsernamePasswordAuthenticationFilter.class);
