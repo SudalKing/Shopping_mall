@@ -66,8 +66,8 @@ public class ProductReadService {
     }
 
     // Best 조회
-    public List<ProductDto> getBestProducts(Long typeId, Long categoryId) {
-        List<Product> productList = findBestProducts(typeId, categoryId);
+    public List<ProductDto> getAllBestProducts() {
+        List<Product> productList = findAllBestProducts();
 
         return productList.stream()
                 .map(this::toDto)
@@ -99,6 +99,14 @@ public class ProductReadService {
         allBestProducts.addAll(beauty);
 
         return allBestProducts;
+    }
+
+    public List<ProductDto> getBestProducts(Long typeId, Long categoryId) {
+        List<Product> productList = findBestProducts(typeId, categoryId);
+
+        return productList.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
     // typeId == 1 의류, categoryId 는 의류에만 사용 /
     private List<Product> findBestProducts(Long typeId, Long categoryId) {

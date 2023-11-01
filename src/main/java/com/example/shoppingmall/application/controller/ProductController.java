@@ -150,8 +150,8 @@ public class ProductController {
     // ===================================== Best ======================================
     @Operation(summary = "Best 전체 상품 조회", description = "[인증 불필요]")
     @GetMapping("/get/best/all")
-    public List<ProductDto> readAllBestProducts(Principal principal, Long typeId, Long categoryId) {
-        var products = productReadService.getBestProducts(typeId, categoryId);
+    public List<ProductDto> readAllBestProducts(Principal principal) {
+        var products = productReadService.getAllBestProducts();
         productReadService.validatePrincipalLike(principal, products);
 
         return products;
