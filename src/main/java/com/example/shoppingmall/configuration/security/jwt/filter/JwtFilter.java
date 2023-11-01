@@ -88,17 +88,16 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("authenticationAccessToken 호출");
         Optional<String> accessToken = jwtService.getAccessToken(request);
 
-        if (accessToken.isEmpty()) {
-            log.error("Access Token null");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
 
         try {
               accessToken
                       .filter(jwtService::verifyToken)
                     .flatMap(jwtService::getEmail)
                     .flatMap(userRepository::findByEmail).ifPresent(this::saveAuthentication);
+//            if (accessToken.isEmpty()) {
+//                log.error("Access Token null");
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            }
         } catch (TokenExpiredException e) {
             log.error("Token 만료 에러: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

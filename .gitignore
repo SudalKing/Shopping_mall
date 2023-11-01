@@ -23,9 +23,9 @@ application-oauth.yml
 application-s3.yml
 application-db.yml
 
-.ebextensions/
-.github
-.platform
+#.ebextensions/
+#.github
+#.platform
 
 src/test/java/com/example/shoppingmall/domain/
 

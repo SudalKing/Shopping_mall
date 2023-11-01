@@ -1,4 +1,4 @@
-package com.example.shoppingmall.application.controller;
+package com.example.shoppingmall.application.controller.aws;
 
 import com.example.shoppingmall.util.AmazonS3Service;
 import lombok.RequiredArgsConstructor;

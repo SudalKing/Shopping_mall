@@ -63,7 +63,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/", "/logout", "/login/oauth2/code/**", "/user/signup", "/login",
                         "/swagger-ui/**", "/v3/**", // /v3/api~ : swagger 리소스 url
-                        "/product/get/**")
+                        "/product/get/**", "/brand/get/**", // 서비스 기능
+                        "/health/check" )
                 .permitAll()
                 .anyRequest().authenticated() // denyAll() 옵션을 주면 토큰이 있어도 막아버림
                 .and()
@@ -80,14 +81,6 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-    /**
-     * AuthenticationManager 설정 후 등록
-     * PasswordEncoder를 사용하는 AuthenticationProvider 지정 (PasswordEncoder는 위에서 등록한 PasswordEncoder 사용)
-     * FormLogin(기존 스프링 시큐리티 로그인)과 동일하게 DaoAuthenticationProvider 사용
-     * UserDetailsService는 커스텀 LoginService로 등록
-     * 또한, FormLogin과 동일하게 AuthenticationManager로는 구현체인 ProviderManager 사용(return ProviderManager)
-     *
-     */
     @Bean
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -96,28 +89,16 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
-    /**
-     * 로그인 성공 시 호출되는 LoginSuccessJWTProviderHandler 빈 등록
-     */
     @Bean
     public JsonLoginSuccessHandler jsonLoginSuccessHandler() {
         return new JsonLoginSuccessHandler(jwtService, userRepository);
     }
 
-    /**
-     * 로그인 실패 시 호출되는 LoginFailureHandler 빈 등록
-     */
     @Bean
     public JsonLoginFailureHandler jsonLoginFailureHandler() {
         return new JsonLoginFailureHandler();
     }
 
-    /**
-     * CustomJsonUsernamePasswordAuthenticationFilter 빈 등록
-     * 커스텀 필터를 사용하기 위해 만든 커스텀 필터를 Bean으로 등록
-     * setAuthenticationManager(authenticationManager())로 위에서 등록한 AuthenticationManager(ProviderManager) 설정
-     * 로그인 성공 시 호출할 handler, 실패 시 호출할 handler로 위에서 등록한 handler 설정
-     */
     @Bean
     public CustomUsernamePasswordAuthenticationFilter customJsonUsernamePasswordAuthenticationFilter() {
         CustomUsernamePasswordAuthenticationFilter customJsonUsernamePasswordLoginFilter
