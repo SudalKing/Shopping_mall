@@ -27,16 +27,9 @@ spring:
       enabled: true
   thymeleaf:
     cache: false
-#
-#server:
-#  port: 5000
-management:
-  endpoints:
-    web:
-      base-path: /management
-      path-mapping:
-        health: health
 
+server:
+  port: 5000
 
 springdoc:
   api-docs:
