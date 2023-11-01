@@ -2,10 +2,12 @@ package com.example.shoppingmall.configuration.security.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.groovy.syntax.TokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -104,14 +106,13 @@ public class JwtService {
                 );
     }
 
-    public boolean verifyToken(String token, HttpServletResponse response){
+    public boolean verifyToken(String token) throws TokenExpiredException {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
         } catch (Exception e) {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            throw new TokenExpiredException("토큰이 만료되었습니다.", Instant.now());
         }
     }
 

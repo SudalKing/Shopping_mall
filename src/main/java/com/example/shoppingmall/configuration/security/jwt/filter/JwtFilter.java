@@ -1,5 +1,6 @@
 package com.example.shoppingmall.configuration.security.jwt.filter;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.shoppingmall.configuration.security.jwt.service.JwtService;
 import com.example.shoppingmall.configuration.security.jwt.util.PasswordUtil;
 import com.example.shoppingmall.domain.user.entity.User;
@@ -12,7 +13,6 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,12 +41,23 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
+//        try {
+//            String refreshToken = jwtService.getRefreshToken(request)
+//                    .filter(jwtService::verifyToken)
+//                    .orElse(null);
 //
-//        String refreshToken = jwtService.getRefreshToken(request)
-//                .filter(jwtService::verifyToken)
-//                .orElse(null);
+//            if (refreshToken != null){
+//                validateAndRenewAccessToken(response, refreshToken);
+//            } else {
+//                authenticationAccessToken(request, response, filterChain);
+//            }
+//        } catch (TokenExpiredException e) {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write("토큰이 만료되었습니다");
+//        }
         String refreshToken = jwtService.getRefreshToken(request)
-                .filter(token -> jwtService.verifyToken(token, response))
+                .filter(jwtService::verifyToken)
                 .orElse(null);
 
         if (refreshToken != null){
@@ -53,9 +65,11 @@ public class JwtFilter extends OncePerRequestFilter {
         } else {
             authenticationAccessToken(request, response, filterChain);
         }
+
     }
 
     private void validateAndRenewAccessToken(HttpServletResponse response, String refreshToken) {
+
         userRepository.findByRefreshToken(refreshToken)
                 .ifPresent(user -> {
                     String renewRefreshToken = renewRefreshToken(user);
@@ -72,11 +86,25 @@ public class JwtFilter extends OncePerRequestFilter {
                                            HttpServletResponse response,
                                            FilterChain filterChain) throws ServletException, IOException {
         log.info("authenticationAccessToken 호출");
-        jwtService.getAccessToken(request)
-//                .filter(jwtService::verifyToken)
-                .filter(token -> jwtService.verifyToken(token, response))
-                .flatMap(jwtService::getEmail)
-                .flatMap(userRepository::findByEmail).ifPresent(this::saveAuthentication);
+        Optional<String> accessToken = jwtService.getAccessToken(request);
+
+        if (accessToken.isEmpty()) {
+            log.error("Access Token null");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        try {
+              accessToken
+                      .filter(jwtService::verifyToken)
+                    .flatMap(jwtService::getEmail)
+                    .flatMap(userRepository::findByEmail).ifPresent(this::saveAuthentication);
+        } catch (TokenExpiredException e) {
+            log.error("Token 만료 에러: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
         filterChain.doFilter(request, response);
     }
 
