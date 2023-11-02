@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -50,10 +50,10 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
       enabled: true
-
----
-# LOCAL 설정
-spring:
-  config:
-    activate:
-      on-profile: "profiles-local"
+#
+#---
+## LOCAL 설정
+#spring:
+#  config:
+#    activate:
+#      on-profile: "profiles-local"
