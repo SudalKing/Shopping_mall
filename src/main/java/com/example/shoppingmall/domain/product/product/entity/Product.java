@@ -35,7 +35,10 @@ public class Product {
     private String description;
 
     @Column(nullable = false)
-    private Long typeId;
+    private Long categoryId;
+
+    @Column(nullable = false)
+    private Long subCategoryId;
 
     private LocalDateTime createdAt;
 

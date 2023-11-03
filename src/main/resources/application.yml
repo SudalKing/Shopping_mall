@@ -14,14 +14,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-
   devtools:
     livereload:
       enabled: true
@@ -50,10 +42,10 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
       enabled: true
-
----
-# LOCAL 설정
-spring:
-  config:
-    activate:
-      on-profile: "profiles-local"
+#
+#---
+## LOCAL 설정
+#spring:
+#  config:
+#    activate:
+#      on-profile: "profiles-local"
