@@ -54,29 +54,29 @@ public class ProductReadService {
     public List<Product> getProductsByProductIds(List<Long> productIds) {return productRepository.findProductsByIdIn(productIds);}
 
     // ============================ Best 조회 ===================================================
-//    public List<ProductResponse> getAllBestProducts() {
-//        List<Product> productList = findAllBestProducts();
-//
-//        return productList.stream()
-//                .map(this::toDto)
-//                .collect(Collectors.toList());
-//    }
+    public List<ProductResponse> getAllBestProducts() {
+        List<Product> productList = findAllBestProducts();
 
-//    public List<ProductResponse> getBestProducts(Long typeId, Long categoryId) {
-//        List<Product> productList = findBestProducts(typeId, categoryId);
-//
-//        return productList.stream()
-//                .map(this::toDto)
-//                .collect(Collectors.toList());
-//    }
-    // typeId == 1 의류, categoryId 는 의류에만 사용 /
-//    private List<Product> findBestProducts(Long typeId, Long categoryId) {
-//        if (typeId == 1L) {
-//            return productRepository.findTop3ByTypeIdAndCategoryIdOrderByStockDesc(typeId, categoryId);
-//        } else {
-//            return productRepository.findTop3ByTypeIdOrderByStockDesc(typeId);
-//        }
-//    }
+        return productList.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> getBestProducts(Long categoryId, Long subCategoryId) {
+        List<Product> productList = findBestProducts(categoryId, subCategoryId);
+
+        return productList.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+//     categoryId == 1 의류, subCategoryId 는 의류에만 사용
+    private List<Product> findBestProducts(Long categoryId, Long subCategoryId) {
+        if (categoryId == 1L) {
+            return productRepository.findTop3ByCategoryAndSubCategoryIdOrderByStockDesc(categoryId, subCategoryId);
+        } else {
+            return productRepository.findTop3ByCategoryIdOrderByStockDesc(categoryId);
+        }
+    }
 
     // ============================================ 전체 상품 조회 =================================================
     public PageCursor<ProductResponse> getProductsByCursor(Number key, int size, Long sortId) throws Exception {
@@ -119,6 +119,20 @@ public class ProductReadService {
 
         var products = findBrandCategoryAll(cursorRequest, sortId, brandId, categoryId, subCategoryId);
         return getProductResponsePageCursor(cursorRequest, products, sortId);
+    }
+
+    public PageCursor<ProductResponse> getLikeProductsByCursor(Principal principal, Number key, int size) throws Exception {
+        User user = userReadService.getUserByEmail(principal.getName());
+
+        CursorRequest cursorRequest = new CursorRequest(key, size);
+        var products = findLikeAll(cursorRequest, user.getId());
+
+        var productDtoList = products.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        var nextKey = getNextKey(products);
+
+        return new PageCursor<>(cursorRequest.next(nextKey), productDtoList);
     }
 
 
@@ -371,6 +385,14 @@ public class ProductReadService {
         }
     }
 
+    private List<Product> findLikeAll(CursorRequest cursorRequest, Long userId) {
+        if (cursorRequest.hasKey()) {
+            return productRepository.findAllByLikeOrderByIdDescHasKey(cursorRequest.getKey().longValue(), userId, cursorRequest.getSize());
+        } else {
+            return productRepository.findAllByLikeOrderByIdDescNoKey(userId, cursorRequest.getSize());
+        }
+    }
+
     private PageCursor<ProductResponse> getProductResponsePageCursor(CursorRequest cursorRequest, List<Product> products, Long sortId) throws Exception {
         var productDtoList = products.stream()
                 .map(this::toDto)
@@ -499,33 +521,33 @@ public class ProductReadService {
             return 0;
         }
     }
-//    private List<Product> findAllBestProducts() {
-//        List<Product> allBestProducts = new ArrayList<>();
-//
-//        List<Product> clothes1 = findBestProducts(1L, 1L);
-//        List<Product> clothes2 = findBestProducts(1L, 2L);
-//        List<Product> clothes3 = findBestProducts(1L, 3L);
-//        List<Product> clothes4 = findBestProducts(1L, 4L);
-//        List<Product> clothes5 = findBestProducts(1L, 5L);
-//
-//        List<Product> props = findBestProducts(2L, 0L);
-//        List<Product> goods = findBestProducts(3L, 0L);
-//        List<Product> homeLivings = findBestProducts(4L, 0L);
-//        List<Product> beauty = findBestProducts(5L, 0L);
-//
-//        allBestProducts.addAll(clothes1);
-//        allBestProducts.addAll(clothes2);
-//        allBestProducts.addAll(clothes3);
-//        allBestProducts.addAll(clothes4);
-//        allBestProducts.addAll(clothes5);
-//
-//        allBestProducts.addAll(props);
-//        allBestProducts.addAll(goods);
-//        allBestProducts.addAll(homeLivings);
-//        allBestProducts.addAll(beauty);
-//
-//        return allBestProducts;
-//    }
+    private List<Product> findAllBestProducts() {
+        List<Product> allBestProducts = new ArrayList<>();
+
+        List<Product> clothes1 = findBestProducts(1L, 1L);
+        List<Product> clothes2 = findBestProducts(1L, 2L);
+        List<Product> clothes3 = findBestProducts(1L, 3L);
+        List<Product> clothes4 = findBestProducts(1L, 4L);
+        List<Product> clothes5 = findBestProducts(1L, 5L);
+
+        List<Product> props = findBestProducts(2L, 0L);
+        List<Product> goods = findBestProducts(3L, 0L);
+        List<Product> homeLivings = findBestProducts(4L, 0L);
+        List<Product> beauty = findBestProducts(5L, 0L);
+
+        allBestProducts.addAll(clothes1);
+        allBestProducts.addAll(clothes2);
+        allBestProducts.addAll(clothes3);
+        allBestProducts.addAll(clothes4);
+        allBestProducts.addAll(clothes5);
+
+        allBestProducts.addAll(props);
+        allBestProducts.addAll(goods);
+        allBestProducts.addAll(homeLivings);
+        allBestProducts.addAll(beauty);
+
+        return allBestProducts;
+    }
     private Double getProductScore(Long productId) {
         return productRepository.findProductScore(productId);
     }

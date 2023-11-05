@@ -78,23 +78,23 @@ public class ProductController {
     }
 
 //    // ===================================== Best ======================================
-//    @Operation(summary = "Best 전체 상품 조회", description = "[인증 불필요]")
-//    @GetMapping("/get/best/all")
-//    public List<ProductResponse> readAllBestProducts(Principal principal) {
-//        var products = productReadService.getAllBestProducts();
-//        productReadService.validatePrincipalLike(principal, products);
-//
-//        return products;
-//    }
-//
-//    @Operation(summary = "Best 상품 조회 - 상품 3개", description = "[인증 불필요]")
-//    @GetMapping("/get/best")
-//    public List<ProductResponse> readBestProducts(Principal principal, Long typeId, Long categoryId) {
-//        var products = productReadService.getBestProducts(typeId, categoryId);
-//        productReadService.validatePrincipalLike(principal, products);
-//
-//        return products;
-//    }
+    @Operation(summary = "Best 전체 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/best/all")
+    public List<ProductResponse> readAllBestProducts(Principal principal) {
+        var products = productReadService.getAllBestProducts();
+        productReadService.validatePrincipalLike(principal, products);
+
+        return products;
+    }
+
+    @Operation(summary = "Best 상품 조회 - 상품 3개", description = "[인증 불필요]")
+    @GetMapping("/get/best")
+    public List<ProductResponse> readBestProducts(Principal principal, Long categoryId, Long subCategoryId) {
+        var products = productReadService.getBestProducts(categoryId, subCategoryId);
+        productReadService.validatePrincipalLike(principal, products);
+
+        return products;
+    }
 //    // ===================================== Sale ======================================
     @Operation(summary = "Sale 상품 조회", description = "[인증 불필요]")
     @GetMapping("/get/sale")
@@ -154,6 +154,16 @@ public class ProductController {
     }
 
     // =================================== Like ================================================
+    @Operation(summary = "좋아요 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/like/get/all")
+    public PageCursor<ProductResponse> readLikeProducts(Principal principal,
+                                                         @RequestParam(required = false) Number key, int size) throws Exception {
+        var products = productReadService.getLikeProductsByCursor(principal, key, size);
+        productReadService.validatePrincipalLike(principal, products.getBody());
+
+        return products;
+    }
+
     @Operation(summary = "상품 좋아요", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @PostMapping("/like/{productId}")

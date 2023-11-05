@@ -20,7 +20,6 @@ public class ClothesProduct {
     private Long id;
 
     private Long productId;
-    private Long categoryId;
     private String color;
     private String clotheSize;
 }

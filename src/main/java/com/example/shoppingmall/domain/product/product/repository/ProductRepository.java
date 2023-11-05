@@ -72,10 +72,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllNewOrderByPriceDescNoKey(@Param("size") int size, @Param("days") LocalDateTime days);
     // ==============================================================================================================
     // ===================================================== Best ===================================================
-//    @Query(value = "select * from product as p left join clothes_product as cp on p.id = cp.product_id " +
-//            "where p.type_id = :typeId and cp.category_id = :categoryId order by stock desc limit 3", nativeQuery = true)
-//    List<Product> findTop3ByTypeIdAndCategoryIdOrderByStockDesc(Long typeId, Long categoryId);
-//    List<Product> findTop3ByTypeIdOrderByStockDesc(Long typeId);
+    @Query(value = "select * from product where category_id = :categoryId and sub_category_id = :subCategoryId order by stock desc limit 3", nativeQuery = true)
+    List<Product> findTop3ByCategoryAndSubCategoryIdOrderByStockDesc(@Param("categoryId") Long categoryId,
+                                                                     @Param("subCategoryId") Long subCategoryId);
+
+    List<Product> findTop3ByCategoryIdOrderByStockDesc(Long categoryId);
     // ==============================================================================================================
     // ===================================================== Sale ==========================================a=========
     // 1. 최신순
@@ -305,6 +306,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                               @Param("size") int size);
 
     //==============================================================================
+    @Query(value = "select * from product as p left join product_like as pl on p.id = pl.product_id " +
+            "where p.id < :id and pl.user_id = :userId order by p.id desc limit :size", nativeQuery = true)
+    List<Product> findAllByLikeOrderByIdDescHasKey(@Param("id") Long id, @Param("userId") Long userId, @Param("size") int size);
+
+    @Query(value = "select * from product as p left join product_like as pl on p.id = pl.product_id " +
+            "where pl.user_id = :userId order by p.id desc limit :size", nativeQuery = true)
+    List<Product> findAllByLikeOrderByIdDescNoKey(@Param("userId") Long userId, @Param("size") int size);
+
+
     @Query(value = "select bp.score from product as p " +
             "left join best_product as bp on p.id = bp.product_id " +
             "where bp.product_id = :productId", nativeQuery = true)
