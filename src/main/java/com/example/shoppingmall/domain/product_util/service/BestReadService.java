@@ -1,16 +1,16 @@
 package com.example.shoppingmall.domain.product_util.service;
 
-import com.example.shoppingmall.domain.product_util.entity.Best;
-import com.example.shoppingmall.domain.product_util.repository.BestRepository;
+import com.example.shoppingmall.domain.product_util.entity.BestProduct;
+import com.example.shoppingmall.domain.product_util.repository.BestProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class BestReadService {
-    private final BestRepository bestRepository;
+    private final BestProductRepository bestProductRepository;
 
-    public Best readBestByProductId(Long productId){
-        return bestRepository.findBestByProductId(productId);
+    public BestProduct readBestByProductId(Long productId){
+        return bestProductRepository.findBestByProductId(productId);
     }
 }

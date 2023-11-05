@@ -27,7 +27,7 @@ application-db.yml
 #.github
 #.platform
 
-src/test/java/com/example/shoppingmall/domain/
+#src/test/java/com/example/shoppingmall/domain/
 
 .idea
 *.iws

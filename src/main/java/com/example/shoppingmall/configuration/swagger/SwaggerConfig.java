@@ -22,7 +22,7 @@ public class SwaggerConfig {
 
     private static final String API_TITLE = "쇼핑몰 프로젝트";
     private static final String API_DESCRIPTION = "쇼핑몰 프로젝트 API 명세서";
-    private static final String API_VERSION = "v0.8";
+    private static final String API_VERSION = "v1.0";
 
     @Bean
     public Docket docket(){

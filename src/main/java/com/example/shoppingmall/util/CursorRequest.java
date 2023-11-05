@@ -8,16 +8,18 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CursorRequest {
-    public static final Long NONE_KEY = -1L;
+    public static final Long NONE_KEY_LONG = -1L;
+    public static final Double NONE_KEY_DOUBLE = -1.;
+    public static final Integer NONE_KEY_INTEGER = -1;
 
-    private Long key;
+    private Number key;
     private int size;
 
     public boolean hasKey(){
         return key != null;
     }
 
-    public CursorRequest next(Long key){
+    public CursorRequest next(Number key){
         return new CursorRequest(key, size);
     }
 }

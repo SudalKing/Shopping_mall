@@ -25,7 +25,8 @@ public class ProductBulkInsertCustomRepository {
             .price(resultSet.getInt("price"))
             .stock(resultSet.getInt("stock"))
             .description(resultSet.getString("description"))
-            .typeId(resultSet.getLong("typeId"))
+            .categoryId(resultSet.getLong("categoryId"))
+            .subCategoryId(resultSet.getLong("subCategoryId"))
             .createdAt(resultSet.getObject("createdAt", LocalDateTime.class))
             .deleted(resultSet.getBoolean("deleted"))
             .version(resultSet.getLong("version"))
@@ -34,8 +35,8 @@ public class ProductBulkInsertCustomRepository {
 
     public void bulkInsertProduct(List<Product> products){
         var sql = String.format(
-                "INSERT INTO %s (name, price, stock, description, type_id, created_at, deleted, saled) " +
-                "VALUES (:name, :price, :stock, :description, :typeId, :createdAt, :deleted, :saled)" ,
+                "INSERT INTO %s (name, price, stock, description, category_id, sub_category_id, created_at, deleted, saled) " +
+                "VALUES (:name, :price, :stock, :description, :categoryId, :subCategoryId, :createdAt, :deleted, :saled)" ,
                 TABLE_PRODUCT);
 
         SqlParameterSource[] params = products

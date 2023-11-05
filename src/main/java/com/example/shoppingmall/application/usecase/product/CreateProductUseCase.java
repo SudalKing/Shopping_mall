@@ -2,7 +2,7 @@ package com.example.shoppingmall.application.usecase.product;
 
 import com.example.shoppingmall.domain.awsS3.service.ProductImageWriteService;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
-import com.example.shoppingmall.domain.product.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product_util.service.BestWriteService;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.product.product.service.ProductWriteService;
@@ -22,7 +22,7 @@ public class CreateProductUseCase {
     private final BestWriteService bestWriteService;
     private final AmazonS3Service amazonS3Service;
 
-    public ProductDto execute(ProductCommand productCommand, String fileType, List<MultipartFile> multipartFiles){
+    public ProductResponse execute(ProductCommand productCommand, String fileType, List<MultipartFile> multipartFiles){
         var product = productWriteService.createProduct(productCommand);
         var s3FileDtoList = amazonS3Service.uploadFiles(fileType, multipartFiles);
         var best = bestWriteService.createBest(productReadService.toDto(product));

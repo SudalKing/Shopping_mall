@@ -1,7 +1,7 @@
 package com.example.shoppingmall.domain.product.product.service;
 
-import com.example.shoppingmall.domain.brand.entity.ProductBrandCategory;
-import com.example.shoppingmall.domain.brand.repository.ProductBrandCategoryRepository;
+import com.example.shoppingmall.domain.brand.entity.BrandProduct;
+import com.example.shoppingmall.domain.brand.repository.BrandProductRepository;
 import com.example.shoppingmall.domain.brand.dto.req.BrandCategoryRequest;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
 import com.example.shoppingmall.domain.product.product.entity.Product;
@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Service
 public class ProductWriteService {
     private final ProductRepository productRepository;
-    private final ProductBrandCategoryRepository productBrandCategoryRepository;
-
+    private final BrandProductRepository brandProductRepository;
+    //
     @Transactional
     public Product createProduct(ProductCommand productCommand){
         BrandCategoryRequest brandCategoryRequest = productCommand.getBrandCategoryRequest();
@@ -27,7 +27,6 @@ public class ProductWriteService {
                 .price(productCommand.getPrice())
                 .stock(productCommand.getStock())
                 .description(productCommand.getDescription())
-                .typeId(productCommand.getTypeId())
                 .saled(productCommand.isSaled())
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
@@ -35,12 +34,11 @@ public class ProductWriteService {
         product.validateStockAndPrice();
         Product savedProduct = productRepository.save(product);
 
-        ProductBrandCategory productBrandCategory = ProductBrandCategory.builder()
+        BrandProduct brandProduct = BrandProduct.builder()
                 .productId(savedProduct.getId())
                 .brandId(brandCategoryRequest.getBrandId())
-                .brandCategoryId(brandCategoryRequest.getCategoryId())
                 .build();
-        productBrandCategoryRepository.save(productBrandCategory);
+        brandProductRepository.save(brandProduct);
 
         return savedProduct;
     }

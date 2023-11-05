@@ -1,5 +1,6 @@
 package com.example.shoppingmall.util;
 
+import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,4 +16,5 @@ public class PageCursor<T> {
         this.cursorRequest = cursorRequest;
         this.body = body;
     }
+
 }

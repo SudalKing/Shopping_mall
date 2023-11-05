@@ -2,19 +2,14 @@ package com.example.shoppingmall.application.controller;
 
 import com.example.shoppingmall.application.usecase.product.CreateProductUseCase;
 import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase;
-import com.example.shoppingmall.domain.product.product.dto.ProductDto;
+import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.service.ProductLikeWriteService;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
-import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
-import com.example.shoppingmall.util.product.pagination.PriceCursorRequest;
-import com.example.shoppingmall.util.product.pagination.PricePageCursor;
-import com.example.shoppingmall.util.product.pagination.ScoreCursorRequest;
-import com.example.shoppingmall.util.product.pagination.ScorePageCursor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,16 +34,6 @@ public class ProductController {
     private final UserReadService userReadService;
 
 
-    private final static String ALL = "all";
-    private final static String NEW = "new";
-    private final static String BEST = "best";
-    private final static String SALE = "sale";
-    private final static String CLOTHES = "clothes";
-    private final static String PROP = "prop";
-    private final static String GOODS = "goods";
-    private final static String HOMELIVINGS = "homeLivings";
-    private final static String BEAUTY = "beauty";
-
     @Operation(summary = "ProductCommand, multipartFiles(이미지들)을 받아 상품 생성", description = "[인증 필요(ADMIN)]")
     @ApiResponse(responseCode = "201", description = "OK")
     @PostMapping("/add")
@@ -70,383 +55,91 @@ public class ProductController {
 
 
 // =============================================모든 상품 조회=====================================================
-    @Operation(summary = "모든 상품 조회(최신순)", description = "[인증 불필요]")
-    @GetMapping("/get/all/0")
-    public PageCursor<ProductDto> readAllProductsDefault(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, ALL);
+    @Operation(summary = "모든 상품 조회 sortId: 0(최신순), 1(인기순), 2(가격 낮은순), 3(가격 높은순)", description = "[인증 불필요]")
+    @GetMapping("/get/all")
+    public PageCursor<ProductResponse> readAllProductsDefault(Principal principal,
+                                                              @RequestParam(required = false) Number key,
+                                                              int size, Long sortId) throws Exception {
+        var products = productReadService.getProductsByCursor(key, size, sortId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
-        return products;
-    }
-
-    @Operation(summary = "모든 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/all/1")
-    public ScorePageCursor<ProductDto> readAllProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, ALL);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "모든 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/all/2")
-    public PricePageCursor<ProductDto> readAllProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, ALL);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-        return products;
-    }
-
-    @Operation(summary = "모든 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/all/3")
-    public PricePageCursor<ProductDto> readAllProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, ALL);
-        productReadService.validatePrincipalLike(principal, products.getBody());
         return products;
     }
 // ================================================New 조회==================================================
     @Operation(summary = "NEW 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/new/0")
-    public PageCursor<ProductDto> readNEWProducts(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, NEW);
+    @GetMapping("/get/new")
+    public PageCursor<ProductResponse> readNEWProducts(Principal principal,
+                                                       @RequestParam(required = false) Number key,
+                                                       int size, Long sortId) throws Exception {
+        var products = productReadService.getNewProductsByCursor(key, size, sortId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
     }
 
-    @Operation(summary = "NEW 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/new/1")
-    public ScorePageCursor<ProductDto> readNEWProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, NEW);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "NEW 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/new/2")
-    public PricePageCursor<ProductDto> readNEWProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, NEW);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "NEW 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/new/3")
-    public PricePageCursor<ProductDto> readNEWProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, NEW);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-    // ===================================== Best ======================================
-    @Operation(summary = "Best 전체 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/best/all")
-    public List<ProductDto> readAllBestProducts(Principal principal) {
-        var products = productReadService.getAllBestProducts();
-        productReadService.validatePrincipalLike(principal, products);
-
-        return products;
-    }
-
-    @Operation(summary = "Best 상품 조회 - 상품 3개", description = "[인증 불필요]")
-    @GetMapping("/get/best")
-    public List<ProductDto> readBestProducts(Principal principal, Long typeId, Long categoryId) {
-        var products = productReadService.getBestProducts(typeId, categoryId);
-        productReadService.validatePrincipalLike(principal, products);
-
-        return products;
-    }
-    // ===================================== Sale ======================================
+//    // ===================================== Best ======================================
+//    @Operation(summary = "Best 전체 상품 조회", description = "[인증 불필요]")
+//    @GetMapping("/get/best/all")
+//    public List<ProductResponse> readAllBestProducts(Principal principal) {
+//        var products = productReadService.getAllBestProducts();
+//        productReadService.validatePrincipalLike(principal, products);
+//
+//        return products;
+//    }
+//
+//    @Operation(summary = "Best 상품 조회 - 상품 3개", description = "[인증 불필요]")
+//    @GetMapping("/get/best")
+//    public List<ProductResponse> readBestProducts(Principal principal, Long typeId, Long categoryId) {
+//        var products = productReadService.getBestProducts(typeId, categoryId);
+//        productReadService.validatePrincipalLike(principal, products);
+//
+//        return products;
+//    }
+//    // ===================================== Sale ======================================
     @Operation(summary = "Sale 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/sale/0")
-    public PageCursor<ProductDto> readSaleProducts(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, SALE);
+    @GetMapping("/get/sale")
+    public PageCursor<ProductResponse> readSaleProducts(Principal principal,
+                                                        @RequestParam(required = false) Number key,
+                                                        int size, Long sortId) throws Exception {
+        var products = productReadService.getSaleProductsByCursor(key, size, sortId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
     }
 
-    @Operation(summary = "Sale 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/sale/1")
-    public ScorePageCursor<ProductDto> readSaleProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, SALE);
+//    // ============================================ 카테고리 상품 =========================================================
+    @Operation(summary = "카테고리 상품 조회: subCategoryId = 0, 한 카테고리 전체 조회", description = "[인증 불필요]")
+    @GetMapping("/get/category")
+    public PageCursor<ProductResponse> readClothesProducts(Principal principal,
+                                                           @RequestParam(required = false) Number key,
+                                                           int size, Long sortId, Long categoryId, Long subCategoryId) throws Exception {
+        var products = productReadService.
+                getProductsByCursorByCategoryAndSubCategoryId(key, size, sortId, categoryId, subCategoryId);
+        productReadService.validatePrincipalLike(principal, products.getBody());
+
+        return products;
+    }
+//// =====================================================================================================================
+//// =================================================== 브랜드 상품 조회 ===================================================
+    @Operation(summary = "브랜드별 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/brand")
+    public PageCursor<ProductResponse> readBrandProducts(Principal principal,
+                                                         @RequestParam(required = false) Number key,
+                                                         int size, Long sortId, Long brandId) throws Exception {
+        var products = productReadService.getBrandProductsByCursor(key, size, sortId, brandId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
     }
 
-    @Operation(summary = "Sale 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/sale/2")
-    public PricePageCursor<ProductDto> readSaleProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, SALE);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "Sale 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/sale/3")
-    public PricePageCursor<ProductDto> readSaleProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, SALE);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    // ======================================= 의류 typeId = 1 =========================================================
-    @Operation(summary = "의류 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/clothes/0")
-    public PageCursor<ProductDto> readClothesProducts(Principal principal, Long key, int size, Long categoryId) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursorHasCategory(cursorRequest, CLOTHES, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "의류 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/clothes/1")
-    public ScorePageCursor<ProductDto> readClothesProductsScore(Principal principal, Double key, int size, Long categoryId) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorHasCategoryOrderByScore(scoreCursorRequest, CLOTHES, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "의류 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/clothes/2")
-    public PricePageCursor<ProductDto> readClothesProductsPriceAsc(Principal principal, Integer key, int size, Long categoryId) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorHasCategoryOrderByPriceAsc(priceCursorRequest, CLOTHES, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "의류 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/clothes/3")
-    public PricePageCursor<ProductDto> readClothesProductsPriceDesc(Principal principal, Integer key, int size, Long categoryId) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorHasCategoryOrderByPriceDesc(priceCursorRequest, CLOTHES, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-// =====================================================================================================================
-// ============================================ 소품 typeId = 2 =========================================================
-    @Operation(summary = "소품 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/prop/0")
-    public PageCursor<ProductDto> readPropProducts(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, PROP);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "소품 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/prop/1")
-    public ScorePageCursor<ProductDto> readPropProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, PROP);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "소품 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/prop/2")
-    public PricePageCursor<ProductDto> readPropProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, PROP);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "소품 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/prop/3")
-    public PricePageCursor<ProductDto> readPropProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, PROP);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-// =====================================================================================================================
-// ======================================================= 잡화 =========================================================
-    @Operation(summary = "잡화 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/goods/0")
-    public PageCursor<ProductDto> readGoodsProducts(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, GOODS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "잡화 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/goods/1")
-    public ScorePageCursor<ProductDto> readGoodsProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, GOODS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "잡화 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/goods/2")
-    public PricePageCursor<ProductDto> readGoodsProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, GOODS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "잡화 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/goods/3")
-    public PricePageCursor<ProductDto> readGoodsProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, GOODS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-// =====================================================================================================================
-// ====================================================== 홈리빙 =========================================================
-    @Operation(summary = "홈리빙 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/home-living/0")
-    public PageCursor<ProductDto> readHomeLivingProducts(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, HOMELIVINGS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "홈리빙 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/home-living/1")
-    public ScorePageCursor<ProductDto> readHomeLivingProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, HOMELIVINGS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "홈리빙 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/home-living/2")
-    public PricePageCursor<ProductDto> readHomeLivingProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, HOMELIVINGS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "홈리빙 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/home-living/3")
-    public PricePageCursor<ProductDto> readHomeLivingProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, HOMELIVINGS);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-// =====================================================================================================================
-// ======================================================= 뷰티 =========================================================
-    @Operation(summary = "뷰티 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/beauty/0")
-    public PageCursor<ProductDto> readBeautyProducts(Principal principal, Long key, int size) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getProductsByCursor(cursorRequest, BEAUTY);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "뷰티 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/beauty/1")
-    public ScorePageCursor<ProductDto> readBeautyProductsScore(Principal principal, Double key, int size) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByScore(scoreCursorRequest, BEAUTY);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "뷰티 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/beauty/2")
-    public PricePageCursor<ProductDto> readBeautyProductsPriceAsc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceAsc(priceCursorRequest, BEAUTY);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "뷰티 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/beauty/3")
-    public PricePageCursor<ProductDto> readBeautyProductsPriceDesc(Principal principal, Integer key, int size) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getProductsByCursorOrderByPriceDesc(priceCursorRequest, BEAUTY);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-// =====================================================================================================================
-// =================================================== 브랜드 상품 조회 ===================================================
-    @Operation(summary = "브랜드 상품 조회", description = "[인증 불필요]")
-    @GetMapping("/get/brand/0")
-    public PageCursor<ProductDto> readBrandProducts(Principal principal, Long key, int size, Long brandId, Long categoryId) throws Exception {
-        CursorRequest cursorRequest = new CursorRequest(key, size);
-        var products = productReadService.getBrandProductsByCursor(cursorRequest, brandId, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "브랜드 상품 조회(인기순)", description = "[인증 불필요]")
-    @GetMapping("/get/brand/1")
-    public ScorePageCursor<ProductDto> readBrandProductsScore(Principal principal, Double key, int size, Long brandId, Long categoryId) throws Exception {
-        ScoreCursorRequest scoreCursorRequest = new ScoreCursorRequest(key, size);
-        var products = productReadService.getBrandProductsByCursorOrderByScore(scoreCursorRequest, brandId, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "브랜드 상품 조회(가격 낮은순)", description = "[인증 불필요]")
-    @GetMapping("/get/brand/2")
-    public PricePageCursor<ProductDto> readBrandProductsPriceAsc(Principal principal, Integer key, int size, Long brandId, Long categoryId) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getBrandProductsByCursorOrderByPriceAsc(priceCursorRequest, brandId, categoryId);
-        productReadService.validatePrincipalLike(principal, products.getBody());
-
-        return products;
-    }
-
-    @Operation(summary = "브랜드 상품 조회(가격 높은순)", description = "[인증 불필요]")
-    @GetMapping("/get/brand/3")
-    public PricePageCursor<ProductDto> readBrandProductsPriceDesc(Principal principal, Integer key, int size, Long brandId, Long categoryId) throws Exception {
-        PriceCursorRequest priceCursorRequest = new PriceCursorRequest(key, size);
-        var products = productReadService.getBrandProductsByCursorOrderByPriceDesc(priceCursorRequest, brandId, categoryId);
+    @Operation(summary = "브랜드, 카테고리, 서브카테고리별 상품 조회", description = "[인증 불필요]")
+    @GetMapping("/get/brand/category")
+    public PageCursor<ProductResponse> readBrandProducts(Principal principal,
+                                                         @RequestParam(required = false) Number key,
+                                                         int size, Long sortId, Long brandId,
+                                                         Long categoryId, Long subCategoryId) throws Exception {
+        var products = productReadService.getBrandCategoryProductsByCursor(
+                key, size, sortId, brandId, categoryId, subCategoryId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
