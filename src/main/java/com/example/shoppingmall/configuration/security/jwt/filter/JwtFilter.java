@@ -13,6 +13,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,13 +21,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
-    private static final String NO_CHECK_PATH = "/login";
+    private static final List<String> NO_CHECK_PATHS = Arrays.asList("/login", "/", "/logout", "/login/oauth2/code/**", "/user/signup",
+        "/swagger-ui/**", "/v3/**", "/product/get/**", "/brand/get/**");
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -37,25 +40,15 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException
     {
-        if (request.getRequestURI().equals(NO_CHECK_PATH)){
-            filterChain.doFilter(request, response);
-            return;
+        String requestURI = request.getRequestURI();
+
+        for (String path : NO_CHECK_PATHS) {
+            if (new AntPathMatcher().match(path, requestURI)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
-//        try {
-//            String refreshToken = jwtService.getRefreshToken(request)
-//                    .filter(jwtService::verifyToken)
-//                    .orElse(null);
-//
-//            if (refreshToken != null){
-//                validateAndRenewAccessToken(response, refreshToken);
-//            } else {
-//                authenticationAccessToken(request, response, filterChain);
-//            }
-//        } catch (TokenExpiredException e) {
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write("토큰이 만료되었습니다");
-//        }
         String refreshToken = jwtService.getRefreshToken(request)
                 .filter(jwtService::verifyToken)
                 .orElse(null);
@@ -87,6 +80,11 @@ public class JwtFilter extends OncePerRequestFilter {
                                            FilterChain filterChain) throws ServletException, IOException {
         log.info("authenticationAccessToken 호출");
         Optional<String> accessToken = jwtService.getAccessToken(request);
+
+        if (accessToken.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
 
         try {
