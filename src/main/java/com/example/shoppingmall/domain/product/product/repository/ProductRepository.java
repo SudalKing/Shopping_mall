@@ -236,74 +236,133 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByBrandOrderByPriceDescNoKey(@Param("brandId") Long brandId, @Param("size") int size);
 
 
-
+    // ========================================== subCategory 없는 카테고리, 브랜드별 전체 조회 ====================================
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where p.id < :id " +
-            "and bp.brand_id = :brandId and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by id desc limit :size", nativeQuery = true)
+            "and bp.brand_id = :brandId and p.category_id = :categoryId order by id desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByIdDescHasKey(@Param("id") Long id,
                                                             @Param("brandId") Long brandId,
                                                             @Param("categoryId") Long categoryId,
-                                                            @Param("subCategoryId") Long subCategoryId,
                                                             @Param("size") int size);
 
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where bp.brand_id = :brandId " +
-            "and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by id desc limit :size", nativeQuery = true)
+            "and p.category_id = :categoryId order by id desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByIdDescNoKey(@Param("brandId") Long brandId,
-                                                               @Param("categoryId") Long categoryId,
-                                                               @Param("subCategoryId") Long subCategoryId,
-                                                               @Param("size") int size);
+                                                           @Param("categoryId") Long categoryId,
+                                                           @Param("size") int size);
 
     // 2. 인기순(HasKey)
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id left join best_product as bep " +
             "on p.id = bep.product_id where bep.score < :score and bp.brand_id = :brandId and p.category_id = :categoryId" +
-            " and p.sub_category_id = :subCategoryId order by bep.score desc limit :size", nativeQuery = true)
+            "order by bep.score desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByScoreHasKey(@Param("score") Double score,
                                                            @Param("brandId") Long brandId,
                                                            @Param("categoryId") Long categoryId,
-                                                           @Param("subCategoryId") Long subCategoryId,
                                                            @Param("size") int size);
 
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id left join best_product as bep " +
             "on p.id = bep.product_id where bp.brand_id = :brandId and p.category_id = :categoryId" +
-            " and p.sub_category_id = :subCategoryId order by bep.score desc limit :size", nativeQuery = true)
+            "order by bep.score desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByScoreNoKey(@Param("brandId") Long brandId,
                                                           @Param("categoryId") Long categoryId,
-                                                          @Param("subCategoryId") Long subCategoryId,
                                                           @Param("size") int size);
 
     // 3. 가격 낮은순(HasKey)
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
             "where p.price > :price and bp.brand_id = :brandId and p.category_id = :categoryId " +
-            "and p.sub_category_id = :subCategoryId order by p.price asc limit :size", nativeQuery = true)
+            "order by p.price asc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByPriceAscHasKey(@Param("price") Integer price,
                                                               @Param("brandId") Long brandId,
                                                               @Param("categoryId") Long categoryId,
-                                                              @Param("subCategoryId") Long subCategoryId,
                                                               @Param("size") int size);
+
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
+            "where bp.brand_id = :brandId and p.category_id = :categoryId order by p.price asc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryOrderByPriceAscNoKey(@Param("brandId") Long brandId,
+                                                             @Param("categoryId") Long categoryId,
+                                                             @Param("size") int size);
+
+    // 4. 가격 높은순(HasKey)
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where p.price < :price " +
+            "and bp.brand_id = :brandId and p.category_id = :categoryId order by p.price desc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryOrderByPriceDescHasKey(@Param("price") Integer price,
+                                                               @Param("brandId") Long brandId,
+                                                               @Param("categoryId") Long categoryId,
+                                                               @Param("size") int size);
+
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where bp.brand_id = :brandId " +
+            "and p.category_id = :categoryId order by p.price desc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryOrderByPriceDescNoKey(@Param("brandId") Long brandId,
+                                                              @Param("categoryId") Long categoryId,
+                                                              @Param("size") int size);
+
+    // =============================================== subCategory 존재 =================================================
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where p.id < :id " +
+            "and bp.brand_id = :brandId and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by id desc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryAndSubOrderByIdDescHasKey(@Param("id") Long id,
+                                                                  @Param("brandId") Long brandId,
+                                                                  @Param("categoryId") Long categoryId,
+                                                                  @Param("subCategoryId") Long subCategoryId,
+                                                                  @Param("size") int size);
+
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where bp.brand_id = :brandId " +
+            "and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by id desc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryAndSubOrderByIdDescNoKey(@Param("brandId") Long brandId,
+                                                                 @Param("categoryId") Long categoryId,
+                                                                 @Param("subCategoryId") Long subCategoryId,
+                                                                 @Param("size") int size);
+
+    // 2. 인기순(HasKey)
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id left join best_product as bep " +
+            "on p.id = bep.product_id where bep.score < :score and bp.brand_id = :brandId and p.category_id = :categoryId" +
+            " and p.sub_category_id = :subCategoryId order by bep.score desc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryAndSubOrderByScoreHasKey(@Param("score") Double score,
+                                                                 @Param("brandId") Long brandId,
+                                                                 @Param("categoryId") Long categoryId,
+                                                                 @Param("subCategoryId") Long subCategoryId,
+                                                                 @Param("size") int size);
+
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id left join best_product as bep " +
+            "on p.id = bep.product_id where bp.brand_id = :brandId and p.category_id = :categoryId" +
+            " and p.sub_category_id = :subCategoryId order by bep.score desc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryAndSubOrderByScoreNoKey(@Param("brandId") Long brandId,
+                                                                @Param("categoryId") Long categoryId,
+                                                                @Param("subCategoryId") Long subCategoryId,
+                                                                @Param("size") int size);
+
+    // 3. 가격 낮은순(HasKey)
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
+            "where p.price > :price and bp.brand_id = :brandId and p.category_id = :categoryId " +
+            "and p.sub_category_id = :subCategoryId order by p.price asc limit :size", nativeQuery = true)
+    List<Product> findAllByBrandCategoryAndSubOrderByPriceAscHasKey(@Param("price") Integer price,
+                                                                    @Param("brandId") Long brandId,
+                                                                    @Param("categoryId") Long categoryId,
+                                                                    @Param("subCategoryId") Long subCategoryId,
+                                                                    @Param("size") int size);
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
             "where bp.brand_id = :brandId and p.category_id = :categoryId and p.sub_category_id = :subCategoryId " +
             "order by p.price asc limit :size", nativeQuery = true)
-    List<Product> findAllByBrandCategoryOrderByPriceAscNoKey(@Param("brandId") Long brandId,
-                                                             @Param("categoryId") Long categoryId,
-                                                             @Param("subCategoryId") Long subCategoryId,
-                                                             @Param("size") int size);
+    List<Product> findAllByBrandCategoryAndSubOrderByPriceAscNoKey(@Param("brandId") Long brandId,
+                                                                   @Param("categoryId") Long categoryId,
+                                                                   @Param("subCategoryId") Long subCategoryId,
+                                                                   @Param("size") int size);
 
     // 4. 가격 높은순(HasKey)
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
             "where p.price < :price and bp.brand_id = :brandId and p.category_id = :categoryId " +
             "and p.sub_category_id = :subCategoryId order by p.price desc limit :size", nativeQuery = true)
-    List<Product> findAllByBrandCategoryOrderByPriceDescHasKey(@Param("price") Integer price,
-                                                               @Param("brandId") Long brandId,
-                                                               @Param("categoryId") Long categoryId,
-                                                               @Param("subCategoryId") Long subCategoryId,
-                                                               @Param("size") int size);
+    List<Product> findAllByBrandCategoryAndSubOrderByPriceDescHasKey(@Param("price") Integer price,
+                                                                     @Param("brandId") Long brandId,
+                                                                     @Param("categoryId") Long categoryId,
+                                                                     @Param("subCategoryId") Long subCategoryId,
+                                                                     @Param("size") int size);
 
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
             "where bp.brand_id = :brandId and p.category_id = :categoryId and p.sub_category_id = :subCategoryId " +
             "order by p.price desc limit :size", nativeQuery = true)
-    List<Product> findAllByBrandCategoryOrderByPriceDescNoKey(@Param("brandId") Long brandId,
-                                                              @Param("categoryId") Long categoryId,
-                                                              @Param("subCategoryId") Long subCategoryId,
-                                                              @Param("size") int size);
+    List<Product> findAllByBrandCategoryAndSubOrderByPriceDescNoKey(@Param("brandId") Long brandId,
+                                                                    @Param("categoryId") Long categoryId,
+                                                                    @Param("subCategoryId") Long subCategoryId,
+                                                                    @Param("size") int size);
 
     //==============================================================================
     @Query(value = "select * from product as p left join product_like as pl on p.id = pl.product_id " +

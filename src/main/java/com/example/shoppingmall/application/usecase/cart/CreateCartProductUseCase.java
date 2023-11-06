@@ -4,7 +4,6 @@ import com.example.shoppingmall.domain.cart.dto.req.CartProductRequest;
 import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.cart.service.CartProductWriteService;
 import com.example.shoppingmall.domain.cart.service.CartReadService;
-import com.example.shoppingmall.domain.cart.service.CartWriteService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.entity.User;
@@ -26,7 +25,7 @@ public class CreateCartProductUseCase {
         Cart cart = cartReadService.getCartInfo(user.getId());
 
         for (CartProductRequest cartProductRequest: cartProductRequests) {
-            Product product = productReadService.getProductEntity(cartProductRequest.getProductId());
+            Product product = productReadService.getProductEntity(cartProductRequest.getId());
 
             cartProductWriteService.createCartProduct(cart, product, cartProductRequest.getAmount());
         }

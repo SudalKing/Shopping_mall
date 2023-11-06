@@ -16,7 +16,7 @@ import java.util.List;
 public class BestProductBulkInsertCustomRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    final static private String TABLE_PRODUCT = "Best_Product";
+    final static private String TABLE_PRODUCT = "best_product";
 
     private Long productId = 1L;
 

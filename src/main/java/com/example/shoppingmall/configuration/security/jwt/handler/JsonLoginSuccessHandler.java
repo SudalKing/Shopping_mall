@@ -1,7 +1,9 @@
 package com.example.shoppingmall.configuration.security.jwt.handler;
 
+import com.example.shoppingmall.configuration.security.jwt.TokenResponse;
 import com.example.shoppingmall.configuration.security.jwt.service.JwtService;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +45,17 @@ public class JsonLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
         log.info("로그인에 성공하였습니다. 이메일: {}", email);
         log.info("로그인에 성공하였습니다. AccessToken: {}", accessToken);
         log.info("발급된 AccessToken 만료 기간: {}", accessTokenExpiration);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+
+        TokenResponse tokenResponse = TokenResponse.builder()
+                .accessToken("Bearer " + accessToken)
+                .refreshToken("Bearer " + refreshToken)
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String body = objectMapper.writeValueAsString(tokenResponse);
+        response.getWriter().write(body);
     }
 
     private String getUsername(Authentication authentication) {

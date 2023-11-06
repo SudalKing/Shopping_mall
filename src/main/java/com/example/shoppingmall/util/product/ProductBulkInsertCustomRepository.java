@@ -17,7 +17,7 @@ import java.util.List;
 public class ProductBulkInsertCustomRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    final static private String TABLE_PRODUCT = "Product";
+    final static private String TABLE_PRODUCT = "product";
 
     private static final RowMapper<Product> ROW_MAPPER_PRODUCT = (ResultSet resultSet, int rowNum) -> Product.builder()
             .id(resultSet.getLong("id"))

@@ -1,4 +1,4 @@
-package com.example.shoppingmall.domain.cart.dto.req;
+package com.example.shoppingmall.configuration.security.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Builder
-public class CartProductRequest {
-    private Long id;
-    private int amount;
+public class TokenResponse {
+    private String accessToken;
+    private String refreshToken;
 }

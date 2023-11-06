@@ -67,9 +67,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 .ifPresent(user -> {
                     String renewRefreshToken = renewRefreshToken(user);
                     log.info("renewRefreshToken: {}", renewRefreshToken);
-                    jwtService.sendAccessTokenAndRefreshToken(response,
-                            jwtService.createAccessToken(user.getEmail()),
-                            renewRefreshToken);
+                    try {
+                        jwtService.sendAccessTokenAndRefreshToken(response,
+                                jwtService.createAccessToken(user.getEmail()),
+                                renewRefreshToken);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     log.info("AccessToken 재발급");
                 });
 

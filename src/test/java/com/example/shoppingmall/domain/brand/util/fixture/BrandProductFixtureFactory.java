@@ -26,7 +26,7 @@ public class BrandProductFixtureFactory {
         var param = new EasyRandomParameters()
                 .excludeField(idPredicate) // null
                 .excludeField(productIdPredicate)
-                .randomize(brandIdPredicate, new LongRangeRandomizer(1L, 10L))
+                .randomize(brandIdPredicate, new LongRangeRandomizer(1L, 21L))
                 ;
 
         return new EasyRandom(param);

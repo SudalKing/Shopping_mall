@@ -349,36 +349,76 @@ public class ProductReadService {
 
     private List<Product> findBrandCategoryAll(CursorRequest cursorRequest, Long sortId, Long brandId, Long categoryId, Long subCategoryId) throws Exception {
         if (sortId == 0L) {
-            if (cursorRequest.hasKey()) {
-                return productRepository.findAllByBrandCategoryOrderByIdDescHasKey(
-                        cursorRequest.getKey().longValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+            if (subCategoryId == 0L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryOrderByIdDescHasKey(
+                            cursorRequest.getKey().longValue(), brandId, categoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryOrderByIdDescNoKey(
+                            brandId, categoryId, cursorRequest.getSize());
+                }
             } else {
-                return productRepository.findAllByBrandCategoryOrderByIdDescNoKey(
-                        brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByIdDescHasKey(
+                            cursorRequest.getKey().longValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByIdDescNoKey(
+                            brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                }
             }
         } else if (sortId == 1L) {
-            if (cursorRequest.hasKey()) {
-                return productRepository.findAllByBrandCategoryOrderByScoreHasKey(
-                        cursorRequest.getKey().doubleValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+            if (subCategoryId == 0L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryOrderByScoreHasKey(
+                            cursorRequest.getKey().doubleValue(), brandId, categoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryOrderByScoreNoKey(
+                            brandId, categoryId, cursorRequest.getSize());
+                }
             } else {
-                return productRepository.findAllByBrandCategoryOrderByScoreNoKey(
-                        brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByScoreHasKey(
+                            cursorRequest.getKey().doubleValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByScoreNoKey(
+                            brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                }
             }
         } else if (sortId == 2L) {
-            if (cursorRequest.hasKey()) {
-                return productRepository.findAllByBrandCategoryOrderByPriceAscHasKey(
-                        cursorRequest.getKey().intValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+            if (subCategoryId == 0L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryOrderByPriceAscHasKey(
+                            cursorRequest.getKey().intValue(), brandId, categoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryOrderByPriceAscNoKey(
+                            brandId, categoryId, cursorRequest.getSize());
+                }
             } else {
-                return productRepository.findAllByBrandCategoryOrderByPriceAscNoKey(
-                        brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByPriceAscHasKey(
+                            cursorRequest.getKey().intValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByPriceAscNoKey(
+                            brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                }
             }
         } else if (sortId == 3L){
-            if (cursorRequest.hasKey()) {
-                return productRepository.findAllByBrandCategoryOrderByPriceDescHasKey(
-                        cursorRequest.getKey().intValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+            if (subCategoryId == 0L) {
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryOrderByPriceDescHasKey(
+                            cursorRequest.getKey().intValue(), brandId, categoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryOrderByPriceDescNoKey(
+                            brandId, categoryId, cursorRequest.getSize());
+                }
             } else {
-                return productRepository.findAllByBrandCategoryOrderByPriceDescNoKey(
-                        brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                if (cursorRequest.hasKey()) {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByPriceDescHasKey(
+                            cursorRequest.getKey().intValue(), brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                } else {
+                    return productRepository.findAllByBrandCategoryAndSubOrderByPriceDescNoKey(
+                            brandId, categoryId, subCategoryId, cursorRequest.getSize());
+                }
             }
         } else {
             throw new Exception("Wrong SortId!!");

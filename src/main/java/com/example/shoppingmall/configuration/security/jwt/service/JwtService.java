@@ -3,7 +3,9 @@ package com.example.shoppingmall.configuration.security.jwt.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.example.shoppingmall.configuration.security.jwt.TokenResponse;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +13,10 @@ import org.codehaus.groovy.syntax.TokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -65,11 +69,12 @@ public class JwtService {
         log.info("재발급된 Access Token: {}", accessToken);
     }
 
-    public void sendAccessTokenAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken){
+    public void sendAccessTokenAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         setAccessTokenHeader(response, accessToken);
         setRefreshTokenHeader(response, refreshToken);
 //        sendAccessToken(response, accessToken);
+
         log.info("Access Token, Refresh Token 헤더 설정");
     }
 
@@ -122,6 +127,15 @@ public class JwtService {
 
     private void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
         response.setHeader(refreshHeader, refreshToken);
+        response.addCookie(createCookie(refreshToken));
+    }
+
+    private Cookie createCookie(String refreshToken) {
+        Cookie cookie = new Cookie(refreshHeader, refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24); // 24시간
+        return cookie;
     }
 
 
