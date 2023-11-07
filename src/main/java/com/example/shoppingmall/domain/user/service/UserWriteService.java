@@ -2,14 +2,17 @@ package com.example.shoppingmall.domain.user.service;
 
 import com.example.shoppingmall.application.usecase.user.CreateUserInfoSetUseCase;
 import com.example.shoppingmall.domain.cart.service.CartWriteService;
-import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
+import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.dto.req.RegisterUserCommand;
 import com.example.shoppingmall.domain.user.entity.User;
+import com.example.shoppingmall.domain.user.exception.EmailDuplicateException;
+import com.example.shoppingmall.domain.user.exception.PasswordMismatchException;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import com.example.shoppingmall.domain.user.util.Role;
 import com.example.shoppingmall.domain.user.util.SocialType;
+import com.example.shoppingmall.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,11 +37,18 @@ public class UserWriteService {
 
 
     @Transactional
-    public UserDto createUser(RegisterUserCommand registerUserCommand) throws Exception {
+    public UserDto createUser(RegisterUserCommand registerUserCommand) {
+        // 이메일 중복 에러
+        if (userRepository.existsByEmail(registerUserCommand.getEmail())) {
+            throw new EmailDuplicateException(registerUserCommand.getEmail(), ErrorCode.EMAIL_DUPLICATION);
+        }
+
+        // 비밀번호 미스매치 에러
         if (!registerUserCommand.getPassword()
                 .equals(registerUserCommand.getConfirmPassword())) {
-            throw new Exception("비밀번호와 확인 비밀번호가 다릅니다!!");
+            throw new PasswordMismatchException(registerUserCommand.getPassword(), ErrorCode.PASSWORD_MISMATCH);
         }
+
 
         var user = User.builder()
                 .name(registerUserCommand.getName())
@@ -58,12 +68,6 @@ public class UserWriteService {
         var savedUser = userRepository.save(user);
         log.info("User 저장 성공");
 
-//        cartWriteService.createCart(savedUser);
-//        log.info("장바구니 생성");
-//
-//        birthWriteService.createBirth(birthDate, savedUser);
-//        addressWriteService.createAddress(addressInfo, savedUser);
-//        log.info("생년월일, 주소 생성 완료");
         createUserInfoSetUseCase.createUserInfoSet(savedUser, addressInfo, birthDate);
 
         return toDto(userRepository.save(savedUser));
