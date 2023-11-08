@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,15 +80,23 @@ public class BrandReadService {
     }
 
     private List<Brand> findAllLikeBrand(User user, Long sortId) throws Exception {
+        List<Brand> likedBrandList = new ArrayList<>();
+
         if (sortId.equals(0L)) {
-            return brandRepository.findLikeBrandsOrderByLike(user.getId());
+             var findBrand = brandRepository.findLikeBrandsOrderByLike(user.getId());
+             if (findBrand.isPresent()) {
+                 return findBrand.get();
+             }
         } else if (sortId.equals(1L)) {
-            return brandRepository.findLikeBrandsOrderByNameAsc(user.getId());
+            var findBrand = brandRepository.findLikeBrandsOrderByNameAsc(user.getId());
+
         } else if (sortId.equals(2L)) {
             return brandRepository.findLikeBrandsOrderByNameDesc(user.getId());
         } else {
             throw new Exception("Wrong SortId!!");
         }
+
+        return likedBrandList;
     }
 
 

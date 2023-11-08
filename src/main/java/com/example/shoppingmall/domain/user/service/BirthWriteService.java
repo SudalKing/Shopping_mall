@@ -31,19 +31,19 @@ public class BirthWriteService {
     }
 
     @Transactional
-    public void updateBirth(User user, Map<String, Object> updates) {
+    public void updateBirth(User user, BirthDate birthDate) {
         UserBirth userBirth = birthRepository.findByUserId(user.getId());
 
-        if (updates.containsKey("year")) {
-            userBirth.updateYear(updates.get("year").toString());
+        if (birthDate.getYear() != null) {
+            userBirth.updateYear(birthDate.getYear());
         }
 
-        if (updates.containsKey("month")) {
-            userBirth.updateMonth(updates.get("month").toString());
+        if (birthDate.getMonth() != null) {
+            userBirth.updateMonth(birthDate.getMonth());
         }
 
-        if (updates.containsKey("day")) {
-            userBirth.updateDay(updates.get("day").toString());
+        if (birthDate.getDay() != null) {
+            userBirth.updateDay(birthDate.getDay());
         }
     }
 }

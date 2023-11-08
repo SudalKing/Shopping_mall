@@ -68,6 +68,10 @@ public class User {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
     public void updatePassword(String password) {
         this.password = password;
     }

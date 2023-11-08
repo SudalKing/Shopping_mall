@@ -131,13 +131,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 2. 인기순
     @Query(value = "select * from product as p left join best_product as bp on p.id = bp.product_id " +
-            "where bp.score < :score and p.category_id = :categoryId order by bp.score desc limit :size;", nativeQuery = true)
+            "where bp.score < :score and p.category_id = :categoryId order by bp.score desc limit :size", nativeQuery = true)
     List<Product> findAllByCategoryIdOrderByScoreHasKey(@Param("score") Double score,
                                                         @Param("categoryId") Long categoryId,
                                                         @Param("size") int size);
 
     @Query(value = "select * from product as p left join best_product as bp on p.id = bp.product_id " +
-            "where p.category_id = :categoryId order by bp.score desc limit :size;", nativeQuery = true)
+            "where p.category_id = :categoryId order by bp.score desc limit :size", nativeQuery = true)
     List<Product> findAllByCategoryIdOrderByScoreNoKey(@Param("categoryId") Long categoryId,
                                                        @Param("size") int size);
 
@@ -149,7 +149,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                                       @Param("size") int size);
 
     @Query(value = "select * from product as p left join best_product as bp on p.id = bp.product_id " +
-            "where p.category_id = :categoryId and sub_category_id = :subCategoryId order by bp.score desc limit :size", nativeQuery = true)
+            "where p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by bp.score desc limit :size", nativeQuery = true)
     List<Product> findAllByCategoryAndSubCategoryIdOrderByScoreNoKey(@Param("categoryId") Long categoryId,
                                                                      @Param("subCategoryId") Long subCategoryId,
                                                                      @Param("size") int size);
@@ -238,21 +238,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // ========================================== subCategory 없는 카테고리, 브랜드별 전체 조회 ====================================
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where p.id < :id " +
-            "and bp.brand_id = :brandId and p.category_id = :categoryId order by id desc limit :size", nativeQuery = true)
+            "and bp.brand_id = :brandId and p.category_id = :categoryId order by p.id desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByIdDescHasKey(@Param("id") Long id,
                                                             @Param("brandId") Long brandId,
                                                             @Param("categoryId") Long categoryId,
                                                             @Param("size") int size);
 
-    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where bp.brand_id = :brandId " +
-            "and p.category_id = :categoryId order by id desc limit :size", nativeQuery = true)
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
+            "where bp.brand_id = :brandId and p.category_id = :categoryId order by p.id desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByIdDescNoKey(@Param("brandId") Long brandId,
                                                            @Param("categoryId") Long categoryId,
                                                            @Param("size") int size);
 
     // 2. 인기순(HasKey)
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id left join best_product as bep " +
-            "on p.id = bep.product_id where bep.score < :score and bp.brand_id = :brandId and p.category_id = :categoryId" +
+            "on p.id = bep.product_id where bep.score < :score and bp.brand_id = :brandId and p.category_id = :categoryId " +
             "order by bep.score desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByScoreHasKey(@Param("score") Double score,
                                                            @Param("brandId") Long brandId,
@@ -260,7 +260,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                            @Param("size") int size);
 
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id left join best_product as bep " +
-            "on p.id = bep.product_id where bp.brand_id = :brandId and p.category_id = :categoryId" +
+            "on p.id = bep.product_id where bp.brand_id = :brandId and p.category_id = :categoryId " +
             "order by bep.score desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryOrderByScoreNoKey(@Param("brandId") Long brandId,
                                                           @Param("categoryId") Long categoryId,
@@ -296,8 +296,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                               @Param("size") int size);
 
     // =============================================== subCategory 존재 =================================================
-    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where p.id < :id " +
-            "and bp.brand_id = :brandId and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by id desc limit :size", nativeQuery = true)
+    @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id " +
+            "where p.id < :id and bp.brand_id = :brandId and p.category_id = :categoryId " +
+            "and p.sub_category_id = :subCategoryId order by p.id desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryAndSubOrderByIdDescHasKey(@Param("id") Long id,
                                                                   @Param("brandId") Long brandId,
                                                                   @Param("categoryId") Long categoryId,
@@ -305,7 +306,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                                   @Param("size") int size);
 
     @Query(value = "select * from product as p left join brand_product as bp on p.id = bp.product_id where bp.brand_id = :brandId " +
-            "and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by id desc limit :size", nativeQuery = true)
+            "and p.category_id = :categoryId and p.sub_category_id = :subCategoryId order by p.id desc limit :size", nativeQuery = true)
     List<Product> findAllByBrandCategoryAndSubOrderByIdDescNoKey(@Param("brandId") Long brandId,
                                                                  @Param("categoryId") Long categoryId,
                                                                  @Param("subCategoryId") Long subCategoryId,

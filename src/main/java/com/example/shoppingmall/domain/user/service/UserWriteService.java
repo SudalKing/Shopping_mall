@@ -6,6 +6,7 @@ import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
 import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.dto.req.RegisterUserCommand;
+import com.example.shoppingmall.domain.user.dto.req.UpdateUserInfoRequest;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.exception.EmailDuplicateException;
 import com.example.shoppingmall.domain.user.exception.PasswordMismatchException;
@@ -83,19 +84,32 @@ public class UserWriteService {
     }
 
     @Transactional
-    public void updateUser(User user, Map<String, Object> updates) {
-        if (updates.containsKey("password")) {
-            String password = passwordEncoder.encode(updates.get("password").toString());
-            user.updatePassword(password);
-        }
+    public void updateUser(User user, UpdateUserInfoRequest updates) {
+        if (updates != null) {
 
-        if (updates.containsKey("phoneNumber")) {
-            user.updatePhoneNumber(updates.get("phoneNumber").toString());
+            if (updates.getName() != null) {
+                user.updateName(updates.getName());
+            }
+
+            if (updates.getPhoneNumber() != null) {
+                user.updatePhoneNumber(updates.getPhoneNumber());
+            }
+
+            if (updates.getPassword() != null) {
+                user.updatePassword(passwordEncoder.encode(updates.getPassword()));
+            }
+
+            if (updates.getAddressInfo() != null) {
+                addressWriteService.updateAddress(user, updates.getAddressInfo());
+            }
+
+            if (updates.getBirthDate() != null) {
+                birthWriteService.updateBirth(user, updates.getBirthDate());
+            }
+
+            user.updateInfoSet();
+            log.info("사용자 정보 업데이트 완료");
         }
-        addressWriteService.updateAddress(user, updates);
-        birthWriteService.updateBirth(user, updates);
-        user.updateInfoSet();
-        log.info("사용자 정보 업데이트 완료");
     }
 
     public UserDto toDto(User user){

@@ -31,19 +31,19 @@ public class AddressWriteService {
     }
 
     @Transactional
-    public void updateAddress(User user, Map<String, Object> updates) {
+    public void updateAddress(User user, AddressInfo addressInfo) {
         UserAddress userAddress = addressRepository.findByUserId(user.getId());
 
-        if (updates.containsKey("postcode")) {
-            userAddress.updatePostCode(updates.get("postcode").toString());
+        if (addressInfo.getPostcode() != null) {
+            userAddress.updatePostCode(addressInfo.getPostcode());
         }
 
-        if (updates.containsKey("address")) {
-            userAddress.updateAddress(updates.get("address").toString());
+        if (addressInfo.getAddress() != null) {
+            userAddress.updateAddress(addressInfo.getAddress());
         }
 
-        if (updates.containsKey("addressDetail")) {
-            userAddress.updateAddressDetail(updates.get("addressDetail").toString());
+        if (addressInfo.getAddressDetail() != null) {
+            userAddress.updateAddressDetail(addressInfo.getAddressDetail());
         }
     }
 }

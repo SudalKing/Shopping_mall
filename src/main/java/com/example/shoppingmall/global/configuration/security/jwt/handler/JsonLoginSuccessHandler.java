@@ -56,6 +56,7 @@ public class JsonLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
         ObjectMapper objectMapper = new ObjectMapper();
         String body = objectMapper.writeValueAsString(tokenResponse);
         response.getWriter().write(body);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private String getUsername(Authentication authentication) {

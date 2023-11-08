@@ -28,12 +28,20 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private static final List<String> NO_CHECK_PATHS = Arrays.asList("/login", "/", "/logout", "/login/oauth2/code/**", "/user/signup",
-        "/swagger-ui/**", "/v3/**", "/product/get/**", "/brand/get/**");
-
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+
+    private static final List<String> NO_CHECK_PATHS = Arrays.asList(
+            "/login", "/", "/logout",
+            "/login/oauth2/code/**",
+            "/user/signup", "/swagger-ui/**", "/v3/**"
+    );
+
+    private static final List<String> NO_CHECK_SERVICE_PATHS = Arrays.asList(
+            "/product/get/**",
+            "/brand/get/**"
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -41,9 +49,17 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException
     {
         String requestURI = request.getRequestURI();
+        Optional<String> accessToken = jwtService.getAccessToken(request);
 
         for (String path : NO_CHECK_PATHS) {
             if (new AntPathMatcher().match(path, requestURI)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+        }
+
+        for (String servicePath : NO_CHECK_SERVICE_PATHS) {
+            if (new AntPathMatcher().match(servicePath, requestURI) && accessToken.isEmpty()) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -53,15 +69,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 .filter(jwtService::verifyToken)
                 .orElse(null);
 
-        if (refreshToken != null){
-            validateAndRenewAccessToken(response, refreshToken);
+
+        if (refreshToken != null) {
+            validateAndRenewAccessToken(request, response, refreshToken);
         } else {
             authenticationAccessToken(request, response, filterChain);
         }
-
     }
 
-    private void validateAndRenewAccessToken(HttpServletResponse response, String refreshToken) {
+    private void validateAndRenewAccessToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
 
         userRepository.findByRefreshToken(refreshToken)
                 .ifPresent(user -> {
@@ -71,6 +87,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         jwtService.sendAccessTokenAndRefreshToken(response,
                                 jwtService.createAccessToken(user.getEmail()),
                                 renewRefreshToken);
+//                        response.sendRedirect(request.getRequestURI());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

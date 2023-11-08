@@ -2,12 +2,12 @@ package com.example.shoppingmall.domain.brand.repository;
 
 import com.example.shoppingmall.domain.brand.entity.Brand;
 import com.example.shoppingmall.domain.brand.util.BrandInfoMapping;
-import com.example.shoppingmall.domain.brand.util.CategoryIdsMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BrandRepository extends JpaRepository<Brand, Long> {
     Brand findBrandById(Long id);
@@ -24,17 +24,25 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query(value = "select * from brand order by name asc", nativeQuery = true)
     List<Brand> findAllBrandsOrderByNameAsc();
     // ========================================
+//@Query(value = "SELECT b.id, b.name, COUNT(bl.brand_id) as likeCount " +
+//        "FROM brand as b " +
+//        "LEFT JOIN brand_like as bl on b.id = bl.brand_id " +
+//        "WHERE bl.user_id = :userId " +
+//        "GROUP BY b.id, b.name " +
+//        "ORDER BY likeCount DESC", nativeQuery = true)
+    @Query(value = "select * from brand as b " +
+            "left join brand_like as bl on b.id = bl.brand_id " +
+            "where bl.user_id = :userId " +
+            "group by b.id " +
+            "order by count(b.id) desc", nativeQuery = true)
+    Optional<List<Brand>> findLikeBrandsOrderByLike(@Param("userId") Long userId);
 
     @Query(value = "select b.* from brand as b left join brand_like as bl on b.id = bl.brand_id " +
-            "where bl.user_id = userId order by count(b.id) desc", nativeQuery = true)
-    List<Brand> findLikeBrandsOrderByLike(@Param("userId") Long userId);
-
-    @Query(value = "select b.* from brand as b left join brand_like as bl on b.id = bl.brand_id " +
-            "where bl.user_id = userId order by b.name asc", nativeQuery = true)
+            "where bl.user_id = :userId order by b.name asc", nativeQuery = true)
     List<Brand> findLikeBrandsOrderByNameAsc(@Param("userId") Long userId);
 
     @Query(value = "select b.* from brand as b left join brand_like as bl on b.id = bl.brand_id " +
-            "where bl.user_id = userId order by b.name desc", nativeQuery = true)
+            "where bl.user_id = :userId order by b.name desc", nativeQuery = true)
     List<Brand> findLikeBrandsOrderByNameDesc(@Param("userId") Long userId);
 
     // ==================================================================

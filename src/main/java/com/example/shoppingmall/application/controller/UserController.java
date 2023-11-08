@@ -2,6 +2,7 @@ package com.example.shoppingmall.application.controller;
 
 import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.dto.req.RegisterUserCommand;
+import com.example.shoppingmall.domain.user.dto.req.UpdateUserInfoRequest;
 import com.example.shoppingmall.domain.user.dto.res.UserInfoResponse;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
@@ -37,7 +39,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST")
     })
     @PostMapping("/signup")
-    public ResponseEntity<Void> createUser(@RequestBody RegisterUserCommand registerUserCommand) throws Exception {
+    public ResponseEntity<Void> createUser(@RequestBody @Valid RegisterUserCommand registerUserCommand) throws Exception {
         UserDto userDto = userWriteService.createUser(registerUserCommand);
         log.info("회원 가입 성공");
 
@@ -57,9 +59,11 @@ public class UserController {
     @Operation(summary = "회원 정보 수정", description = "[인증 필요]")
     @ApiResponse(responseCode = "204", description = "OK")
     @PutMapping("/update/info")
-    public ResponseEntity<Void> updateUser(Principal principal, @RequestBody Map<String, Object> updates){
+    public ResponseEntity<Void> updateUser(Principal principal, @RequestBody UpdateUserInfoRequest updateUserInfoRequest){
         User user = userReadService.getUserByEmail(principal.getName());
-        userWriteService.updateUser(user, updates);
+
+        userWriteService.updateUser(user, updateUserInfoRequest);
+
         return ResponseEntity.noContent().build();
     }
 
