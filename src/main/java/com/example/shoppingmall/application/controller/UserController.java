@@ -1,16 +1,13 @@
 package com.example.shoppingmall.application.controller;
 
 import com.example.shoppingmall.domain.user.dto.UserDto;
-import com.example.shoppingmall.domain.user.dto.req.RegisterUserCommand;
+import com.example.shoppingmall.domain.user.dto.req.RegisterUserRequest;
 import com.example.shoppingmall.domain.user.dto.req.UpdateUserInfoRequest;
 import com.example.shoppingmall.domain.user.dto.res.UserInfoResponse;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.domain.user.service.UserWriteService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,8 +34,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST")
     })
     @PostMapping("/signup")
-    public ResponseEntity<Void> createUser(@RequestBody @Valid RegisterUserCommand registerUserCommand) throws Exception {
-        UserDto userDto = userWriteService.createUser(registerUserCommand);
+    public ResponseEntity<Void> createUser(@RequestBody @Valid RegisterUserRequest registerUserRequest) {
+        UserDto userDto = userWriteService.createUser(registerUserRequest);
         log.info("회원 가입 성공");
 
         return ResponseEntity.status(HttpStatus.CREATED)

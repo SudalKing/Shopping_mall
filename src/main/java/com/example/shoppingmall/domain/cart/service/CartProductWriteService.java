@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,9 +23,9 @@ public class CartProductWriteService {
 
     @Transactional
     public void createCartProduct(Cart cart, Product product, int amount){
-        CartProduct findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+        Optional<CartProduct> findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
-        if(findCartProduct == null){
+        if(findCartProduct.isEmpty()){
             CartProduct cartProduct = CartProduct.builder()
                     .cartId(cart.getId())
                     .productId(product.getId())
@@ -33,15 +34,15 @@ public class CartProductWriteService {
                     .enabled(true)
                     .build();
             cartProductRepository.save(cartProduct);
-        } else {findCartProduct.addCount(amount);}
+        } else {findCartProduct.get().addCount(amount);}
     }
 
     @Transactional
     public void decreaseCartProductCount(Cart cart, Product product) throws Exception {
-        CartProduct findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+        Optional<CartProduct> findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
-        if (findCartProduct.getAmount() > 1) {
-            findCartProduct.minusCount(1);
+        if (findCartProduct.isPresent() && findCartProduct.get().getAmount() > 1) {
+            findCartProduct.get().minusCount(1);
         } else {
             throw new Exception("Can not minus!!");
         }
@@ -49,8 +50,13 @@ public class CartProductWriteService {
 
     @Transactional
     public void increaseCartProductCount(Cart cart, Product product) throws Exception {
-        CartProduct findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
-        findCartProduct.addCount(1);
+        Optional<CartProduct> findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
+
+        if (findCartProduct.isPresent()) {
+            findCartProduct.get().addCount(1);
+        } else {
+            throw new Exception("");
+        }
     }
 
     @Transactional

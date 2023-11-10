@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Builder
-public class ProductReadResponse {
+public class ProductInCartReadResponse {
     private Long id;
     private String name;
     private String imageUrl;

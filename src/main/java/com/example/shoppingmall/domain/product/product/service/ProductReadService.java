@@ -2,9 +2,10 @@ package com.example.shoppingmall.domain.product.product.service;
 
 import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
 import com.example.shoppingmall.domain.brand.repository.BrandRepository;
-import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.repository.ProductLikeRepository;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
@@ -457,6 +458,12 @@ public class ProductReadService {
 
 
 
+    public List<ProductInCartReadResponse> getProductsInCartByIds(List<Long> productIds) {
+        List<Product> products = productRepository.findProductsByIdIn(productIds);
+        return products.stream()
+                .map(this::toProductInCartReadResponse)
+                .collect(Collectors.toList());
+    }
 
     public List<ProductReadResponse> getProductsByIds(List<Long> productIds) {
         List<Product> products = productRepository.findProductsByIdIn(productIds);
@@ -528,9 +535,9 @@ public class ProductReadService {
         return clothesInfo;
     }
 
-    public ProductReadResponse toProductReadResponse(Product product) {
+    public ProductInCartReadResponse toProductInCartReadResponse(Product product) {
         Map<String, String> clothesInfo = getClothesSizeAndColor(product);
-        return new ProductReadResponse(
+        return new ProductInCartReadResponse(
                 product.getId(),
                 product.getName(),
                 productImageReadService.getUrl(product.getId()),
@@ -541,6 +548,18 @@ public class ProductReadService {
                 getDiscountPrice(product)
         );
     }
+
+    public ProductReadResponse toProductReadResponse(Product product) {
+        Map<String, String> clothesInfo = getClothesSizeAndColor(product);
+        return new ProductReadResponse(
+                product.getId(),
+                product.getName(),
+                productImageReadService.getUrl(product.getId()),
+                clothesInfo.get("color"),
+                clothesInfo.get("size")
+        );
+    }
+
     public ProductResponse toDto(Product product){
         return ProductResponse.builder()
                 .id(product.getId())

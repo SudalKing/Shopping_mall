@@ -5,7 +5,7 @@ import com.example.shoppingmall.domain.cart.service.CartWriteService;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
 import com.example.shoppingmall.domain.user.dto.UserDto;
-import com.example.shoppingmall.domain.user.dto.req.RegisterUserCommand;
+import com.example.shoppingmall.domain.user.dto.req.RegisterUserRequest;
 import com.example.shoppingmall.domain.user.dto.req.UpdateUserInfoRequest;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.exception.EmailDuplicateException;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,24 +37,23 @@ public class UserWriteService {
 
 
     @Transactional
-    public UserDto createUser(RegisterUserCommand registerUserCommand) {
-        // 이메일 중복 에러
-        if (userRepository.existsByEmail(registerUserCommand.getEmail())) {
-            throw new EmailDuplicateException(registerUserCommand.getEmail(), ErrorCode.EMAIL_DUPLICATION);
+    public UserDto createUser(RegisterUserRequest registerUserRequest) {
+        // 이메일 중복 검증
+        if (userRepository.existsByEmail(registerUserRequest.getEmail())) {
+            throw new EmailDuplicateException(registerUserRequest.getEmail(), ErrorCode.EMAIL_DUPLICATION);
         }
 
-        // 비밀번호 미스매치 에러
-        if (!registerUserCommand.getPassword()
-                .equals(registerUserCommand.getConfirmPassword())) {
-            throw new PasswordMismatchException(registerUserCommand.getPassword(), ErrorCode.PASSWORD_MISMATCH);
+        // 비밀번호 미스매치 검증
+        if (!registerUserRequest.getPassword()
+                .equals(registerUserRequest.getConfirmPassword())) {
+            throw new PasswordMismatchException(registerUserRequest.getPassword(), ErrorCode.PASSWORD_MISMATCH);
         }
-
 
         var user = User.builder()
-                .name(registerUserCommand.getName())
-                .phoneNumber(registerUserCommand.getPhoneNumber())
-                .email(registerUserCommand.getEmail())
-                .password(passwordEncoder.encode(registerUserCommand.getPassword()))
+                .name(registerUserRequest.getName())
+                .phoneNumber(registerUserRequest.getPhoneNumber())
+                .email(registerUserRequest.getEmail())
+                .password(passwordEncoder.encode(registerUserRequest.getPassword()))
                 .role(Role.USER)
                 .socialType(SocialType.WEB)
                 .createdAt(LocalDateTime.now())
@@ -63,8 +61,8 @@ public class UserWriteService {
                 .infoSet(true)
                 .build();
 
-        AddressInfo addressInfo = registerUserCommand.getAddressInfo();
-        BirthDate birthDate = registerUserCommand.getBirthDate();
+        BirthDate birthDate = registerUserRequest.getBirthDate();
+        AddressInfo addressInfo = registerUserRequest.getAddressInfo();
 
         var savedUser = userRepository.save(user);
         log.info("User 저장 성공");

@@ -2,7 +2,6 @@ package com.example.shoppingmall.domain.user.dto.req;
 
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,8 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
-@Schema(description = "회원가입 Request class")
-public class RegisterUserCommand {
+public class RegisterUserRequest {
 
     @NotNull
     private String name;
@@ -30,7 +28,9 @@ public class RegisterUserCommand {
     @NotNull
     private String phoneNumber;
 
+    @NotNull
     private BirthDate birthDate;
 
+    @NotNull
     private AddressInfo addressInfo;
 }

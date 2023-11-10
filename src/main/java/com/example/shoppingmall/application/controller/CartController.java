@@ -6,7 +6,7 @@ import com.example.shoppingmall.domain.cart.dto.req.CartProductRequest;
 import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.cart.service.CartProductWriteService;
 import com.example.shoppingmall.domain.cart.service.CartReadService;
-import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.entity.User;
@@ -37,7 +37,7 @@ public class CartController {
     @Operation(summary = "장바구니 모든 상품 조회", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/get/all")
-    public ResponseEntity<List<ProductReadResponse>> readAllCartProducts(Principal principal){
+    public ResponseEntity<List<ProductInCartReadResponse>> readAllCartProducts(Principal principal){
         return ResponseEntity.ok(readCartProductsUseCase.execute(principal));
     }
 
@@ -70,7 +70,7 @@ public class CartController {
     @Operation(summary = "장바구니 상품 추가", description = "[인증 필요]")
     @ApiResponse(responseCode = "201", description = "OK")
     @PostMapping("/product/add")
-    public ResponseEntity<List<ProductReadResponse>> createCartProduct(Principal principal,@RequestBody List<CartProductRequest> cartProductRequests){
+    public ResponseEntity<List<ProductInCartReadResponse>> createCartProduct(Principal principal, @RequestBody List<CartProductRequest> cartProductRequests){
         User user = userReadService.getUserByEmail(principal.getName());
         createCartProductUseCase.execute(user, cartProductRequests);
 

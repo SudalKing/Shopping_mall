@@ -8,9 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CartProductRepository extends JpaRepository<CartProduct, Long> {
-    CartProduct findCartProductByProductIdAndCartId(Long productId, Long cartId);
+    Optional<CartProduct> findCartProductByProductIdAndCartId(Long productId, Long cartId);
 
     List<CartProduct> findCartProductsByCartIdAndEnabledTrue(Long cartId);
 

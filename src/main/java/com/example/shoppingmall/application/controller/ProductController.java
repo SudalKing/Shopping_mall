@@ -4,6 +4,7 @@ import com.example.shoppingmall.application.usecase.product.CreateProductUseCase
 import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase;
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.service.ProductLikeWriteService;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
@@ -146,7 +147,14 @@ public class ProductController {
     }
     // ==================================================================================
 
-    @Operation(summary = "상품 List 조회", description = "[인증 불필요]")
+    @Operation(summary = "장바구니 상품 List 조회", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @GetMapping("/cart-in/get")
+    public List<ProductInCartReadResponse> readProductsInCart(@RequestParam List<Long> productIds){
+        return productReadService.getProductsInCartByIds(productIds);
+    }
+
+    @Operation(summary = "상품 List 조회", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/get")
     public List<ProductReadResponse> readProducts(@RequestParam List<Long> productIds){

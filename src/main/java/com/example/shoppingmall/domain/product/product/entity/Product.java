@@ -54,8 +54,8 @@ public class Product {
     public void addStock(int count){
         stock += count;
     }
-    public void minusStock(int count){
-        stock -= count;
+    public void decreaseStock(int amount){
+        stock -= amount;
     }
     public void validateStockAndPrice(){
         if(stock <= 0 || price <= 0) deleted = true;

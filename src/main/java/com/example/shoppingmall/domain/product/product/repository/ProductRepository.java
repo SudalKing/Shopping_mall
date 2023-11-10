@@ -87,10 +87,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 2. 인기순
     @Query(value = "select * from product as p left join best_product as bp on p.id = bp.product_id " +
-            "where bp.score < :score and p.saled = true order by bp.score desc limit :size;", nativeQuery = true)
+            "where bp.score < :score and p.saled = true order by bp.score desc limit :size", nativeQuery = true)
     List<Product> findAllSaleOrderByScoreHasKey(@Param("score") Double score, @Param("size") int size);
     @Query(value = "select * from product as p left join best_product as bp on p.id = bp.product_id " +
-            "where p.saled = true order by bp.score desc limit :size;", nativeQuery = true)
+            "where p.saled = true order by bp.score desc limit :size", nativeQuery = true)
     List<Product> findAllSaleOrderByScoreNoKey(@Param("size") int size);
 
     // 3. 낮은 가격순

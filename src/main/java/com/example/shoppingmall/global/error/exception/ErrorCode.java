@@ -17,14 +17,15 @@ public enum ErrorCode {
     // User
     EMAIL_DUPLICATION(400, "U001", "Email is Duplication"),
     LOGIN_INPUT_INVALID(400, "U002", "Login input is invalid"),
-    PASSWORD_MISMATCH(400, "U003", "Password dose not match")
+    PASSWORD_MISMATCH(400, "U003", "Password dose not match"),
+    BIRTHDATE_INPUT_INVALID(400, "U004", "Check your date of birth")
 
     // More
     ;
 
     private final String code;
     private final String message;
-    private int status;
+    private final int status;
 
     ErrorCode(final int status, final String code, final String message) {
         this.status = status;
