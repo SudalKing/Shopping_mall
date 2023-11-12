@@ -124,7 +124,6 @@ public class ProductReviewController {
     @GetMapping("/get/review/{productId}")
     public ResponseEntity<ReviewStatsResponse> readReviewStats(Principal principal,
                                                           @PathVariable Long productId) {
-        User user = userReadService.getUserByEmail(principal.getName());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productReviewReadService.getReviewStatsByProductId(productId));
     }

@@ -17,6 +17,7 @@ public class ReviewListResponse {
     private String color;
     private String size;
     private Integer rating;
+    private String content;
     private String reviewImageUrl;
     private Integer reviewLikeCount;
     private LocalDateTime createdAt;

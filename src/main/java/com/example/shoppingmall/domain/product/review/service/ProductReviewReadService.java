@@ -193,6 +193,7 @@ public class ProductReviewReadService {
                 .color(clothesInfo.get("color"))
                 .size(clothesInfo.get("size"))
                 .rating(productReview.getRating())
+                .content(productReview.getContent())
                 .reviewImageUrl(productReviewImageReadService.getUrl(productReview.getId()))
                 .reviewLikeCount(productReviewLikeReadService.getReviewLikeCount(productReview.getId()))
                 .createdAt(productReview.getCreatedAt())
