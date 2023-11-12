@@ -3,6 +3,7 @@ package com.example.shoppingmall.domain.product.review.service;
 import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.product.review.dto.req.ProductReviewRequest;
+import com.example.shoppingmall.domain.product.review.dto.req.UpdateProductReviewRequest;
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.repository.ProductReviewRepository;
 import com.example.shoppingmall.domain.user.entity.User;
@@ -49,17 +50,15 @@ public class ProductReviewWriteService {
     }
 
     @Transactional
-    public void updateReview(Long reviewId, Map<String, Object> updates) {
+    public void updateReview(Long reviewId, UpdateProductReviewRequest updates) {
         ProductReview productReview = productReviewRepository.findProductReviewById(reviewId);
 
-        if (updates.containsKey("content")) {
-            String content = updates.get("content").toString();
-            productReview.updateContent(content);
+        if (updates.getContent() != null) {
+            productReview.updateContent(updates.getContent());
         }
 
-        if (updates.containsKey("rating")) {
-            Integer rating = (Integer) updates.get("rating");
-            productReview.updateRating(rating);
+        if (updates.getRating() != null) {
+            productReview.updateRating(updates.getRating());
         }
     }
 

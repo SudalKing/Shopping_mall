@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -43,18 +44,17 @@ public class ProductReviewImageWriteService {
     }
 
     @Transactional
-    public void updateProductReviewImage(Long reviewId, List<MultipartFile> multipartFiles) {
-        List<S3FileDto> s3FileDtoList = amazonS3Service.uploadFiles("image", multipartFiles);
-
-        if (s3FileDtoList.isEmpty()) {
-            deleteProductImage(reviewId);
-            return;
+    public void updateProductReviewImage(Long reviewId, Optional<List<MultipartFile>> multipartFiles) {
+        if (multipartFiles.isEmpty()) {
+            deleteProductReviewImage(reviewId);
+        } else {
+            List<S3FileDto> s3FileDtoList = amazonS3Service.uploadFiles("image", multipartFiles.get());
+            deleteProductReviewImage(reviewId);
+            createProductReviewImage(reviewId, s3FileDtoList);
         }
-
-        createProductReviewImage(reviewId, s3FileDtoList);
     }
 
-    public void deleteProductImage(Long reviewId){
-        productReviewImageRepository.deleteAllByReviewId(reviewId);
+    public void deleteProductReviewImage(Long reviewId){
+        productReviewImageRepository.deleteByReviewId(reviewId);
     }
 }

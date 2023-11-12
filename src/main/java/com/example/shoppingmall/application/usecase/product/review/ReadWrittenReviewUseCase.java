@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class ReadWrittenReviewUseCase {
     public List<ProductReviewWrittenResponse> execute(User user) {
         List<ProductReviewWrittenResponse> responses = new ArrayList<>();
 
-        List<ProductReview> reviews = productReviewReadService.getAllReviewsByUserId(user.getId());
+        List<ProductReview> reviews = productReviewReadService.getAllReviewsByUserIdOrderByCreatedAt(user.getId());
 
         for (ProductReview review : reviews) {
             Product product = productReadService.getProductEntity(review.getProductId());
@@ -46,6 +47,8 @@ public class ReadWrittenReviewUseCase {
                     .build();
             responses.add(response);
         }
+
+        Collections.reverse(responses);
 
         return responses;
     }

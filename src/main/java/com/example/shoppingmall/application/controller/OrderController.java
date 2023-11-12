@@ -6,6 +6,7 @@ import com.example.shoppingmall.domain.order.dto.req.OrderRequest;
 import com.example.shoppingmall.domain.order.service.OrderReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
+import com.example.shoppingmall.util.PageCursor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -47,11 +48,14 @@ public class OrderController {
         return ResponseEntity.ok(orderReadService.getCurrentOrder(orderId));
     }
 
-    @Operation(summary = "사용자 주문 전체 조회", description = "인증 필요")
+    @Operation(summary = "사용자 주문 전체 조회", description = "[인증 필요]")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     @GetMapping("/get/all")
-    public ResponseEntity<List<OrderDto>> readAllOrders(Principal principal){
+    public PageCursor<OrderDto> readAllOrders(Principal principal,
+                                              @RequestParam(required = false) Number key,
+                                              int size)
+    {
         User user = userReadService.getUserByEmail(principal.getName());
-        return ResponseEntity.ok(orderReadService.getAllOrders(user));
+        return orderReadService.getAllOrdersByCursor(key, size, user);
     }
 }

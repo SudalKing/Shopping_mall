@@ -11,5 +11,5 @@ public interface ProductReviewImageRepository extends JpaRepository<ProductRevie
     @Query(value = "select upload_file_url from product_review_image where review_id = :reviewId", nativeQuery = true)
     List<String> findUploadFileUrlsByReviewId(Long reviewId);
     List<ProductReviewImage> findAllByReviewId(Long reviewId);
-    void deleteAllByReviewId(Long reviewId);
+    void deleteByReviewId(Long reviewId);
 }

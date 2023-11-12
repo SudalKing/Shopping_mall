@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface ProductReviewLikeRepository extends JpaRepository<ProductReviewLike, Long> {
     Long countAllById(Long id);
     Optional<ProductReviewLike> findByUserIdAndReviewId(Long userId, Long productReviewId);
+
+    Integer countAllByReviewId(Long reviewId);
 }
