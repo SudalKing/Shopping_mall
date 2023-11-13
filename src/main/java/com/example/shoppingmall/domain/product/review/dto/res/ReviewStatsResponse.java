@@ -15,4 +15,5 @@ public class ReviewStatsResponse {
     private Integer totalCount;
     private Double averageRating;
     private List<Integer> proportion;
+    private Integer photoReviewCount;
 }

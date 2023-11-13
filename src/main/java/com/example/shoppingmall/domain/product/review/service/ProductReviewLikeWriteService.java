@@ -8,6 +8,7 @@ import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class ProductReviewLikeWriteService {
                     .productId(productReview.getProductId())
                     .reviewId(productReview.getId())
                     .userId(user.getId())
+                    .createdAt(LocalDateTime.now())
                     .build();
             productReviewLikeRepository.save(productReviewLike);
         } else {

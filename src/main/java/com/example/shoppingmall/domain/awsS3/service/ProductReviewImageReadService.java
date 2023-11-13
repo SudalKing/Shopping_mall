@@ -29,6 +29,10 @@ public class ProductReviewImageReadService {
         }
     }
 
+    public Integer getPhotoReviewCount(Long productId) {
+        return productReviewImageRepository.countPhotoAllByProductId(productId);
+    }
+
 //
 //    public List<String> getUrls(Long reviewId){
 //        List<String> productImagesUrlList = productReviewImageRepository

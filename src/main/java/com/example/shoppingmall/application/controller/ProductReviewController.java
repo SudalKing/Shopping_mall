@@ -62,7 +62,10 @@ public class ProductReviewController {
     public PageCursor<ReviewListResponse> readProductReview(Principal principal,
                                                             @RequestParam(required = false) Number key,
                                                             int size, Long productId, Long sortId) throws Exception {
-        return productReviewReadService.getProductReviewsByCursor(key, size, sortId, productId);
+        var reviews = productReviewReadService.getProductReviewsByCursor(key, size, sortId, productId);
+        productReviewReadService.validatePrincipalLike(principal, reviews.getBody());
+
+        return reviews;
     }
 
     @Operation(summary = "작성 가능 리뷰 조회", description = "[인증 필요]")
@@ -87,7 +90,10 @@ public class ProductReviewController {
     public PageCursor<ReviewListResponse> readProductReviewImage(Principal principal,
                                                             @RequestParam(required = false) Number key,
                                                             int size, Long productId) throws Exception {
-        return productReviewReadService.getReviewImagesByCursor(key, size, productId);
+        var reviewImages = productReviewReadService.getReviewImagesByCursor(key, size, productId);
+        productReviewReadService.validatePrincipalLike(principal, reviewImages.getBody());
+
+        return reviewImages;
     }
 
     @Operation(summary = "리뷰 상세 조회", description = "[인증 필요]")
@@ -122,8 +128,7 @@ public class ProductReviewController {
     @Operation(summary = "리뷰 통계 조회", description = "[인증 불필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/get/review/{productId}")
-    public ResponseEntity<ReviewStatsResponse> readReviewStats(Principal principal,
-                                                          @PathVariable Long productId) {
+    public ResponseEntity<ReviewStatsResponse> readReviewStats(@PathVariable Long productId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productReviewReadService.getReviewStatsByProductId(productId));
     }

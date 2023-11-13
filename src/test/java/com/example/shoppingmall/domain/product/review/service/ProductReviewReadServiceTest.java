@@ -27,6 +27,7 @@ class ProductReviewReadServiceTest {
         var proportion = reviewStatsRes.getProportion();
         System.out.println("totalCount: " + reviewStatsRes.getTotalCount());
         System.out.println("avgRating: " + reviewStatsRes.getAverageRating());
+        System.out.println("photoCount: " + reviewStatsRes.getPhotoReviewCount());
 
         for (Integer count: proportion) {
             System.out.println("proportion: " + count);

@@ -13,10 +13,8 @@ import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -45,6 +43,7 @@ public class ProductReviewReadService {
                 .totalCount(getTotalReviewCount(productId))
                 .averageRating(getAverageRating(productId))
                 .proportion(getProportion(productId))
+                .photoReviewCount(productReviewImageReadService.getPhotoReviewCount(productId))
                 .build();
     }
 
@@ -67,6 +66,20 @@ public class ProductReviewReadService {
 
         return getReviewImageResponsePageCursor(cursorRequest, productReviews);
     }
+
+    /**
+     * 좋아요 검증
+     */
+    public void validatePrincipalLike(Principal principal, List<ReviewListResponse> cursorBody){
+        if (principal != null) {
+            Optional<User> userOptional = userReadService.getUserPrincipal(principal.getName());
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                updateLikeTrue(user, cursorBody);
+            }
+        }
+    }
+
 
 
     // ================================================= 로직 모음 ==========================================
@@ -116,6 +129,7 @@ public class ProductReviewReadService {
 
         return proportion;
     }
+
 
     private PageCursor<ReviewListResponse> getProductResponsePageCursor(CursorRequest cursorRequest, List<ProductReview> productReviews, Long sortId) throws Exception {
         var productReviewList = productReviews.stream()
@@ -182,6 +196,15 @@ public class ProductReviewReadService {
                 .orElse(CursorRequest.NONE_KEY_INTEGER);
     }
 
+    private void updateLikeTrue(User user, List<ReviewListResponse> reviewListResponses) {
+        reviewListResponses.forEach(
+                reviewListResponse -> {
+                    if (productReviewLikeReadService.getByUserIdAndReviewId(user.getId(), reviewListResponse.getReviewId()).isPresent()) {
+                        reviewListResponse.setLiked();
+                    }
+                }
+        );
+    }
 
     private ReviewListResponse toListResponse(ProductReview productReview) {
         User user = userReadService.getUserEntity(productReview.getUserId());

@@ -20,6 +20,7 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 
     Integer countByProductIdAndRating(Long productId, Integer rating);
 
+
     @Query(value = "select * from product_review " +
             "where id < :id and product_id = :productId " +
             "order by id desc limit :size", nativeQuery = true)
@@ -34,14 +35,17 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
                                                                      @Param("productId") Long productId);
 
 
+
     @Query(value = "select * from product_review as pr " +
             "left join product_review_like as prl on pr.id = prl.review_id " +
-            "where count(prl.id) < :like and pr.product_id = :productId " +
+            "where pr.product_id = :productId " +
             "group by pr.id " +
+            "having count(prl.id) <= :like " +
             "order by count(prl.id) desc limit :size", nativeQuery = true)
     List<ProductReview> findAllByProductIdByCursorOrderByLikeDescHasKey(@Param("like") Integer like,
                                                                         @Param("size") int size,
                                                                         @Param("productId") Long productId);
+
     @Query(value = "select * from product_review as pr " +
             "left join product_review_like as prl on pr.id = prl.review_id " +
             "where pr.product_id = :productId " +
@@ -50,13 +54,8 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
     List<ProductReview> findAllByProductIdByCursorOrderByLikeDescNoKey(@Param("size") int size,
                                                                        @Param("productId") Long productId);
 
-// @Query(value = "SELECT pr.* FROM product_review pr " +
-//               "INNER JOIN product_review_image pri ON pr.id = pri.review_id " +
-//               "WHERE pr.id < :id AND pr.product_id = :productId " +
-//               "ORDER BY pr.id DESC LIMIT :size", nativeQuery = true)
-//List<ProductReview> findAllByProductIdByCursorOrderByIdDescHasKey(@Param("id") Long id,
-//                                                                  @Param("size") int size,
-//                                                                  @Param("productId") Long productId);
+
+
 
     @Query(value = "select pr.* from product_review as pr " +
             "inner join product_review_image as pri on pr.id = pri.review_id " +

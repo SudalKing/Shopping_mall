@@ -20,5 +20,10 @@ public class ReviewListResponse {
     private String content;
     private String reviewImageUrl;
     private Integer reviewLikeCount;
+    private boolean isLiked;
     private LocalDateTime createdAt;
+
+    public void setLiked() {
+        this.isLiked = true;
+    }
 }
