@@ -6,6 +6,7 @@ import com.example.shoppingmall.domain.product.review.dto.res.ReviewListResponse
 import com.example.shoppingmall.domain.product.review.dto.res.ReviewStatsResponse;
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.repository.ProductReviewRepository;
+import com.example.shoppingmall.domain.product.review.repository.ReviewLikeScoreRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.util.CursorRequest;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProductReviewReadService {
     private final ProductReviewRepository productReviewRepository;
+    private final ReviewLikeScoreRepository reviewLikeScoreRepository;
 
     private final ProductReviewImageReadService productReviewImageReadService;
     private final UserReadService userReadService;
@@ -156,7 +158,7 @@ public class ProductReviewReadService {
             }
         } else if (sortId == 1L) {
             if (cursorRequest.hasKey()) {
-                return productReviewRepository.findAllByProductIdByCursorOrderByLikeDescHasKey(cursorRequest.getKey().intValue(), cursorRequest.getSize(), productId);
+                return productReviewRepository.findAllByProductIdByCursorOrderByLikeDescHasKey(cursorRequest.getKey().doubleValue(), cursorRequest.getSize(), productId);
             } else {
                 return productReviewRepository.findAllByProductIdByCursorOrderByLikeDescNoKey(cursorRequest.getSize(), productId);
             }
@@ -189,9 +191,9 @@ public class ProductReviewReadService {
                 .min()
                 .orElse(CursorRequest.NONE_KEY_LONG);
     }
-    private Integer getLikeCountNextKey(List<ReviewListResponse> reviewListResponses){
+    private Double getLikeCountNextKey(List<ReviewListResponse> reviewListResponses){
         return reviewListResponses.stream()
-                .mapToInt(ReviewListResponse::getReviewLikeCount)
+                .mapToDouble(ReviewListResponse::getReviewScore)
                 .min()
                 .orElse(CursorRequest.NONE_KEY_INTEGER);
     }
@@ -219,7 +221,13 @@ public class ProductReviewReadService {
                 .content(productReview.getContent())
                 .reviewImageUrl(productReviewImageReadService.getUrl(productReview.getId()))
                 .reviewLikeCount(productReviewLikeReadService.getReviewLikeCount(productReview.getId()))
+                .reviewScore(getReviewScore(productReview.getId()))
                 .createdAt(productReview.getCreatedAt())
                 .build();
+    }
+
+    private Double getReviewScore(Long reviewId) {
+        return reviewLikeScoreRepository.findReviewLikeScoreByReviewId(reviewId)
+                .get().getReviewScore();
     }
 }

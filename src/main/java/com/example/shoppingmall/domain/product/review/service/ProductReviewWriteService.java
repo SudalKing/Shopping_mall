@@ -5,7 +5,10 @@ import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.product.review.dto.req.ProductReviewRequest;
 import com.example.shoppingmall.domain.product.review.dto.req.UpdateProductReviewRequest;
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
+import com.example.shoppingmall.domain.product.review.entity.ReviewLikeScore;
+import com.example.shoppingmall.domain.product.review.repository.ProductReviewLikeRepository;
 import com.example.shoppingmall.domain.product.review.repository.ProductReviewRepository;
+import com.example.shoppingmall.domain.product.review.repository.ReviewLikeScoreRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,8 @@ import java.util.Map;
 @Service
 public class ProductReviewWriteService {
     private final ProductReviewRepository productReviewRepository;
+    private final ProductReviewLikeRepository productReviewLikeRepository;
+    private final ReviewLikeScoreRepository reviewLikeScoreRepository;
     private final OrderProductReadService orderProductReadService;
 
     @Transactional
@@ -34,6 +39,8 @@ public class ProductReviewWriteService {
                 .updatedAt(LocalDateTime.now())
                 .build();
         ProductReview savedReview = productReviewRepository.save(productReview);
+
+        createReviewLikeScore(savedReview.getId());
 
         OrderProduct orderProduct = orderProductReadService.
                 getOrderProductByOrderIdAndProductId(savedReview.getOrderId(), savedReview.getProductId());
@@ -60,6 +67,35 @@ public class ProductReviewWriteService {
         if (updates.getRating() != null) {
             productReview.updateRating(updates.getRating());
         }
+    }
+
+    public void createReviewLikeScore(Long productReviewId) {
+        ReviewLikeScore reviewLikeScore = ReviewLikeScore.builder()
+                .reviewId(productReviewId)
+                .reviewScore(getReviewScore(productReviewId))
+                .updatedAt(LocalDateTime.now())
+                .build();
+        reviewLikeScoreRepository.save(reviewLikeScore);
+    }
+
+    @Transactional
+    public void updateReviewLikeScore(Long reviewId) {
+        ReviewLikeScore reviewLikeScore = reviewLikeScoreRepository.findReviewLikeScoreByReviewId(reviewId).orElse(null);
+
+        if (reviewLikeScore == null) {
+            createReviewLikeScore(reviewId);
+        } else {
+            reviewLikeScore.setReviewScore(getReviewScore(reviewId));
+        }
+    }
+
+    public void deleteReviewLikeScore(Long reviewId) {
+        reviewLikeScoreRepository.deleteByReviewId(reviewId);
+    }
+
+    private Double getReviewScore(Long reviewId) {
+        Integer likeCount = productReviewLikeRepository.countAllByReviewId(reviewId);
+        return (likeCount * 0.99999 + reviewId * 0.00001);
     }
 
 }

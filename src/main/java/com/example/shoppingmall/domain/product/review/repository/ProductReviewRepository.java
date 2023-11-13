@@ -37,20 +37,17 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 
 
     @Query(value = "select * from product_review as pr " +
-            "left join product_review_like as prl on pr.id = prl.review_id " +
-            "where pr.product_id = :productId " +
-            "group by pr.id " +
-            "having count(prl.id) <= :like " +
-            "order by count(prl.id) desc limit :size", nativeQuery = true)
-    List<ProductReview> findAllByProductIdByCursorOrderByLikeDescHasKey(@Param("like") Integer like,
+            "left join review_like_score as rls on pr.id = rls.review_id " +
+            "where rls.review_score < :likeScore and pr.product_id = :productId " +
+            "order by rls.review_score desc limit :size", nativeQuery = true)
+    List<ProductReview> findAllByProductIdByCursorOrderByLikeDescHasKey(@Param("likeScore") Double likeScore,
                                                                         @Param("size") int size,
                                                                         @Param("productId") Long productId);
 
     @Query(value = "select * from product_review as pr " +
-            "left join product_review_like as prl on pr.id = prl.review_id " +
+            "left join review_like_score as rls on pr.id = rls.review_id " +
             "where pr.product_id = :productId " +
-            "group by pr.id " +
-            "order by count(prl.id) desc limit :size", nativeQuery = true)
+            "order by rls.review_score desc limit :size", nativeQuery = true)
     List<ProductReview> findAllByProductIdByCursorOrderByLikeDescNoKey(@Param("size") int size,
                                                                        @Param("productId") Long productId);
 

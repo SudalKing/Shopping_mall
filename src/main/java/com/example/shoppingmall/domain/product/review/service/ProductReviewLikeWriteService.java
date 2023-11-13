@@ -4,9 +4,11 @@ import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.entity.ProductReviewLike;
 import com.example.shoppingmall.domain.product.review.repository.ProductReviewLikeRepository;
 import com.example.shoppingmall.domain.product.review.repository.ProductReviewRepository;
+import com.example.shoppingmall.domain.product.review.repository.ReviewLikeScoreRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -16,7 +18,9 @@ import java.util.Optional;
 public class ProductReviewLikeWriteService {
     private final ProductReviewLikeRepository productReviewLikeRepository;
     private final ProductReviewRepository productReviewRepository;
+    private final ProductReviewWriteService productReviewWriteService;
 
+    @Transactional
     public void createOrDeleteProductReviewLike(User user, Long productReviewId){
         Optional<ProductReviewLike> findProductReviewLike = productReviewLikeRepository
                 .findByUserIdAndReviewId(user.getId(), productReviewId);
@@ -30,8 +34,12 @@ public class ProductReviewLikeWriteService {
                     .createdAt(LocalDateTime.now())
                     .build();
             productReviewLikeRepository.save(productReviewLike);
+
+            productReviewWriteService.updateReviewLikeScore(productReviewId);
         } else {
             productReviewLikeRepository.delete(findProductReviewLike.get());
+
+            productReviewWriteService.updateReviewLikeScore(productReviewId);
         }
     }
 

@@ -20,6 +20,7 @@ public class ReviewListResponse {
     private String content;
     private String reviewImageUrl;
     private Integer reviewLikeCount;
+    private Double reviewScore;
     private boolean isLiked;
     private LocalDateTime createdAt;
 
