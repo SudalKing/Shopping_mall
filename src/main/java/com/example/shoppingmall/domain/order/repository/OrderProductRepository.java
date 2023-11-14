@@ -3,6 +3,7 @@ package com.example.shoppingmall.domain.order.repository;
 import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -19,4 +20,20 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Long
 
     @Query(value = "select price from product where id = :productId", nativeQuery = true)
     Integer findPriceByProductId(Long productId);
+
+
+    @Query(value = "select * from order_product as op " +
+            "left join orders as o on op.order_id = o.id " +
+            "where op.id < :id and o.user_id = :userId " +
+            "order by op.id desc limit :size", nativeQuery = true)
+    List<OrderProduct> findAllByUserIdOrderByIdHasKey(@Param("id") Long id,
+                                                      @Param("userId") Long userId,
+                                                      @Param("size") int size);
+
+    @Query(value = "select * from order_product as op " +
+            "left join orders as o on op.order_id = o.id " +
+            "where o.user_id = :userId " +
+            "order by op.id desc limit :size", nativeQuery = true)
+    List<OrderProduct> findAllByUserIdOrderByIdNoKey(@Param("userId") Long userId,
+                                                     @Param("size") int size);
 }

@@ -1,12 +1,12 @@
 package com.example.shoppingmall.domain.order.service;
 
-import com.example.shoppingmall.domain.order.dto.OrderDto;
+import com.example.shoppingmall.domain.order.dto.res.OrderResponse;
 import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.repository.OrderProductRepository;
 import com.example.shoppingmall.domain.order.repository.OrdersRepository;
-import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
-import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
+import com.example.shoppingmall.domain.product.product.entity.Product;
+import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,74 +22,63 @@ import java.util.stream.Collectors;
 public class OrderReadService {
     private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
-    private final ProductRepository productRepository;
+    private final ProductReadService productReadService;
 
     public List<Orders> getAllOrdersEntity(User user) {
         return ordersRepository.findAllByUserId(user.getId());
     }
 
 
-    public PageCursor<OrderDto> getAllOrdersByCursor(Number key, int size, User user) {
+    public PageCursor<OrderResponse> getAllOrdersByCursor(Number key, int size, User user) {
         CursorRequest cursorRequest = new CursorRequest(key, size);
 
-        var orders = findAll(cursorRequest, user.getId());
-        return getOrderResponseCursor(cursorRequest, orders);
+        var orderProductList = findAllOrderProduct(cursorRequest, user.getId());
+
+        return getOrderResponseCursor(cursorRequest, orderProductList);
     }
 
-    private List<Orders> findAll(CursorRequest cursorRequest, Long userId) {
+    private List<OrderProduct> findAllOrderProduct(CursorRequest cursorRequest, Long userId) {
         if (cursorRequest.hasKey()) {
-            return ordersRepository.findOrdersByUserIdHasKey(
-                    cursorRequest.getKey().longValue(),
-                    userId,
-                    cursorRequest.getSize());
+            return orderProductRepository.findAllByUserIdOrderByIdHasKey(cursorRequest.getKey().longValue(), userId, cursorRequest.getSize());
         } else {
-            return ordersRepository.findOrdersByUserIdNoKey(userId, cursorRequest.getSize());
+            return orderProductRepository.findAllByUserIdOrderByIdNoKey(userId, cursorRequest.getSize());
         }
     }
 
 
-    public OrderDto getCurrentOrder(Long orderId){
-        var orders = ordersRepository.findOrdersById(orderId);
-        return toDto(orders);
+    private OrderResponse toOrderResponse(OrderProduct orderProduct){
+        Product product = productReadService.getProductEntity(orderProduct.getProductId());
+        Map<String, String> clothesInfo = productReadService.getClothesSizeAndColor(product);
+
+        return OrderResponse.builder()
+                .orderId(orderProduct.getOrderId())
+                .productId(orderProduct.getProductId())
+                .productName(product.getName())
+                .color(clothesInfo.get("color"))
+                .size(clothesInfo.get("size"))
+                .price(product.getPrice())
+                .discountPrice(productReadService.getDiscountPrice(product))
+                .amount(orderProduct.getCount())
+                .status("confirmation")
+                .imageUrl(productReadService.getUrl(product))
+                .createdAt(ordersRepository.findCreatedAtById(orderProduct.getOrderId()))
+                .build();
     }
 
-    public OrderDto toDto(Orders order){
-        return new OrderDto(
-                order.getId(),
-                order.getUserId(),
-                order.getOrderStatusId(),
-                order.getCreatedAt(),
-                order.getVersionCount(),
-                getTotalPrice(order)
-        );
-    }
-
-    private Long getNextKey(List<Orders> orders){
-        return orders.stream()
-                .mapToLong(Orders::getId)
+    private Long getNextKey(List<OrderProduct> orderProductList){
+        return orderProductList.stream()
+                .mapToLong(OrderProduct::getId)
                 .min()
                 .orElse(CursorRequest.NONE_KEY_LONG);
     }
 
-    private PageCursor<OrderDto> getOrderResponseCursor(CursorRequest cursorRequest, List<Orders> orders) {
-        var orderDtoList = orders.stream()
-                .map(this::toDto)
+    private PageCursor<OrderResponse> getOrderResponseCursor(CursorRequest cursorRequest, List<OrderProduct> orderProductList) {
+        var orderResponseList = orderProductList.stream()
+                .map(this::toOrderResponse)
                 .collect(Collectors.toList());
 
-        var nextKey = getNextKey(orders);
-        return new PageCursor<>(cursorRequest.next(nextKey), orderDtoList);
-    }
-
-    private int getTotalPrice(Orders order) {
-        int totalPrice = 0;
-        List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(order.getId());
-
-        for (OrderProduct orderProduct: orderProducts) {
-            var product = productRepository.findProductById(orderProduct.getProductId());
-            totalPrice += orderProduct.getCount() * product.getPrice();
-        }
-
-        return totalPrice;
+        var nextKey = getNextKey(orderProductList);
+        return new PageCursor<>(cursorRequest.next(nextKey), orderResponseList);
     }
 
 }

@@ -567,12 +567,17 @@ public class ProductReadService {
                 .price(product.getPrice())
                 .score(getProductScore(product.getId()))
                 .description(product.getDescription())
-                .imageUrl(productImageReadService.getUrl(product.getId()))
+                .imageUrl(getUrl(product))
                 .isLiked(false)
                 .brandInfo(brandRepository.findBrandInfoByProductId(product.getId()))
                 .build();
     }
-    private int getDiscountPrice(Product product){
+
+    public String getUrl(Product product) {
+        return productImageReadService.getUrl(product.getId());
+    }
+
+    public int getDiscountPrice(Product product){
         if (product.isSaled()) {
             ProductSale productSale = productSaleRepository.findByProductId(product.getId());
             return (int) Math.round(product.getPrice() * productSale.getDiscountRate());
@@ -580,6 +585,7 @@ public class ProductReadService {
             return 0;
         }
     }
+
     private List<Product> findAllBestProducts() {
         List<Product> allBestProducts = new ArrayList<>();
 
