@@ -25,7 +25,7 @@ public class CreateProductUseCase {
     public ProductResponse execute(ProductCommand productCommand, String fileType, List<MultipartFile> multipartFiles){
         var product = productWriteService.createProduct(productCommand);
         var s3FileDtoList = amazonS3Service.uploadFiles(fileType, multipartFiles);
-        var best = bestWriteService.createBest(productReadService.toDto(product));
+        var best = bestWriteService.createBest(productReadService.toProductResponse(product));
 
         productImageWriteService.createProductImage(product.getId(), s3FileDtoList);
 

@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface BrandLikeRepository extends JpaRepository<BrandLike, Long> {
     Optional<BrandLike> findByUserIdAndBrandId(Long userId, Long brandId);
+    void deleteAllByUserId(Long userId);
 }

@@ -67,6 +67,18 @@ public class ProductReviewController {
         return reviews;
     }
 
+    @Operation(summary = "최근 리뷰 조회", description = "[인증 불필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @GetMapping("/get/review/recent")
+    public PageCursor<RecentReviewResponse> readRecentProductReview(Principal principal,
+                                                            @RequestParam(required = false) Number key,
+                                                            int size) {
+        var reviews = productReviewReadService.getRecentReviewsByCursor(key, size);
+        productReviewReadService.validatePrincipalLikeRecentReview(principal, reviews.getBody());
+
+        return reviews;
+    }
+
     @Operation(summary = "작성 가능 리뷰 조회", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/review/writeable/list")

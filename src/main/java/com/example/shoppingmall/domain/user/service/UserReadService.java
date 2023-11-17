@@ -43,6 +43,7 @@ public class UserReadService {
         return userRepository.findUserById(userId);
     }
 
+
     public UserInfoResponse findUserInfo(User user) {
         UserAddress userAddress = addressRepository.findByUserId(user.getId());
         AddressInfo addressInfo = AddressInfo.builder()

@@ -40,4 +40,8 @@ public class BrandWriteService {
             brandLikeRepository.delete(findBrandLike.get());
         }
     }
+
+    public void deleteAllBrandLikeByUserId(Long userId) {
+        brandLikeRepository.deleteAllByUserId(userId);
+    }
 }

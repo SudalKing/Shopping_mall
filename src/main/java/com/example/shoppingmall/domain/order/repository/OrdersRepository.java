@@ -12,6 +12,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     Orders findOrdersById(Long orderId);
     List<Orders> findAllByUserId(Long userId);
     Orders findOrderByUserId(Long userId);
+    void deleteAllByUserId(Long userId);
 
     @Query(value = "select created_at from orders where id = :id", nativeQuery = true)
     LocalDateTime findCreatedAtById(@Param("id") Long id);

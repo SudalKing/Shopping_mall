@@ -28,4 +28,7 @@ public class ProductLikeWriteService {
         }
     }
 
+    public void deleteProductLikeByUserId(Long userId) {
+        productLikeRepository.deleteAllByUserId(userId);
+    }
 }

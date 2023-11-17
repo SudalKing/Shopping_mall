@@ -1,5 +1,6 @@
 package com.example.shoppingmall.application.controller;
 
+import com.example.shoppingmall.application.usecase.user.DeleteUserUseCase;
 import com.example.shoppingmall.domain.user.dto.UserDto;
 import com.example.shoppingmall.domain.user.dto.req.RegisterUserRequest;
 import com.example.shoppingmall.domain.user.dto.req.UpdateUserInfoRequest;
@@ -28,6 +29,8 @@ public class UserController {
     private final UserReadService userReadService;
     private final UserWriteService userWriteService;
 
+    private final DeleteUserUseCase deleteUserUseCase;
+
     @Operation(summary = "회원가입", description = "[인증 불필요]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "CREATED"),
@@ -51,6 +54,14 @@ public class UserController {
         return userReadService.findUserInfo(user);
     }
 
+    @Operation(summary = "사용자 이름 조회", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @GetMapping("/get/name")
+    public String readUserName(Principal principal){
+        User user = userReadService.getUserByEmail(principal.getName());
+        return user.getName();
+    }
+
     @Operation(summary = "회원 정보 수정", description = "[인증 필요]")
     @ApiResponse(responseCode = "204", description = "OK")
     @PutMapping("/update/info")
@@ -67,7 +78,7 @@ public class UserController {
     @DeleteMapping("/unregister")
     public void deleteUser(Principal principal){
         User user = userReadService.getUserByEmail(principal.getName());
-        userWriteService.deleteUser(user);
+        deleteUserUseCase.execute(user);
     }
 
 }

@@ -15,6 +15,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findProductsByIdIn(List<Long> productIds);
 
+    List<Product> findAllByName(String name);
+    Product findProductByName(String name);
+
     //============================================= 전체 상품 조회 =====================================================
     // 0. 기본 최신순
     @Query(value = "select * from product where id < :id order by id desc limit :size", nativeQuery = true)

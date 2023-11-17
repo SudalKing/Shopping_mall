@@ -25,6 +25,7 @@ public class ProductReviewWriteService {
     private final ProductReviewRepository productReviewRepository;
     private final ProductReviewLikeRepository productReviewLikeRepository;
     private final ReviewLikeScoreRepository reviewLikeScoreRepository;
+
     private final OrderProductReadService orderProductReadService;
 
     @Transactional
@@ -54,6 +55,12 @@ public class ProductReviewWriteService {
         var productReview = productReviewRepository.findById(reviewId).orElseThrow();
         if(productReview.getUserId().equals(userId)) productReviewRepository.deleteById(reviewId);
         else throw new RuntimeException();
+    }
+
+    public void deleteAllReview(Long userId) {
+        productReviewRepository.deleteAllByUserId(userId);
+        productReviewRepository.deleteReviewImagesByUserId(userId);
+        productReviewLikeRepository.deleteAllByUserId(userId);
     }
 
     @Transactional

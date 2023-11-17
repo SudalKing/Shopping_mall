@@ -21,6 +21,9 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Long
     @Query(value = "select price from product where id = :productId", nativeQuery = true)
     Integer findPriceByProductId(Long productId);
 
+    @Query(value = "delete from order_product " +
+            "where order_id in (select id from orders where user_id = :userId)", nativeQuery = true)
+    void deleteAllByUserId(@Param("userId") Long userId);
 
     @Query(value = "select * from order_product as op " +
             "left join orders as o on op.order_id = o.id " +

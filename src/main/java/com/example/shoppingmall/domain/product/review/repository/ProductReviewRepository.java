@@ -20,6 +20,11 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 
     Integer countByProductIdAndRating(Long productId, Integer rating);
 
+    void deleteAllByUserId(Long userId);
+
+    @Query(value = "delete from product_review_image " +
+            "where review_id in (select id from product_review where user_id = :userId)", nativeQuery = true)
+    void deleteReviewImagesByUserId(@Param("userId") Long userId);
 
     @Query(value = "select * from product_review " +
             "where id < :id and product_id = :productId " +
@@ -68,5 +73,15 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
             "order by id desc limit :size", nativeQuery = true)
     List<ProductReview> findAllExistImageByProductIdByCursorOrderByIdDescNoKey(@Param("size") int size,
                                                                                @Param("productId") Long productId);
+
+
+    @Query(value = "select * from product_review " +
+            "where id < :id order by id desc limit :size", nativeQuery = true)
+    List<ProductReview> findAllRecentReviewHasKey(@Param("id") Long id,
+                                                          @Param("size") int size);
+
+
+    @Query(value = "select * from product_review order by id desc limit :size", nativeQuery = true)
+    List<ProductReview> findAllRecentReviewNoKey(@Param("size") int size);
 
 }

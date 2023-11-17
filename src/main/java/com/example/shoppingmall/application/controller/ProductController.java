@@ -4,10 +4,12 @@ import com.example.shoppingmall.application.usecase.product.CreateProductUseCase
 import com.example.shoppingmall.application.usecase.product.DeleteProductUseCase;
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductDetailResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.service.ProductLikeWriteService;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.service.cursor.*;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.util.PageCursor;
@@ -34,6 +36,13 @@ public class ProductController {
     private final DeleteProductUseCase deleteProductUseCase;
     private final UserReadService userReadService;
 
+    private final ProductAllCursorReadService productAllCursorReadService;
+    private final ProductBestReadService productBestReadService;
+    private final ProductNewCursorReadService productNewCursorReadService;
+    private final ProductSaleCursorReadService productSaleCursorReadService;
+    private final ProductBrandCursorReadService productBrandCursorReadService;
+    private final ProductLikeCursorReadService productLikeCursorReadService;
+    private final ProductCategoryCursorReadService productCategoryCursorReadService;
 
     @Operation(summary = "ProductCommand, multipartFiles(이미지들)을 받아 상품 생성", description = "[인증 필요(ADMIN)]")
     @ApiResponse(responseCode = "201", description = "OK")
@@ -61,7 +70,7 @@ public class ProductController {
     public PageCursor<ProductResponse> readAllProductsDefault(Principal principal,
                                                               @RequestParam(required = false) Number key,
                                                               int size, Long sortId) throws Exception {
-        var products = productReadService.getProductsByCursor(key, size, sortId);
+        var products = productAllCursorReadService.getProductsByCursor(key, size, sortId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
@@ -72,7 +81,7 @@ public class ProductController {
     public PageCursor<ProductResponse> readNEWProducts(Principal principal,
                                                        @RequestParam(required = false) Number key,
                                                        int size, Long sortId) throws Exception {
-        var products = productReadService.getNewProductsByCursor(key, size, sortId);
+        var products = productNewCursorReadService.getNewProductsByCursor(key, size, sortId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
@@ -82,7 +91,7 @@ public class ProductController {
     @Operation(summary = "Best 전체 상품 조회", description = "[인증 불필요]")
     @GetMapping("/get/best/all")
     public List<ProductResponse> readAllBestProducts(Principal principal) {
-        var products = productReadService.getAllBestProducts();
+        var products = productBestReadService.getAllBestProducts();
         productReadService.validatePrincipalLike(principal, products);
 
         return products;
@@ -91,7 +100,7 @@ public class ProductController {
     @Operation(summary = "Best 상품 조회 - 상품 3개", description = "[인증 불필요]")
     @GetMapping("/get/best")
     public List<ProductResponse> readBestProducts(Principal principal, Long categoryId, Long subCategoryId) {
-        var products = productReadService.getBestProducts(categoryId, subCategoryId);
+        var products = productBestReadService.getBestProducts(categoryId, subCategoryId);
         productReadService.validatePrincipalLike(principal, products);
 
         return products;
@@ -102,7 +111,7 @@ public class ProductController {
     public PageCursor<ProductResponse> readSaleProducts(Principal principal,
                                                         @RequestParam(required = false) Number key,
                                                         int size, Long sortId) throws Exception {
-        var products = productReadService.getSaleProductsByCursor(key, size, sortId);
+        var products = productSaleCursorReadService.getSaleProductsByCursor(key, size, sortId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
@@ -114,7 +123,7 @@ public class ProductController {
     public PageCursor<ProductResponse> readClothesProducts(Principal principal,
                                                            @RequestParam(required = false) Number key,
                                                            int size, Long sortId, Long categoryId, Long subCategoryId) throws Exception {
-        var products = productReadService.
+        var products = productCategoryCursorReadService.
                 getProductsByCursorByCategoryAndSubCategoryId(key, size, sortId, categoryId, subCategoryId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
@@ -127,7 +136,7 @@ public class ProductController {
     public PageCursor<ProductResponse> readBrandProducts(Principal principal,
                                                          @RequestParam(required = false) Number key,
                                                          int size, Long sortId, Long brandId) throws Exception {
-        var products = productReadService.getBrandProductsByCursor(key, size, sortId, brandId);
+        var products = productBrandCursorReadService.getBrandProductsByCursor(key, size, sortId, brandId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;
@@ -139,7 +148,7 @@ public class ProductController {
                                                          @RequestParam(required = false) Number key,
                                                          int size, Long sortId, Long brandId,
                                                          Long categoryId, Long subCategoryId) throws Exception {
-        var products = productReadService.getBrandCategoryProductsByCursor(
+        var products = productBrandCursorReadService.getBrandCategoryProductsByCursor(
                 key, size, sortId, brandId, categoryId, subCategoryId);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
@@ -154,11 +163,21 @@ public class ProductController {
         return productReadService.getProductsInCartByIds(productIds);
     }
 
-    @Operation(summary = "상품 List 조회", description = "[인증 필요]")
+    @Operation(summary = "상품 List 조회", description = "[인증 불필요]")
     @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping("/get")
+    @GetMapping("/get/list")
     public List<ProductReadResponse> readProducts(@RequestParam List<Long> productIds){
         return productReadService.getProductsByIds(productIds);
+    }
+
+    @Operation(summary = "상품 상세 조회", description = "[인증 불필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @GetMapping("/get/detail")
+    public ProductDetailResponse readProductsByName(Principal principal, @RequestParam String productName){
+        var product = productReadService.getProductDetail(productName);
+        productReadService.validatePrincipalLike(principal, product);
+
+        return product;
     }
 
     // =================================== Like ================================================
@@ -166,7 +185,7 @@ public class ProductController {
     @GetMapping("/like/get/all")
     public PageCursor<ProductResponse> readLikeProducts(Principal principal,
                                                          @RequestParam(required = false) Number key, int size) throws Exception {
-        var products = productReadService.getLikeProductsByCursor(principal, key, size);
+        var products = productLikeCursorReadService.getLikeProductsByCursor(principal, key, size);
         productReadService.validatePrincipalLike(principal, products.getBody());
 
         return products;

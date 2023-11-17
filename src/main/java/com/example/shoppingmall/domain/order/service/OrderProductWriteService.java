@@ -23,4 +23,7 @@ public class OrderProductWriteService {
         return orderProductRepository.save(orderProduct);
     }
 
+    public void deleteOrderProduct(Long userId) {
+        orderProductRepository.deleteAllByUserId(userId);
+    }
 }

@@ -72,13 +72,8 @@ public class UserWriteService {
         return toDto(userRepository.save(savedUser));
     }
 
-    @Transactional
     public void deleteUser(User user){
-        Long userId = user.getId();
-        userRepository.deleteById(userId);
-        birthWriteService.deleteBirth(user);
-        addressWriteService.deleteAddress(user);
-        cartWriteService.deleteCart(user);
+        userRepository.deleteById(user.getId());
     }
 
     @Transactional

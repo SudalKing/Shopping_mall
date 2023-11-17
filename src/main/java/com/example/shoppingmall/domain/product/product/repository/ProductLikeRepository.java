@@ -18,5 +18,7 @@ public interface ProductLikeRepository extends JpaRepository<ProductLike, Long> 
     @Query(value = "select count(id) from product_like where product_id = :productId group by product_id", nativeQuery = true)
     int findLikeCountByProductId(Long productId);
 
+    void deleteAllByUserId(Long userId);
+
     Optional<ProductLike> findByUserIdAndProductId(Long userId, Long productId);
 }
