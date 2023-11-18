@@ -31,7 +31,6 @@ public class ProductWriteService {
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-        product.validateStockAndPrice();
         Product savedProduct = productRepository.save(product);
 
         BrandProduct brandProduct = BrandProduct.builder()

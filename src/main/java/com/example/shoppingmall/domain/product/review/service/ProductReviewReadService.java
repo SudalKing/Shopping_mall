@@ -11,6 +11,8 @@ import com.example.shoppingmall.domain.product.review.repository.ProductReviewRe
 import com.example.shoppingmall.domain.product.review.repository.ReviewLikeScoreRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
+import com.example.shoppingmall.global.error.exception.ErrorCode;
+import com.example.shoppingmall.global.error.exception.InvalidValueException;
 import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
@@ -165,7 +167,7 @@ public class ProductReviewReadService {
             var nextKey = getLikeCountNextKey(productReviewList);
             return new PageCursor<>(cursorRequest.next(nextKey), productReviewList);
         } else {
-            throw new Exception("Wrong SortId!!");
+            throw new InvalidValueException("Wrong SortId", ErrorCode.INVALID_INPUT_VALUE);
         }
     }
 
@@ -202,7 +204,7 @@ public class ProductReviewReadService {
                 return productReviewRepository.findAllByProductIdByCursorOrderByLikeDescNoKey(cursorRequest.getSize(), productId);
             }
         } else {
-            throw new Exception("Wrong sortId");
+            throw new InvalidValueException("Wrong SortId", ErrorCode.INVALID_INPUT_VALUE);
         }
     }
 

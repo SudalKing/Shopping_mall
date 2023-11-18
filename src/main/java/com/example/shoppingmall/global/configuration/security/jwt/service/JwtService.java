@@ -129,9 +129,9 @@ public class JwtService {
 
     private Cookie createCookie(String refreshToken) {
         Cookie cookie = new Cookie(refreshHeader, refreshToken);
-        cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60 * 24); // 24시간
+        cookie.setSecure(true);
         return cookie;
     }
 

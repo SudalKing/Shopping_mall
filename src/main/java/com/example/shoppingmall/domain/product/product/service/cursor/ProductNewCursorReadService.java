@@ -4,6 +4,8 @@ import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import com.example.shoppingmall.domain.product.product.util.ProductCursorUtilService;
+import com.example.shoppingmall.global.error.exception.ErrorCode;
+import com.example.shoppingmall.global.error.exception.InvalidValueException;
 import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
@@ -77,7 +79,7 @@ public class ProductNewCursorReadService {
                         LocalDateTime.now().minusDays(NEW_PRODUCT_DAYS));
             }
         } else {
-            throw new Exception("Wrong SortId!!");
+            throw new InvalidValueException("Wrong SortId", ErrorCode.INVALID_INPUT_VALUE);
         }
     }
 

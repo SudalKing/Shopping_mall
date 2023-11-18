@@ -1,15 +1,16 @@
 package com.example.shoppingmall.domain.brand.service;
 
-import com.example.shoppingmall.domain.brand.dto.BrandCategoryIdsDto;
-import com.example.shoppingmall.domain.brand.entity.Brand;
-import com.example.shoppingmall.domain.brand.repository.BrandLikeRepository;
-import com.example.shoppingmall.domain.brand.repository.BrandRepository;
-import com.example.shoppingmall.domain.brand.repository.BrandProductRepository;
 import com.example.shoppingmall.domain.brand.dto.res.BrandDetailResponse;
 import com.example.shoppingmall.domain.brand.dto.res.BrandResponse;
+import com.example.shoppingmall.domain.brand.entity.Brand;
+import com.example.shoppingmall.domain.brand.repository.BrandLikeRepository;
+import com.example.shoppingmall.domain.brand.repository.BrandProductRepository;
+import com.example.shoppingmall.domain.brand.repository.BrandRepository;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
+import com.example.shoppingmall.global.error.exception.ErrorCode;
+import com.example.shoppingmall.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +76,7 @@ public class BrandReadService {
         } else if (sortId.equals(2L)) {
             return brandRepository.findAllBrandsOrderByNameDesc();
         } else {
-            throw new Exception("Wrong sortId!!!");
+            throw new InvalidValueException("Wrong SortId", ErrorCode.INVALID_INPUT_VALUE);
         }
     }
 
@@ -93,7 +94,7 @@ public class BrandReadService {
         } else if (sortId.equals(2L)) {
             return brandRepository.findLikeBrandsOrderByNameDesc(user.getId());
         } else {
-            throw new Exception("Wrong SortId!!");
+            throw new InvalidValueException("Wrong SortId", ErrorCode.INVALID_INPUT_VALUE);
         }
 
         return likedBrandList;
@@ -109,14 +110,6 @@ public class BrandReadService {
     }
 
     private BrandDetailResponse toBrandDetailResponse(Brand brand) {
-//        return new BrandDetailResponse(
-//                brand.getId(),
-//                brand.getName(),
-//                productRepository.findCategoryAndSubCategoryIdsByBrandId(brand.getId()),
-//                brand.getLogoUrl(),
-//                brand.getImageUrl(),
-//                false
-//        );
         return BrandDetailResponse.builder()
                 .id(brand.getId())
                 .name(brand.getName())
@@ -126,8 +119,4 @@ public class BrandReadService {
                 .isLiked(false)
                 .build();
     }
-//
-//    private List<BrandCategoryIdsDto> getBrandCategoryIds(Long brandId) {
-//
-//    }
 }

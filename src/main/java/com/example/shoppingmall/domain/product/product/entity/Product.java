@@ -57,9 +57,6 @@ public class Product {
     public void decreaseStock(int amount){
         stock -= amount;
     }
-    public void validateStockAndPrice(){
-        if(stock <= 0 || price <= 0) deleted = true;
-    }
     public void doSale(){
         saled = true;
     }

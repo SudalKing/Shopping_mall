@@ -9,13 +9,17 @@ import com.example.shoppingmall.domain.delivery.entity.Delivery;
 import com.example.shoppingmall.domain.delivery.service.DeliveryWriteService;
 import com.example.shoppingmall.domain.order.dto.ProductsInfo;
 import com.example.shoppingmall.domain.order.dto.req.OrderRequest;
+import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderProductWriteService;
 import com.example.shoppingmall.domain.order.service.OrderWriteService;
+import com.example.shoppingmall.domain.product.product.entity.Product;
+import com.example.shoppingmall.domain.product.product.exception.OutOfStockException;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.entity.User;
+import com.example.shoppingmall.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,15 +65,15 @@ public class CreateOrderUseCase {
                 .collect(Collectors.toList());
 
         for (ProductsInfo productInfo : productsInfo) {
-            orderProductWriteService.createOrderProduct(productInfo, order);
+            OrderProduct orderProduct = orderProductWriteService.createOrderProduct(productInfo, order);
+            Product product = productReadService.getProductEntity(productInfo.getId());
+
+            if (orderProduct.getCount() > product.getStock()) {
+                throw new OutOfStockException("Out of Stock", ErrorCode.OUT_OF_STOCK);
+            }
         }
 
         if (!matchingProductIds.isEmpty()) {
-//            for (Long matchingProductId: matchingProductIds) {
-//                cartProductWriteService.deleteCartProduct(cart,
-//                        productReadService.getProductEntity(matchingProductId)
-//                );
-//            }
             cartProductWriteService.deleteCartProduct(user, matchingProductIds);
         }
 
