@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -70,7 +71,6 @@ public class JwtService {
         response.setStatus(HttpServletResponse.SC_CREATED);
         setAccessTokenHeader(response, accessToken);
         setRefreshTokenHeader(response, refreshToken);
-//        sendAccessToken(response, accessToken);
 
         log.info("Access Token, Refresh Token 헤더 설정");
     }
@@ -124,15 +124,21 @@ public class JwtService {
 
     private void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
         response.setHeader(refreshHeader, refreshToken);
-        response.addCookie(createCookie(refreshToken));
+        createCookie(response, refreshToken);
     }
 
-    private Cookie createCookie(String refreshToken) {
-        Cookie cookie = new Cookie(refreshHeader, refreshToken);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 24); // 24시간
-        cookie.setSecure(true);
-        return cookie;
+    private void createCookie(HttpServletResponse response, String refreshToken) {
+//        Cookie cookie = new Cookie(refreshHeader, refreshToken);
+        ResponseCookie cookie = ResponseCookie.from(refreshHeader, refreshToken)
+                .path("/")
+                .secure(true)
+                .sameSite("None")
+                .httpOnly(true)
+                .maxAge(60 * 60 * 24)
+                .domain("orday.shop")
+                .build();
+
+        response.setHeader("Set-Cookie", cookie.toString());
     }
 
 

@@ -133,6 +133,10 @@ public class ProductReviewReadService {
     }
 
     private Double getAverageRating(final Long productId) {
+        if (productReviewRepository.sumTotalReviewByProductId(productId) == null) {
+            return 0.;
+        }
+
         return Math.round(productReviewRepository.sumTotalReviewByProductId(productId).doubleValue()
                 / getTotalReviewCount(productId) * 10.0) / 10.0;
     }
@@ -143,6 +147,10 @@ public class ProductReviewReadService {
 
         for (int i = 0; i < 5; i++) {
             total += productReviewRepository.countByProductIdAndRating(productId, i + 1);
+        }
+
+        if (total == 0) {
+            return List.of(0, 0, 0, 0, 0);
         }
 
         for (int i = 0; i < 5; i++) {

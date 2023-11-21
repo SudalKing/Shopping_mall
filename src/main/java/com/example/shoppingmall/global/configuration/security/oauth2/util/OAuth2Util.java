@@ -55,7 +55,7 @@ public class OAuth2Util {
 //                .password(PasswordUtil.generateRandomPassword())
                 .password("0*!llpqasdp")
                 .name(oAuth2UserInfo.getNickname())
-                .phoneNumber("-")
+                .phoneNumber("010-0000-0000")
                 .enabled(true)
                 .infoSet(false)
                 .role(Role.GUEST)

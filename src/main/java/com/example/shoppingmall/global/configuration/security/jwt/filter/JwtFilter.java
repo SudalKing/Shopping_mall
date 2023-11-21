@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final List<String> NO_CHECK_PATHS = Arrays.asList(
             "/login", "/", "/logout",
             "/login/oauth2/code/**",
+            "/oauth2/authorization/google",
             "/user/signup", "/swagger-ui/**", "/v3/**"
     );
 

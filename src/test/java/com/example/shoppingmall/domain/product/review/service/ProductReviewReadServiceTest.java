@@ -23,7 +23,7 @@ class ProductReviewReadServiceTest {
 
     @Test
     void getReviewStatsByProductId() {
-        var reviewStatsRes = productReviewReadService.getReviewStatsByProductId(300L);
+        var reviewStatsRes = productReviewReadService.getReviewStatsByProductId(31L);
         var proportion = reviewStatsRes.getProportion();
         System.out.println("totalCount: " + reviewStatsRes.getTotalCount());
         System.out.println("avgRating: " + reviewStatsRes.getAverageRating());
