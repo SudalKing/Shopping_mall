@@ -3,6 +3,8 @@ package com.example.shoppingmall.application.controller;
 import com.example.shoppingmall.application.usecase.order.CreateOrderUseCase;
 import com.example.shoppingmall.domain.order.dto.res.OrderResponse;
 import com.example.shoppingmall.domain.order.dto.req.OrderRequest;
+import com.example.shoppingmall.domain.order.dto.res.OrderStatsResponse;
+import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
@@ -26,6 +28,7 @@ import java.security.Principal;
 public class OrderController {
     private final CreateOrderUseCase createOrderUseCase;
     private final OrderReadService orderReadService;
+    private final OrderProductReadService orderProductReadService;
     private final UserReadService userReadService;
 
     @Operation(summary = "상품 주문", description = "[인증 필요]")
@@ -49,5 +52,14 @@ public class OrderController {
     {
         User user = userReadService.getUserByEmail(principal.getName());
         return orderReadService.getAllOrdersByCursor(key, size, user);
+    }
+
+    @Operation(summary = "사용자 주문 현황", description = "[인증 필요]")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
+    @GetMapping("/status")
+    public OrderStatsResponse readOrderStats(Principal principal)
+    {
+        User user = userReadService.getUserByEmail(principal.getName());
+        return orderProductReadService.getOrderStats(user);
     }
 }

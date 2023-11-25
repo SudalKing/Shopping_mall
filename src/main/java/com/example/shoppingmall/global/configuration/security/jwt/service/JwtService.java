@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -72,7 +73,7 @@ public class JwtService {
         setAccessTokenHeader(response, accessToken);
         setRefreshTokenHeader(response, refreshToken);
 
-        log.info("Access Token, Refresh Token 헤더 설정");
+        log.info("Access Token 헤더, Refresh Token 쿠키 설정");
     }
 
     public Optional<String> getAccessToken(HttpServletRequest request){
@@ -113,9 +114,22 @@ public class JwtService {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
         } catch (Exception e) {
-            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
-            throw new TokenExpiredException("토큰이 만료되었습니다.", Instant.now());
+//            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+//            throw new TokenExpiredException("토큰이 만료되었습니다.", Instant.now());
+            return false;
         }
+    }
+
+    public Cookie findCookie(HttpServletRequest request) {
+        Cookie[] cookies =  request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        return Arrays.stream(cookies)
+                .filter(c -> c.getName().equals(refreshHeader))
+                .findAny()
+                .orElse(null);
     }
 
     private void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
@@ -123,12 +137,11 @@ public class JwtService {
     }
 
     private void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-        response.setHeader(refreshHeader, refreshToken);
+//        response.setHeader(refreshHeader, refreshToken);
         createCookie(response, refreshToken);
     }
 
     private void createCookie(HttpServletResponse response, String refreshToken) {
-//        Cookie cookie = new Cookie(refreshHeader, refreshToken);
         ResponseCookie cookie = ResponseCookie.from(refreshHeader, refreshToken)
                 .path("/")
                 .secure(true)
@@ -136,6 +149,7 @@ public class JwtService {
                 .httpOnly(true)
                 .maxAge(60 * 60 * 24)
                 .domain("orday.shop")
+//                .domain("localhost")
                 .build();
 
         response.setHeader("Set-Cookie", cookie.toString());

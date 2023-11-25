@@ -43,8 +43,6 @@ public class JsonLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandl
                     userRepository.saveAndFlush(user);
                 });
         log.info("로그인에 성공하였습니다. 이메일: {}", email);
-        log.info("로그인에 성공하였습니다. AccessToken: {}", accessToken);
-        log.info("발급된 AccessToken 만료 기간: {}", accessTokenExpiration);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");

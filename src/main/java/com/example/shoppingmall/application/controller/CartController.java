@@ -80,7 +80,7 @@ public class CartController {
     @Operation(summary = "장바구니 상품 삭제", description = "[인증 필요]")
     @ApiResponse(responseCode = "200", description = "OK")
     @DeleteMapping("/product/delete")
-    public ResponseEntity<List<Long>> deleteCartProduct(Principal principal, List<Long> productIds){
+    public ResponseEntity<List<Long>> deleteCartProduct(Principal principal,@RequestParam List<Long> productIds){
         User user = userReadService.getUserByEmail(principal.getName());
         cartProductWriteService.deleteCartProduct(user, productIds);
 

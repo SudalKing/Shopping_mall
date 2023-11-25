@@ -18,6 +18,7 @@ public class OrderProductWriteService {
         var orderProduct = OrderProduct.builder()
                 .orderId(orders.getId())
                 .productId(productsInfo.getId())
+                .orderStatusId(1L)
                 .count(productsInfo.getAmount())
                 .build();
         return orderProductRepository.save(orderProduct);

@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
@@ -34,7 +36,8 @@ public class UserController {
     @Operation(summary = "회원가입", description = "[인증 불필요]")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "CREATED"),
-            @ApiResponse(responseCode = "400", description = "BAD_REQUEST")
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "409", description = "EMAIL_DUPLICATE")
     })
     @PostMapping("/signup")
     public ResponseEntity<Void> createUser(@RequestBody @Valid RegisterUserRequest registerUserRequest) {
@@ -44,6 +47,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(URI.create("/user/" + userDto.getId()))
                 .build();
+    }
+
+    @Operation(summary = "로그아웃", description = "[인증 필요]")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @GetMapping("/logout")
+    public void logout(Principal principal,
+                       HttpServletRequest request,
+                       HttpServletResponse response){
+        User user = userReadService.getUserByEmail(principal.getName());
+        userWriteService.logout(request, response, user);
     }
 
     @Operation(summary = "사용자 조회", description = "[인증 필요]")

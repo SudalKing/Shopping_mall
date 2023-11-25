@@ -30,7 +30,13 @@ public class ProductReviewImageReadService {
     }
 
     public Integer getPhotoReviewCount(Long productId) {
-        return productReviewImageRepository.countPhotoAllByProductId(productId);
+        var count = productReviewImageRepository.countPhotoAllByProductId(productId);
+
+        if (count == null) {
+            return 0;
+        }
+
+        return count;
     }
 
 //

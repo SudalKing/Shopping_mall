@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -66,16 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        String refreshToken = jwtService.getRefreshToken(request)
-                .filter(jwtService::verifyToken)
-                .orElse(null);
-
-
-        if (refreshToken != null) {
-            validateAndRenewAccessToken(request, response, refreshToken);
-        } else {
-            authenticationAccessToken(request, response, filterChain);
-        }
+        authenticationAccessToken(request, response, filterChain);
     }
 
     private void validateAndRenewAccessToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
@@ -88,7 +80,6 @@ public class JwtFilter extends OncePerRequestFilter {
                         jwtService.sendAccessTokenAndRefreshToken(response,
                                 jwtService.createAccessToken(user.getEmail()),
                                 renewRefreshToken);
-//                        response.sendRedirect(request.getRequestURI());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -105,20 +96,22 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (accessToken.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            log.error("access token is null");
             return;
         }
 
+        if (!jwtService.verifyToken(accessToken.get())) {
+            log.error("Token 검증 실패");
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            String refreshToken = jwtService.findCookie(request).getValue();
 
-        try {
-              accessToken
-                      .filter(jwtService::verifyToken)
-                    .flatMap(jwtService::getEmail)
-                    .flatMap(userRepository::findByEmail).ifPresent(this::saveAuthentication);
-        } catch (TokenExpiredException e) {
-            log.error("Token 만료 에러: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            validateAndRenewAccessToken(request, response, refreshToken);
             return;
         }
+
+        jwtService.getEmail(accessToken.get())
+                        .flatMap(userRepository::findByEmail)
+                                .ifPresent(this::saveAuthentication);
 
         filterChain.doFilter(request, response);
     }

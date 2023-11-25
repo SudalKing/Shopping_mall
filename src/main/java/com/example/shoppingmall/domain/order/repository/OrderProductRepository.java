@@ -12,6 +12,17 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Long
     List<OrderProduct> findAllByOrderId(Long orderId);
     OrderProduct findOrderProductByOrderIdAndProductId(Long orderId, Long productId);
 
+    @Query(value = "select count(*) from order_product as op " +
+            "left join orders as o on op.order_id = o.id " +
+            "where o.user_id = :userId", nativeQuery = true)
+    Integer countAllByOrdersCount(@Param("userId") Long userId);
+
+    @Query(value = "select count(*) from order_product as op " +
+            "left join orders as o on op.order_id = o.id " +
+            "where o.user_id = :userId and op.order_status_id = :statusId", nativeQuery = true)
+    Integer countAllByOrdersCountByStatus(@Param("userId") Long userId,
+                                          @Param("statusId") Long orderStatusId);
+
     @Query(value = "select product_id from order_product where order_id = :orderId and reviewed = false", nativeQuery = true)
     List<Long> findAllProductIdsByOrderIdAndNotReviewed(Long orderId);
 

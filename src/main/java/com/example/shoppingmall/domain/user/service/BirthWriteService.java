@@ -32,6 +32,17 @@ public class BirthWriteService {
         return birthRepository.save(userBirth);
     }
 
+    @Transactional
+    public UserBirth createBirthForOauth2(BirthDate birthDate, User user){
+        UserBirth userBirth = UserBirth.builder()
+                .userId(user.getId())
+                .year(birthDate.getYear())
+                .month(birthDate.getMonth())
+                .day(birthDate.getDay())
+                .build();
+        return birthRepository.save(userBirth);
+    }
+
     public void deleteBirth(User user){
         birthRepository.deleteByUserId(user.getId());
     }

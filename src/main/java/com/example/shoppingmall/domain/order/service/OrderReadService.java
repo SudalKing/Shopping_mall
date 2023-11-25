@@ -59,7 +59,7 @@ public class OrderReadService {
                 .price(product.getPrice())
                 .discountPrice(productReadService.getDiscountPrice(product))
                 .amount(orderProduct.getCount())
-                .status("confirmation")
+                .status(getStatus(orderProduct))
                 .imageUrl(productReadService.getUrl(product))
                 .createdAt(ordersRepository.findCreatedAtById(orderProduct.getOrderId()))
                 .build();
@@ -81,4 +81,21 @@ public class OrderReadService {
         return new PageCursor<>(cursorRequest.next(nextKey), orderResponseList);
     }
 
+    private String getStatus(OrderProduct orderProduct) {
+        Long orderStatusId = orderProduct.getOrderStatusId();
+
+        if (orderStatusId == 1L) {
+            return "paymentPending";
+        } else if (orderStatusId == 2L) {
+            return "shippingIn";
+        } else if (orderStatusId == 3L) {
+            return "delivered";
+        } else if (orderStatusId == 4L) {
+            return "confirmedPurchase";
+        } else if (orderStatusId == 5L){
+            return "exchangeReturn";
+        } else {
+            return "";
+        }
+    }
 }

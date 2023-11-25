@@ -22,6 +22,6 @@ public class CreateUserInfoSetUseCase {
         cartWriteService.createCart(user);
 
         addressWriteService.createAddress(addressInfo, user);
-        birthWriteService.createBirth(birthDate, user);
+        birthWriteService.createBirthForOauth2(birthDate, user);
     }
 }

@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @Component
@@ -30,24 +32,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
         if (customOAuth2User.getRole() == Role.GUEST) {
-            log.info("게스트 유저");
             String accessToken = jwtService.createAccessToken(customOAuth2User.getEmail());
             String refreshToken = jwtService.createRefreshToken();
 
-            log.info("소셜 로그인 Email: {}", customOAuth2User.getEmail());
-            log.info("소셜 로그인 Token: {}", accessToken);
-
             response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
 
-
-            log.info("게스트 권한 -> 유저 권한. Refresh 토큰 생성");
             jwtService.sendAccessTokenAndRefreshToken(response, accessToken, refreshToken);
             User findUser = userRepository.findByEmail(customOAuth2User.getEmail())
                     .orElseThrow(() -> new IllegalArgumentException("이메일에 해당하는 유저가 없습니다!"));
             findUser.updateUserRole();
 
-            log.info("/ 리디렉션 실행");
-            response.sendRedirect("https://orday.vercel.app"); // 프론트 추가 정보 입력 폼으로 리다이렉트
+            String redirectUrl = "https://orday.vercel.app/oauth2/callback";
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.sendRedirect(redirectUrl + "?token=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8)); // 프론트 추가 정보 입력 폼으로 리다이렉트
         } else {
             loginSuccess(response, customOAuth2User);
         }

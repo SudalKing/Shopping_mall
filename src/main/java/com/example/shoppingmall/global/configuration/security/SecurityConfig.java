@@ -39,6 +39,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final LoginFailureJson loginFailureJson;
 
 
     @Bean
@@ -94,7 +95,7 @@ public class SecurityConfig {
 
     @Bean
     public JsonLoginFailureHandler jsonLoginFailureHandler() {
-        return new JsonLoginFailureHandler();
+        return new JsonLoginFailureHandler(loginFailureJson);
     }
 
     @Bean

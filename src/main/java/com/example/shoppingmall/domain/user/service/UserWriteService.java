@@ -1,7 +1,6 @@
 package com.example.shoppingmall.domain.user.service;
 
 import com.example.shoppingmall.application.usecase.user.CreateUserInfoSetUseCase;
-import com.example.shoppingmall.domain.cart.service.CartWriteService;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
 import com.example.shoppingmall.domain.user.dto.UserDto;
@@ -10,6 +9,7 @@ import com.example.shoppingmall.domain.user.dto.req.UpdateUserInfoRequest;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.exception.EmailDuplicateException;
 import com.example.shoppingmall.domain.user.exception.PasswordMismatchException;
+import com.example.shoppingmall.domain.user.exception.SocialEmailAlreadyExistException;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import com.example.shoppingmall.domain.user.util.Role;
 import com.example.shoppingmall.domain.user.util.SocialType;
@@ -20,7 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,22 +36,12 @@ public class UserWriteService {
 
     private final BirthWriteService birthWriteService;
     private final AddressWriteService addressWriteService;
-    private final CartWriteService cartWriteService;
     private final CreateUserInfoSetUseCase createUserInfoSetUseCase;
 
 
     @Transactional
     public UserDto createUser(RegisterUserRequest registerUserRequest) {
-        // 이메일 중복 검증
-        if (userRepository.existsByEmail(registerUserRequest.getEmail())) {
-            throw new EmailDuplicateException(registerUserRequest.getEmail(), ErrorCode.EMAIL_DUPLICATION);
-        }
-
-        // 비밀번호 미스매치 검증
-        if (!registerUserRequest.getPassword()
-                .equals(registerUserRequest.getConfirmPassword())) {
-            throw new PasswordMismatchException(registerUserRequest.getPassword(), ErrorCode.PASSWORD_MISMATCH);
-        }
+        validateUser(registerUserRequest);
 
         var user = User.builder()
                 .name(registerUserRequest.getName())
@@ -105,6 +99,15 @@ public class UserWriteService {
         }
     }
 
+    public void logout(HttpServletRequest request, HttpServletResponse response, User user) {
+        Cookie[] cookies = request.getCookies();
+
+        for (Cookie cookie: cookies) {
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
+    }
+
     public UserDto toDto(User user){
         return new UserDto(
                 user.getId(),
@@ -115,6 +118,26 @@ public class UserWriteService {
                 user.getCreatedAt(),
                 user.isEnabled()
         );
+
+    }
+
+    private void validateUser(RegisterUserRequest registerUserRequest) {
+        Optional<User> user = userRepository.findByEmailAndSocialType(registerUserRequest.getEmail(), SocialType.GOOGLE);
+        // 소셜 이메일을 통해 회원가입을 진행할 때
+        if (user.isPresent()) {
+            throw new SocialEmailAlreadyExistException(registerUserRequest.getEmail(), ErrorCode.SOCIAL_EMAIL_EXIST);
+        }
+
+        // 이메일 중복 검증
+        if (userRepository.existsByEmail(registerUserRequest.getEmail())) {
+            throw new EmailDuplicateException(registerUserRequest.getEmail(), ErrorCode.EMAIL_DUPLICATION);
+        }
+
+        // 비밀번호 미스매치 검증
+        if (!registerUserRequest.getPassword()
+                .equals(registerUserRequest.getConfirmPassword())) {
+            throw new PasswordMismatchException(registerUserRequest.getPassword(), ErrorCode.PASSWORD_MISMATCH);
+        }
 
     }
 

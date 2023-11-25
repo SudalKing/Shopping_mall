@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private static final String NAVER = "naver";
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.info("CustomOAuth2UserService.loadUser() - OAuth2 로그인 요청");
 
@@ -69,7 +71,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
     }
 
-    private User getUser(OAuth2Util attributes, SocialType socialType) {
+    @Transactional
+    public User getUser(OAuth2Util attributes, SocialType socialType) {
         User user = userRepository.findBySocialTypeAndSocialId(
                 socialType, attributes.getOAuth2UserInfo().getId()
         );
@@ -81,7 +84,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return user;
     }
 
-    private User saveUser(OAuth2Util attributes, SocialType socialType) {
+    @Transactional
+    public User saveUser(OAuth2Util attributes, SocialType socialType) {
         User user = attributes.toEntity(socialType, attributes.getOAuth2UserInfo());
         var savedUser = userRepository.save(user);
 

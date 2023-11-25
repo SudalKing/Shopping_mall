@@ -23,6 +23,7 @@ public class OrderProduct {
 
     private Long orderId;
     private Long productId;
+    private Long orderStatusId;
     private int count;
     private boolean reviewed;
 

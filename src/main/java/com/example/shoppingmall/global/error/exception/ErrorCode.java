@@ -15,10 +15,13 @@ public enum ErrorCode {
     HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
 
     // User
-    EMAIL_DUPLICATION(400, "U001", "Email is duplicate"),
-    LOGIN_INPUT_INVALID(400, "U002", "Login input is invalid"),
-    PASSWORD_MISMATCH(400, "U003", "Password dose not match"),
-    BIRTHDATE_INPUT_INVALID(400, "U004", "Check your date of birth"),
+    EMAIL_DUPLICATION(409, "U001", "Email is duplicated"),
+    SOCIAL_EMAIL_EXIST(409, "U002", "Email has already been used in social register"),
+    LOGIN_INPUT_INVALID(400, "U003", "Login input is invalid"),
+    EMAIL_TYPE_SOCIAL(400, "U004", "Email is social type"),
+    PASSWORD_MISMATCH(400, "U005", "Password dose not match"),
+    PASSWORD_INCORRECT(400, "U006", "Password is incorrect"),
+    BIRTHDATE_INPUT_INVALID(400, "U007", "Check your date of birth"),
 
     // Product
     OUT_OF_STOCK(400, "P001", "Out of Stock")
