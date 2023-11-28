@@ -3,6 +3,7 @@ package com.example.shoppingmall.application.controller;
 import com.example.shoppingmall.application.usecase.order.CreateOrderUseCase;
 import com.example.shoppingmall.domain.order.dto.res.OrderResponse;
 import com.example.shoppingmall.domain.order.dto.req.OrderRequest;
+import com.example.shoppingmall.domain.order.dto.res.OrderResultResponse;
 import com.example.shoppingmall.domain.order.dto.res.OrderStatsResponse;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderReadService;
@@ -34,13 +35,11 @@ public class OrderController {
     @Operation(summary = "상품 주문", description = "[인증 필요]")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     @PostMapping("/product")
-    public ResponseEntity<Void> createOrderSelectProduct(Principal principal, @RequestBody OrderRequest orderRequest){
+    public ResponseEntity<OrderResultResponse> createOrderSelectProduct(Principal principal, @RequestBody OrderRequest orderRequest){
         User user = userReadService.getUserByEmail(principal.getName());
-        Long orderId = createOrderUseCase.execute(user, orderRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .location(URI.create("/order/get/" + orderId))
-                .build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(createOrderUseCase.execute(user, orderRequest));
     }
 
     @Operation(summary = "사용자 주문 전체 조회", description = "[인증 필요]")

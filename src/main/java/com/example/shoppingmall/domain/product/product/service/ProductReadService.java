@@ -9,7 +9,7 @@ import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductDetailResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
-import com.example.shoppingmall.domain.product.product.repository.ProductLikeRepository;
+import com.example.shoppingmall.domain.product.product_like.ProductLikeRepository;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import com.example.shoppingmall.domain.product.product_duplicated.entity.ProductDuplicate;
 import com.example.shoppingmall.domain.product.product_duplicated.repository.ProductDuplicateRepository;
@@ -21,6 +21,7 @@ import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.*;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class ProductReadService {
     private final ProductRepository productRepository;
     private final ProductDuplicateRepository productDuplicateRepository;
@@ -40,26 +42,44 @@ public class ProductReadService {
     private final ProductImageReadService productImageReadService;
     private final UserReadService userReadService;
 
-
-
-    public ProductResponse getProduct(Long productId) {
-        var product = productRepository.findProductById(productId);
-        return toProductResponse(product);
-    }
     public Product getProductEntity(Long productId){
-        return productRepository.findProductById(productId);
+        Optional<Product> product = productRepository.findById(productId);
+
+        return product.orElseGet(() -> toProduct(productDuplicateRepository.findByProductId(productId)));
     }
+
+    public List<Product> getProductListByIds(List<Long> productIds) {
+        List<Product> products = productRepository.findProductsByIdIn(productIds);
+        List<ProductDuplicate> dupleProducts = productDuplicateRepository.findProductDuplicatesByProductIdIn(productIds);
+
+        products.addAll(dupleProducts.stream()
+                .map(this::toProduct)
+                .collect(Collectors.toList()));
+
+        return products;
+    }
+
+    public ProductResponse getProductResponse(Long productId) {
+        return toProductResponse(getProductEntity(productId));
+    }
+
     public int readHighestPrice(){
         return productRepository.findTopByOrderByPriceDesc().getPrice();
     }
-    public List<Product> getProductsByProductIds(List<Long> productIds) {return productRepository.findProductsByIdIn(productIds);}
-
-
 
     public List<ProductInCartReadResponse> getProductsInCartByIds(List<Long> productIds) {
-        List<Product> products = productRepository.findProductsByIdIn(productIds);
+        List<Product> products = getProductListByIds(productIds);
+
         return products.stream()
                 .map(this::toProductInCartReadResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductReadResponse> getProductsByIds(List<Long> productIds) {
+        List<Product> products = getProductListByIds(productIds);
+
+        return products.stream()
+                .map(this::toProductReadResponse)
                 .collect(Collectors.toList());
     }
 
@@ -84,14 +104,8 @@ public class ProductReadService {
                 .description(product.getDescription())
                 .brandInfo(brandRepository.findBrandInfoByProductId(product.getId()))
                 .price(product.getPrice())
+                .discountPrice(getDiscountPrice(product))
                 .build();
-    }
-
-    public List<ProductReadResponse> getProductsByIds(List<Long> productIds) {
-        List<Product> products = productRepository.findProductsByIdIn(productIds);
-        return products.stream()
-                .map(this::toProductReadResponse)
-                .collect(Collectors.toList());
     }
 
     private Product toProduct(ProductDuplicate productDuplicate) {
@@ -194,6 +208,7 @@ public class ProductReadService {
                 .score(getProductScore(product.getId()))
                 .description(product.getDescription())
                 .imageUrl(getUrl(product))
+                .discountPrice(getDiscountPrice(product))
                 .isLiked(false)
                 .brandInfo(brandRepository.findBrandInfoByProductId(product.getId()))
                 .build();
@@ -223,9 +238,10 @@ public class ProductReadService {
     }
 
     public int getDiscountPrice(Product product){
-        if (product.isSaled()) {
-            ProductSale productSale = productSaleRepository.findByProductId(product.getId());
-            return (int) Math.round(product.getPrice() * productSale.getDiscountRate());
+        Optional<ProductSale> productSale = productSaleRepository.findByProductId(product.getId());
+
+        if (product.isSaled() && productSale.isPresent()) {
+            return (int) Math.round(product.getPrice() * productSale.get().getDiscountRate());
         } else {
             return 0;
         }
@@ -234,5 +250,4 @@ public class ProductReadService {
     private Double getProductScore(Long productId) {
         return productRepository.findProductScore(productId);
     }
-
 }

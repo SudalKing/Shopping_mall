@@ -9,6 +9,7 @@ import com.example.shoppingmall.domain.delivery.entity.Delivery;
 import com.example.shoppingmall.domain.delivery.service.DeliveryWriteService;
 import com.example.shoppingmall.domain.order.dto.ProductsInfo;
 import com.example.shoppingmall.domain.order.dto.req.OrderRequest;
+import com.example.shoppingmall.domain.order.dto.res.OrderResultResponse;
 import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
@@ -40,7 +41,7 @@ public class CreateOrderUseCase {
     private final DeliveryWriteService deliveryWriteService;
 
     @Transactional
-    public Long execute(User user, OrderRequest orderRequest) {
+    public OrderResultResponse execute(User user, OrderRequest orderRequest) {
         AddressInfo addressInfo = orderRequest.getAddressInfo();
         List<ProductsInfo> productsInfo = orderRequest.getProductsInfo();
         Orders order = orderWriteService.createOrder(user);
@@ -79,7 +80,10 @@ public class CreateOrderUseCase {
 
         orderWriteService.updateOrderPriceSum(order, orderProductReadService.getPriceSum(order));
 
-        return order.getId();
+        return OrderResultResponse.builder()
+                .orderId(order.getId())
+                .createdAt(order.getCreatedAt())
+                .build();
     }
 
 }

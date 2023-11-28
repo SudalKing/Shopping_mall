@@ -18,6 +18,7 @@ public class ProductResponse {
     private Double score;
     private String description;
     private String imageUrl;
+    private Integer discountPrice;
     private boolean isLiked;
     private BrandInfoMapping brandInfo;
 

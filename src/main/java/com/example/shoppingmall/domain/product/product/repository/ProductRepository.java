@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findProductById(Long id);
+
     Product findTopByOrderByPriceDesc();
 
     List<Product> findProductsByIdIn(List<Long> productIds);
 
-    List<Product> findAllByName(String name);
     Product findProductByName(String name);
 
     //============================================= 전체 상품 조회 =====================================================

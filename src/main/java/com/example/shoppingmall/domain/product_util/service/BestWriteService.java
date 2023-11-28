@@ -1,7 +1,7 @@
 package com.example.shoppingmall.domain.product_util.service;
 
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
-import com.example.shoppingmall.domain.product.product.repository.ProductLikeRepository;
+import com.example.shoppingmall.domain.product.product_like.ProductLikeRepository;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.product_util.entity.BestProduct;
 import com.example.shoppingmall.domain.product_util.repository.BestProductRepository;
@@ -45,7 +45,7 @@ public class BestWriteService {
 
     public Double calcScore(Long productId){
         var productBest = bestProductRepository.findBestByProductId(productId);
-        var productDto = productReadService.getProduct(productId);
+        var productDto = productReadService.getProductResponse(productId);
 
         int highestPrice = productReadService.readHighestPrice();
         int highestSales = bestProductRepository.findTopByOrderByTotalSalesDesc().getTotalSales();

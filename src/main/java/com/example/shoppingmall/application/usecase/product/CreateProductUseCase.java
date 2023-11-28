@@ -29,6 +29,6 @@ public class CreateProductUseCase {
 
         productImageWriteService.createProductImage(product.getId(), s3FileDtoList);
 
-        return productReadService.getProduct(product.getId());
+        return productReadService.getProductResponse(product.getId());
     }
 }
