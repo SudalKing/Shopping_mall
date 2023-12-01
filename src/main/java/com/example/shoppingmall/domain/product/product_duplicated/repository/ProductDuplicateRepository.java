@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ProductDuplicateRepository extends JpaRepository<ProductDuplicate, Long> {
     List<ProductDuplicate> findAllByName(String name);
-    List<ProductDuplicate> findProductDuplicatesByProductIdIn(List<Long> productIds);
+    List<ProductDuplicate> findProductDuplicatesByProductIdInOrderByCreatedAtDesc(List<Long> productIds);
     ProductDuplicate findByProductId(Long productId);
 }

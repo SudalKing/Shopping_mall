@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,4 +20,5 @@ public class ProductInCartReadResponse {
     private int price;
     private int amount;
     private int discountPrice;
+    private LocalDateTime createdAt;
 }

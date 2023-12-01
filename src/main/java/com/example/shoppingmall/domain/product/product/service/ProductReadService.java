@@ -2,6 +2,7 @@ package com.example.shoppingmall.domain.product.product.service;
 
 import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
 import com.example.shoppingmall.domain.brand.repository.BrandRepository;
+import com.example.shoppingmall.domain.cart.service.CartProductReadService;
 import com.example.shoppingmall.domain.product.product.dto.ClothesInfo;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
@@ -41,6 +42,7 @@ public class ProductReadService {
 
     private final ProductImageReadService productImageReadService;
     private final UserReadService userReadService;
+    private final CartProductReadService cartProductReadService;
 
     public Product getProductEntity(Long productId){
         Optional<Product> product = productRepository.findById(productId);
@@ -49,12 +51,16 @@ public class ProductReadService {
     }
 
     public List<Product> getProductListByIds(List<Long> productIds) {
-        List<Product> products = productRepository.findProductsByIdIn(productIds);
-        List<ProductDuplicate> dupleProducts = productDuplicateRepository.findProductDuplicatesByProductIdIn(productIds);
+        List<Product> products = productRepository.findProductsByIdInOrderByCreatedAtDesc(productIds);
+        List<ProductDuplicate> dupleProducts = productDuplicateRepository.findProductDuplicatesByProductIdInOrderByCreatedAtDesc(productIds);
 
-        products.addAll(dupleProducts.stream()
+        List<Product> dupleProductsToProducts = dupleProducts.stream()
                 .map(this::toProduct)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+
+        products.addAll(dupleProductsToProducts);
+
+
 
         return products;
     }
@@ -72,6 +78,7 @@ public class ProductReadService {
 
         return products.stream()
                 .map(this::toProductInCartReadResponse)
+                .sorted(Comparator.comparing(ProductInCartReadResponse::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -185,7 +192,8 @@ public class ProductReadService {
                 clothesInfo.get("size"),
                 product.getPrice(),
                 cartProductRepository.findAmountByProductId(product.getId()),
-                getDiscountPrice(product)
+                getDiscountPrice(product),
+                cartProductReadService.getCreatedAt(product)
         );
     }
 
