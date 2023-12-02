@@ -20,4 +20,4 @@
  ![2](https://github.com/SudalKing/Shopping_mall/assets/87001865/0729b4dc-dd06-469e-876e-63d2621eb025) <br>
 
 
-## 2. 
+## 2. Exception 처리
