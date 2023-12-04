@@ -7,6 +7,7 @@ import com.example.shoppingmall.domain.order.repository.OrderProductRepository;
 import com.example.shoppingmall.domain.order.repository.OrdersRepository;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.util.ProductUtilService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
@@ -23,6 +24,8 @@ public class OrderReadService {
     private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductReadService productReadService;
+
+    private final ProductUtilService productUtilService;
 
     public List<Orders> getAllOrdersEntity(User user) {
         return ordersRepository.findAllByUserId(user.getId());
@@ -57,7 +60,7 @@ public class OrderReadService {
                 .color(clothesInfo.get("color"))
                 .size(clothesInfo.get("size"))
                 .price(product.getPrice())
-                .discountPrice(productReadService.getDiscountPrice(product))
+                .discountPrice(productUtilService.getDiscountPrice(product))
                 .amount(orderProduct.getCount())
                 .status(getStatus(orderProduct))
                 .imageUrl(productReadService.getUrl(product))

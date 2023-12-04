@@ -1,7 +1,7 @@
-package com.example.shoppingmall.domain.product.product_like;
+package com.example.shoppingmall.domain.product.product_like.service;
 
-import com.example.shoppingmall.domain.product.product_like.ProductLike;
-import com.example.shoppingmall.domain.product.product_like.ProductLikeRepository;
+import com.example.shoppingmall.domain.product.product_like.entity.ProductLike;
+import com.example.shoppingmall.domain.product.product_like.repository.ProductLikeRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

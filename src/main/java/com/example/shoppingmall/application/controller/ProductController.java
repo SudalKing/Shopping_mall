@@ -7,7 +7,7 @@ import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductDetailResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
-import com.example.shoppingmall.domain.product.product_like.ProductLikeWriteService;
+import com.example.shoppingmall.domain.product.product_like.service.ProductLikeWriteService;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.product.product.service.cursor.*;
 import com.example.shoppingmall.domain.user.entity.User;

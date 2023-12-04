@@ -4,7 +4,7 @@ import com.example.shoppingmall.domain.brand.service.BrandWriteService;
 import com.example.shoppingmall.domain.cart.service.CartWriteService;
 import com.example.shoppingmall.domain.order.service.OrderProductWriteService;
 import com.example.shoppingmall.domain.order.service.OrderWriteService;
-import com.example.shoppingmall.domain.product.product_like.ProductLikeWriteService;
+import com.example.shoppingmall.domain.product.product_like.service.ProductLikeWriteService;
 import com.example.shoppingmall.domain.product.review.service.ProductReviewWriteService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.AddressWriteService;

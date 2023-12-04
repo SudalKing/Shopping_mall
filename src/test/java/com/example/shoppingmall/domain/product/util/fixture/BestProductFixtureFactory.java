@@ -1,6 +1,6 @@
 package com.example.shoppingmall.domain.product.util.fixture;
 
-import com.example.shoppingmall.domain.product_util.entity.BestProduct;
+import com.example.shoppingmall.domain.product.best.entity.BestProduct;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.range.DoubleRangeRandomizer;

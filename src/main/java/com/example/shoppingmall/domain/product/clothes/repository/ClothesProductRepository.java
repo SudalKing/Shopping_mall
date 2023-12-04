@@ -1,6 +1,6 @@
-package com.example.shoppingmall.domain.product_util.repository;
+package com.example.shoppingmall.domain.product.clothes.repository;
 
-import com.example.shoppingmall.domain.product_util.entity.ClothesProduct;
+import com.example.shoppingmall.domain.product.clothes.entity.ClothesProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClothesProductRepository extends JpaRepository<ClothesProduct, Long> {

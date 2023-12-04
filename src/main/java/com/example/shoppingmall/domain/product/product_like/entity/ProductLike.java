@@ -1,4 +1,4 @@
-package com.example.shoppingmall.domain.product.product_like;
+package com.example.shoppingmall.domain.product.product_like.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

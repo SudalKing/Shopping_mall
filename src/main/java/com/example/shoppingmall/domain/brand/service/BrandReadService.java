@@ -6,6 +6,7 @@ import com.example.shoppingmall.domain.brand.entity.Brand;
 import com.example.shoppingmall.domain.brand.repository.BrandLikeRepository;
 import com.example.shoppingmall.domain.brand.repository.BrandProductRepository;
 import com.example.shoppingmall.domain.brand.repository.BrandRepository;
+import com.example.shoppingmall.domain.brand.util.BrandInfoMapping;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
@@ -51,6 +52,9 @@ public class BrandReadService {
                 .collect(Collectors.toList());
     }
 
+    public BrandInfoMapping getBrandInfo(Long productId) {
+        return brandRepository.findBrandInfoByProductId(productId);
+    }
 
     public void validatePrincipalLike(Principal principal, BrandDetailResponse brandDetailResponse) {
         if (principal != null) {

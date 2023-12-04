@@ -1,6 +1,6 @@
-package com.example.shoppingmall.domain.product.product_like;
+package com.example.shoppingmall.domain.product.product_like.repository;
 
-import com.example.shoppingmall.domain.product.product_like.ProductLike;
+import com.example.shoppingmall.domain.product.product_like.entity.ProductLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

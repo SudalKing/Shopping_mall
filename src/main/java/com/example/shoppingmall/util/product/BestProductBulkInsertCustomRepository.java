@@ -1,6 +1,6 @@
 package com.example.shoppingmall.util.product;
 
-import com.example.shoppingmall.domain.product_util.entity.BestProduct;
+import com.example.shoppingmall.domain.product.best.entity.BestProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

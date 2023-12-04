@@ -4,6 +4,7 @@ import com.example.shoppingmall.domain.order.dto.res.OrderStatsResponse;
 import com.example.shoppingmall.domain.order.entity.OrderProduct;
 import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.repository.OrderProductRepository;
+import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import java.util.List;
 @Service
 public class OrderProductReadService {
     private final OrderProductRepository orderProductRepository;
+
+    private final ProductReadService productReadService;
 
     public List<Long> getOrderProductIdsByOrderIdNotReviewed(Long orderId) {
         return orderProductRepository.findAllProductIdsByOrderIdAndNotReviewed(orderId);
@@ -48,7 +51,7 @@ public class OrderProductReadService {
 
         for (OrderProduct orderProduct: orderProducts) {
             priceSum += orderProduct.getCount() *
-                    orderProductRepository.findPriceByProductId(orderProduct.getProductId());
+                    productReadService.getProductEntity(orderProduct.getProductId()).getPrice();
         }
 
         return priceSum;

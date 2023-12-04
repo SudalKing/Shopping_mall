@@ -1,7 +1,7 @@
 package com.example.shoppingmall.domain.product.util.insert;
 
 import com.example.shoppingmall.domain.product.util.fixture.BestProductFixtureFactory;
-import com.example.shoppingmall.domain.product_util.entity.BestProduct;
+import com.example.shoppingmall.domain.product.best.entity.BestProduct;
 import com.example.shoppingmall.util.product.BestProductBulkInsertCustomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

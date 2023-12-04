@@ -1,23 +1,21 @@
 package com.example.shoppingmall.domain.product.product.service;
 
 import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
-import com.example.shoppingmall.domain.brand.repository.BrandRepository;
-import com.example.shoppingmall.domain.cart.service.CartProductReadService;
-import com.example.shoppingmall.domain.product.product.dto.ClothesInfo;
-import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
+import com.example.shoppingmall.domain.cart.service.CartProductReadService;
+import com.example.shoppingmall.domain.product.clothes.entity.ClothesProduct;
+import com.example.shoppingmall.domain.product.clothes.repository.ClothesProductRepository;
+import com.example.shoppingmall.domain.product.product.dto.ClothesInfo;
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductDetailResponse;
+import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartReadResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
-import com.example.shoppingmall.domain.product.product_like.ProductLikeRepository;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
+import com.example.shoppingmall.domain.product.product.util.ProductUtilService;
 import com.example.shoppingmall.domain.product.product_duplicated.entity.ProductDuplicate;
 import com.example.shoppingmall.domain.product.product_duplicated.repository.ProductDuplicateRepository;
-import com.example.shoppingmall.domain.product_util.entity.ClothesProduct;
-import com.example.shoppingmall.domain.product_util.entity.ProductSale;
-import com.example.shoppingmall.domain.product_util.repository.ClothesProductRepository;
-import com.example.shoppingmall.domain.product_util.repository.ProductSaleRepository;
+import com.example.shoppingmall.domain.product.product_like.repository.ProductLikeRepository;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +33,14 @@ public class ProductReadService {
     private final ProductRepository productRepository;
     private final ProductDuplicateRepository productDuplicateRepository;
     private final ProductLikeRepository productLikeRepository;
-    private final ProductSaleRepository productSaleRepository;
     private final ClothesProductRepository clothesProductRepository;
     private final CartProductRepository cartProductRepository;
-    private final BrandRepository brandRepository;
 
     private final ProductImageReadService productImageReadService;
     private final UserReadService userReadService;
     private final CartProductReadService cartProductReadService;
+
+    private final ProductUtilService productUtilService;
 
     public Product getProductEntity(Long productId){
         Optional<Product> product = productRepository.findById(productId);
@@ -59,8 +57,6 @@ public class ProductReadService {
                 .collect(Collectors.toList());
 
         products.addAll(dupleProductsToProducts);
-
-
 
         return products;
     }
@@ -109,9 +105,9 @@ public class ProductReadService {
                 .imageUrl(getUrl(product))
                 .clothesInfoList(getClothesInfoList(productList))
                 .description(product.getDescription())
-                .brandInfo(brandRepository.findBrandInfoByProductId(product.getId()))
+                .brandInfo(productUtilService.getBrandInfo(product.getId()))
                 .price(product.getPrice())
-                .discountPrice(getDiscountPrice(product))
+                .discountPrice(productUtilService.getDiscountPrice(product))
                 .build();
     }
 
@@ -192,7 +188,7 @@ public class ProductReadService {
                 clothesInfo.get("size"),
                 product.getPrice(),
                 cartProductRepository.findAmountByProductId(product.getId()),
-                getDiscountPrice(product),
+                productUtilService.getDiscountPrice(product),
                 cartProductReadService.getCreatedAt(product)
         );
     }
@@ -216,9 +212,9 @@ public class ProductReadService {
                 .score(getProductScore(product.getId()))
                 .description(product.getDescription())
                 .imageUrl(getUrl(product))
-                .discountPrice(getDiscountPrice(product))
+                .discountPrice(productUtilService.getDiscountPrice(product))
                 .isLiked(false)
-                .brandInfo(brandRepository.findBrandInfoByProductId(product.getId()))
+                .brandInfo(productUtilService.getBrandInfo(product.getId()))
                 .build();
     }
 
@@ -243,16 +239,6 @@ public class ProductReadService {
 
     public String getUrl(Product product) {
         return productImageReadService.getUrl(product.getId());
-    }
-
-    public int getDiscountPrice(Product product){
-        Optional<ProductSale> productSale = productSaleRepository.findByProductId(product.getId());
-
-        if (product.isSaled() && productSale.isPresent()) {
-            return (int) Math.round(product.getPrice() * productSale.get().getDiscountRate());
-        } else {
-            return 0;
-        }
     }
 
     private Double getProductScore(Long productId) {

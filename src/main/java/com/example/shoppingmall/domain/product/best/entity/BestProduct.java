@@ -1,4 +1,4 @@
-package com.example.shoppingmall.domain.product_util.entity;
+package com.example.shoppingmall.domain.product.best.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,19 +9,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
 @Entity
-public class ProductSale {
+public class BestProduct {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long productId;
-    private double discountRate;
-    private boolean deleted;
-    private LocalDateTime createdAt;
+    private int totalSales;
+    private int totalLike;
+    private Double score;
+
+    public void updateTotalSales(int stock){
+        totalSales += stock;
+    }
+    public void updateScore(Double score){
+        this.score = score;
+    }
+    public void updateTotalLike(int likeCount) {
+        this.totalLike = likeCount;
+    }
 }

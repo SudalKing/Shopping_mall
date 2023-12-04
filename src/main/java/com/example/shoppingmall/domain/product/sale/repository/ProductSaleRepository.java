@@ -1,6 +1,6 @@
-package com.example.shoppingmall.domain.product_util.repository;
+package com.example.shoppingmall.domain.product.sale.repository;
 
-import com.example.shoppingmall.domain.product_util.entity.ProductSale;
+import com.example.shoppingmall.domain.product.sale.entity.ProductSale;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
