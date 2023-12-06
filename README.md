@@ -1,8 +1,24 @@
-# Shopping_mall
+# 쇼핑몰 프로젝트 
 
-## 1. JWT 로그인
+## 프로젝트 설명
+> 의류, 잡화 등등 여러 카테고리의 상품을 쇼핑할 수 있는 웹 페이지
 
-### 1-1. 동작 과정
+## 사용 기술셋
+  * Spring Boot 2.7.2
+  * MySQL 8.0.33
+  * Nginx
+
+## 배포
+  * AWS EC2, S3, RDS, Route53
+
+## 동작 예시
+
+
+## 주요 기능
+
+### 1. JWT 로그인
+
+#### 1-1. 동작 과정
 
   Access Token 은 사용자의 email 정보를 포함
  
@@ -19,8 +35,8 @@
   
  ![2](https://github.com/SudalKing/Shopping_mall/assets/87001865/0729b4dc-dd06-469e-876e-63d2621eb025) <br>
 
-### 1-2. 예외 처리
+#### 1-2. 예외 처리
 
-## 2. 무한 스크롤
+### 2. 무한 스크롤
 
-## 3. Exception 처리
+### 3. Exception
