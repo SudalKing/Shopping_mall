@@ -1,6 +1,7 @@
 package com.example.shoppingmall.domain.user.service;
 
 import com.example.shoppingmall.application.usecase.user.CreateUserInfoSetUseCase;
+import com.example.shoppingmall.domain.cart.service.CartWriteService;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
 import com.example.shoppingmall.domain.user.dto.UserDto;
@@ -29,15 +30,15 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserWriteService {
-    private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final BirthWriteService birthWriteService;
     private final AddressWriteService addressWriteService;
-    private final CreateUserInfoSetUseCase createUserInfoSetUseCase;
-
+    private final CartWriteService cartWriteService;
 
     @Transactional
     public UserDto createUser(RegisterUserRequest registerUserRequest) {
@@ -61,7 +62,9 @@ public class UserWriteService {
         var savedUser = userRepository.save(user);
         log.info("User 저장 성공");
 
-        createUserInfoSetUseCase.createUserInfoSet(savedUser, addressInfo, birthDate);
+        cartWriteService.createCart(user);
+        addressWriteService.createAddress(addressInfo, user);
+        birthWriteService.createBirth(birthDate, user);
 
         return toDto(userRepository.save(savedUser));
     }
@@ -70,10 +73,8 @@ public class UserWriteService {
         userRepository.deleteById(user.getId());
     }
 
-    @Transactional
     public void updateUser(User user, UpdateUserInfoRequest updates) {
         if (updates != null) {
-
             if (updates.getName() != null) {
                 user.updateName(updates.getName());
             }

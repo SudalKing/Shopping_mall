@@ -2,9 +2,12 @@ package com.example.shoppingmall.domain.cart.service;
 
 import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.cart.entity.CartProduct;
+import com.example.shoppingmall.domain.cart.exception.InvalidQuantityException;
 import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.user.entity.User;
+import com.example.shoppingmall.global.error.exception.EntityNotFoundException;
+import com.example.shoppingmall.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class CartProductWriteService {
     private final CartProductRepository cartProductRepository;
     private final CartReadService cartReadService;
@@ -44,18 +48,18 @@ public class CartProductWriteService {
         if (findCartProduct.isPresent() && findCartProduct.get().getAmount() > 1) {
             findCartProduct.get().minusCount(1);
         } else {
-            throw new Exception("Can not minus!!");
+            throw new InvalidQuantityException("Can not decrease quantity", ErrorCode.INVALID_QUANTITY);
         }
     }
 
     @Transactional
-    public void increaseCartProductCount(Cart cart, Product product) throws Exception {
+    public void increaseCartProductCount(Cart cart, Product product) {
         Optional<CartProduct> findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
         if (findCartProduct.isPresent()) {
             findCartProduct.get().addCount(1);
         } else {
-            throw new Exception("");
+            throw new EntityNotFoundException("Can not find CartProduct");
         }
     }
 

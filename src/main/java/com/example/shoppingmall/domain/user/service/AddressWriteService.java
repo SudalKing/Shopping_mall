@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class AddressWriteService {
 
     private final AddressRepository addressRepository;
@@ -30,7 +31,6 @@ public class AddressWriteService {
         addressRepository.deleteByUserId(user.getId());
     }
 
-    @Transactional
     public void updateAddress(User user, AddressInfo addressInfo) {
         UserAddress userAddress = addressRepository.findByUserId(user.getId());
 

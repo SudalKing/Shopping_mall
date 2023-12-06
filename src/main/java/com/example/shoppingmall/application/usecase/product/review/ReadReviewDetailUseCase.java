@@ -4,6 +4,7 @@ import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
 import com.example.shoppingmall.domain.awsS3.service.ProductReviewImageReadService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.service.ProductUtilService;
 import com.example.shoppingmall.domain.product.review.dto.res.ProductReviewDetailResponse;
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.service.ProductReviewReadService;
@@ -24,11 +25,13 @@ public class ReadReviewDetailUseCase {
     private final ProductImageReadService productImageReadService;
     private final ProductReviewImageReadService productReviewImageReadService;
 
+    private final ProductUtilService productUtilService;
+
     @Transactional
     public ProductReviewDetailResponse execute(User user, Long reviewId) {
         ProductReview productReview = productReviewReadService.getReviewByReviewId(reviewId);
         Product product = productReadService.getProductEntity(productReview.getProductId());
-        Map<String, String> clothesInfo = productReadService.getClothesSizeAndColor(product);
+        Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
 
         return ProductReviewDetailResponse.builder()
                 .reviewId(reviewId)

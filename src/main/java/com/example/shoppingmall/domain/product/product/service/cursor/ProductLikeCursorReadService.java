@@ -4,7 +4,7 @@ import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
-import com.example.shoppingmall.domain.product.product.util.ProductCursorUtilService;
+import com.example.shoppingmall.domain.product.product.service.cursor.util.ProductCursorUtilService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.util.CursorRequest;

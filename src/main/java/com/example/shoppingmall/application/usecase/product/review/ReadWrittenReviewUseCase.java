@@ -3,6 +3,7 @@ package com.example.shoppingmall.application.usecase.product.review;
 import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.service.ProductUtilService;
 import com.example.shoppingmall.domain.product.review.dto.res.ProductReviewWrittenResponse;
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.service.ProductReviewReadService;
@@ -23,6 +24,8 @@ public class ReadWrittenReviewUseCase {
     private final ProductReviewReadService productReviewReadService;
     private final ProductImageReadService productImageReadService;
 
+    private final ProductUtilService productUtilService;
+
     @Transactional
     public List<ProductReviewWrittenResponse> execute(User user) {
         List<ProductReviewWrittenResponse> responses = new ArrayList<>();
@@ -31,7 +34,7 @@ public class ReadWrittenReviewUseCase {
 
         for (ProductReview review : reviews) {
             Product product = productReadService.getProductEntity(review.getProductId());
-            Map<String, String> clothesInfo = productReadService.getClothesSizeAndColor(product);
+            Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
 
             ProductReviewWrittenResponse response = ProductReviewWrittenResponse.builder()
                     .reviewId(review.getId())

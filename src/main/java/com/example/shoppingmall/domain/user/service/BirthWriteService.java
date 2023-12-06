@@ -15,6 +15,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class BirthWriteService {
     private final BirthRepository birthRepository;
 

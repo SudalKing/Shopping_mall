@@ -13,14 +13,12 @@ import com.example.shoppingmall.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class ProductReviewWriteService {
     private final ProductReviewRepository productReviewRepository;
     private final ProductReviewLikeRepository productReviewLikeRepository;
@@ -63,7 +61,6 @@ public class ProductReviewWriteService {
         productReviewLikeRepository.deleteAllByUserId(userId);
     }
 
-    @Transactional
     public void updateReview(Long reviewId, UpdateProductReviewRequest updates) {
         ProductReview productReview = productReviewRepository.findProductReviewById(reviewId);
 
@@ -85,7 +82,6 @@ public class ProductReviewWriteService {
         reviewLikeScoreRepository.save(reviewLikeScore);
     }
 
-    @Transactional
     public void updateReviewLikeScore(Long reviewId) {
         ReviewLikeScore reviewLikeScore = reviewLikeScoreRepository.findReviewLikeScoreByReviewId(reviewId).orElse(null);
 
@@ -94,10 +90,6 @@ public class ProductReviewWriteService {
         } else {
             reviewLikeScore.setReviewScore(getReviewScore(reviewId));
         }
-    }
-
-    public void deleteReviewLikeScore(Long reviewId) {
-        reviewLikeScoreRepository.deleteByReviewId(reviewId);
     }
 
     private Double getReviewScore(Long reviewId) {

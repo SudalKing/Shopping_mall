@@ -7,12 +7,13 @@ import com.example.shoppingmall.domain.order.repository.OrderProductRepository;
 import com.example.shoppingmall.domain.order.repository.OrdersRepository;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
-import com.example.shoppingmall.domain.product.product.util.ProductUtilService;
+import com.example.shoppingmall.domain.product.product.service.ProductUtilService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -20,11 +21,11 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class OrderReadService {
     private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductReadService productReadService;
-
     private final ProductUtilService productUtilService;
 
     public List<Orders> getAllOrdersEntity(User user) {
@@ -51,7 +52,7 @@ public class OrderReadService {
 
     private OrderResponse toOrderResponse(OrderProduct orderProduct){
         Product product = productReadService.getProductEntity(orderProduct.getProductId());
-        Map<String, String> clothesInfo = productReadService.getClothesSizeAndColor(product);
+        Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
 
         return OrderResponse.builder()
                 .orderId(orderProduct.getOrderId())

@@ -3,6 +3,7 @@ package com.example.shoppingmall.domain.product.review.service;
 import com.example.shoppingmall.domain.awsS3.service.ProductReviewImageReadService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
+import com.example.shoppingmall.domain.product.product.service.ProductUtilService;
 import com.example.shoppingmall.domain.product.review.dto.res.RecentReviewResponse;
 import com.example.shoppingmall.domain.product.review.dto.res.ReviewListResponse;
 import com.example.shoppingmall.domain.product.review.dto.res.ReviewStatsResponse;
@@ -17,6 +18,7 @@ import com.example.shoppingmall.util.CursorRequest;
 import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.*;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class ProductReviewReadService {
     private final ProductReviewRepository productReviewRepository;
     private final ReviewLikeScoreRepository reviewLikeScoreRepository;
@@ -32,6 +35,8 @@ public class ProductReviewReadService {
     private final UserReadService userReadService;
     private final ProductReadService productReadService;
     private final ProductReviewLikeReadService productReviewLikeReadService;
+
+    private final ProductUtilService productUtilService;
 
     public List<ProductReview> getAllReviewsByUserIdOrderByCreatedAt(Long userId) {
         return productReviewRepository.findAllByUserIdOrderByCreatedAt(userId);
@@ -106,28 +111,7 @@ public class ProductReviewReadService {
         }
     }
 
-    // ================================================= 로직 모음 ==========================================
-    /**
-     * 리뷰 통계 조회 메소드 로직
-     */
-    public void getReviewStatsByProductIdLogics(Long productId) {
-        getTotalReviewCount(productId);
-        getAverageRating(productId);
-        getProportion(productId);
-    }
 
-    /**
-     * 리뷰 목록 조회 메소드 로직
-     */
-    public void getProductReviewsByCursorLogics() {
-//        getProductResponsePageCursor();
-//        findAllReview();
-//        getNextKey();
-//        getLikeCountNextKey();
-    }
-
-    // ====================================================================================================
-    // ================================================== 메소드 ============================================
     private Integer getTotalReviewCount(final Long productId) {
         return productReviewRepository.countAllByProductId(productId);
     }
@@ -225,12 +209,11 @@ public class ProductReviewReadService {
     }
 
 
-    private List<ProductReview> findAllReviewImage(CursorRequest cursorRequest, Long productId) throws Exception {
+    private List<ProductReview> findAllReviewImage(CursorRequest cursorRequest, Long productId) {
         if (cursorRequest.hasKey()) {
             return productReviewRepository.findAllExistImageByProductIdByCursorOrderByIdDescHasKey(cursorRequest.getKey().longValue(), cursorRequest.getSize(), productId);
         } else {
             return productReviewRepository.findAllExistImageByProductIdByCursorOrderByIdDescNoKey(cursorRequest.getSize(), productId);
-
         }
     }
 
@@ -269,7 +252,7 @@ public class ProductReviewReadService {
 
     private ReviewListResponse toListResponse(ProductReview productReview) {
         User user = userReadService.getUserEntity(productReview.getUserId());
-        Map<String, String> clothesInfo = productReadService.getClothesSizeAndColor(productReadService.getProductEntity(productReview.getProductId()));
+        Map<String, String> clothesInfo = productUtilService.getClothesInfo(productReadService.getProductEntity(productReview.getProductId()));
 
         return ReviewListResponse.builder()
                 .reviewId(productReview.getId())

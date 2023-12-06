@@ -1,10 +1,7 @@
 package com.example.shoppingmall.domain.product.product.service;
 
-import com.example.shoppingmall.domain.awsS3.service.ProductImageReadService;
-import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
+import com.example.shoppingmall.domain.brand.service.BrandReadService;
 import com.example.shoppingmall.domain.cart.service.CartProductReadService;
-import com.example.shoppingmall.domain.product.clothes.entity.ClothesProduct;
-import com.example.shoppingmall.domain.product.clothes.repository.ClothesProductRepository;
 import com.example.shoppingmall.domain.product.product.dto.ClothesInfo;
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.res.ProductDetailResponse;
@@ -12,10 +9,9 @@ import com.example.shoppingmall.domain.product.product.dto.res.ProductInCartRead
 import com.example.shoppingmall.domain.product.product.dto.res.ProductReadResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
-import com.example.shoppingmall.domain.product.product.util.ProductUtilService;
 import com.example.shoppingmall.domain.product.product_duplicated.entity.ProductDuplicate;
 import com.example.shoppingmall.domain.product.product_duplicated.repository.ProductDuplicateRepository;
-import com.example.shoppingmall.domain.product.product_like.repository.ProductLikeRepository;
+import com.example.shoppingmall.domain.product.product_like.service.ProductLikeReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +28,14 @@ import java.util.stream.Collectors;
 public class ProductReadService {
     private final ProductRepository productRepository;
     private final ProductDuplicateRepository productDuplicateRepository;
-    private final ProductLikeRepository productLikeRepository;
-    private final ClothesProductRepository clothesProductRepository;
-    private final CartProductRepository cartProductRepository;
 
-    private final ProductImageReadService productImageReadService;
     private final UserReadService userReadService;
+    private final ProductLikeReadService productLikeReadService;
+    private final BrandReadService brandReadService;
     private final CartProductReadService cartProductReadService;
 
     private final ProductUtilService productUtilService;
+
 
     public Product getProductEntity(Long productId){
         Optional<Product> product = productRepository.findById(productId);
@@ -105,7 +100,7 @@ public class ProductReadService {
                 .imageUrl(getUrl(product))
                 .clothesInfoList(getClothesInfoList(productList))
                 .description(product.getDescription())
-                .brandInfo(productUtilService.getBrandInfo(product.getId()))
+                .brandInfo(brandReadService.getBrandInfo(product.getId()))
                 .price(product.getPrice())
                 .discountPrice(productUtilService.getDiscountPrice(product))
                 .build();
@@ -139,7 +134,7 @@ public class ProductReadService {
     public void updateLikeTrue(User user, List<ProductResponse> productResponseList) {
         productResponseList.forEach(
                 productDto -> {
-                    if (productLikeRepository.findByUserIdAndProductId(user.getId(), productDto.getId()).isPresent()) {
+                    if (productLikeReadService.isLiked(user.getId(), productDto.getId())) {
                         productDto.setLiked();
                     }
                 }
@@ -157,48 +152,34 @@ public class ProductReadService {
     }
 
     public void updateLikeTrue(User user, ProductDetailResponse detailResponse) {
-        if (productLikeRepository.findByUserIdAndProductId(user.getId(), detailResponse.getClothesInfoList().get(0).getId()).isPresent()) {
+        if (productLikeReadService.isLiked(user.getId(), detailResponse.getClothesInfoList().get(0).getId())) {
             detailResponse.setLiked();
         }
     }
 
-    public Map<String, String> getClothesSizeAndColor(Product product) {
-        Long typeId = product.getCategoryId();
-        Map<String, String> clothesInfo = new HashMap<>();
-        ClothesProduct clothesProduct = clothesProductRepository.findByProductId(product.getId());
-
-        if (typeId == 1L) {
-            clothesInfo.put("color", clothesProduct.getColor());
-            clothesInfo.put("size", clothesProduct.getClotheSize());
-        } else {
-            clothesInfo.put("color", "");
-            clothesInfo.put("size", "");
-        }
-
-        return clothesInfo;
-    }
-
     public ProductInCartReadResponse toProductInCartReadResponse(Product product) {
-        Map<String, String> clothesInfo = getClothesSizeAndColor(product);
+        Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
+
         return new ProductInCartReadResponse(
                 product.getId(),
                 product.getName(),
-                productImageReadService.getUrl(product.getId()),
+                productUtilService.getProductImageUrl(product.getId()),
                 clothesInfo.get("color"),
                 clothesInfo.get("size"),
                 product.getPrice(),
-                cartProductRepository.findAmountByProductId(product.getId()),
+                cartProductReadService.getAmount(product.getId()),
                 productUtilService.getDiscountPrice(product),
-                cartProductReadService.getCreatedAt(product)
+                cartProductReadService.getCreatedAt(product.getId())
         );
     }
 
     public ProductReadResponse toProductReadResponse(Product product) {
-        Map<String, String> clothesInfo = getClothesSizeAndColor(product);
+        Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
+
         return new ProductReadResponse(
                 product.getId(),
                 product.getName(),
-                productImageReadService.getUrl(product.getId()),
+                productUtilService.getProductImageUrl(product.getId()),
                 clothesInfo.get("color"),
                 clothesInfo.get("size")
         );
@@ -214,7 +195,7 @@ public class ProductReadService {
                 .imageUrl(getUrl(product))
                 .discountPrice(productUtilService.getDiscountPrice(product))
                 .isLiked(false)
-                .brandInfo(productUtilService.getBrandInfo(product.getId()))
+                .brandInfo(brandReadService.getBrandInfo(product.getId()))
                 .build();
     }
 
@@ -223,7 +204,7 @@ public class ProductReadService {
         List<ClothesInfo> clothesInfoList = new ArrayList<>();
 
         for (Product product: productList) {
-            Map<String, String> clothes = getClothesSizeAndColor(product);
+            Map<String, String> clothes = productUtilService.getClothesInfo(product);
 
             ClothesInfo clothesInfo = ClothesInfo.builder()
                     .id(product.getId())
@@ -238,7 +219,7 @@ public class ProductReadService {
     }
 
     public String getUrl(Product product) {
-        return productImageReadService.getUrl(product.getId());
+        return productUtilService.getProductImageUrl(product.getId());
     }
 
     private Double getProductScore(Long productId) {

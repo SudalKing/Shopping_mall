@@ -9,11 +9,13 @@ import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class BrandWriteService {
     private final BrandRepository brandRepository;
     private final BrandLikeRepository brandLikeRepository;

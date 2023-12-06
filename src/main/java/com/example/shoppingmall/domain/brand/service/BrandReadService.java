@@ -3,17 +3,16 @@ package com.example.shoppingmall.domain.brand.service;
 import com.example.shoppingmall.domain.brand.dto.res.BrandDetailResponse;
 import com.example.shoppingmall.domain.brand.dto.res.BrandResponse;
 import com.example.shoppingmall.domain.brand.entity.Brand;
-import com.example.shoppingmall.domain.brand.repository.BrandLikeRepository;
-import com.example.shoppingmall.domain.brand.repository.BrandProductRepository;
 import com.example.shoppingmall.domain.brand.repository.BrandRepository;
 import com.example.shoppingmall.domain.brand.util.BrandInfoMapping;
-import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
+import com.example.shoppingmall.domain.product.product.service.ProductUtilService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.global.error.exception.ErrorCode;
 import com.example.shoppingmall.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -23,12 +22,14 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class BrandReadService {
-    private final UserReadService userReadService;
     private final BrandRepository brandRepository;
-    private final BrandLikeRepository brandLikeRepository;
-    private final ProductRepository productRepository;
-    private final BrandProductRepository brandProductRepository;
+
+    private final BrandLikeReadService brandLikeReadService;
+    private final UserReadService userReadService;
+    private final ProductUtilService productUtilService;
+
 
     public BrandDetailResponse getBrandDetail(Long brandId) {
         Brand brand = brandRepository.findBrandById(brandId);
@@ -36,7 +37,7 @@ public class BrandReadService {
         return toBrandDetailResponse(brand);
     }
 
-    public List<BrandResponse> getAllBrand(Long sortId) throws Exception {
+    public List<BrandResponse> getAllBrand(Long sortId) {
         List<Brand> brandList = findAllBrand(sortId);
 
         return brandList.stream()
@@ -44,7 +45,7 @@ public class BrandReadService {
                 .collect(Collectors.toList());
     }
 
-    public List<BrandResponse> getLikeBrands(User user, Long sortId) throws Exception {
+    public List<BrandResponse> getLikeBrands(User user, Long sortId) {
         List<Brand> likeBrandList = findAllLikeBrand(user, sortId);
 
         return likeBrandList.stream()
@@ -67,12 +68,12 @@ public class BrandReadService {
     }
 
     private void updateLikeTrue(User user, BrandDetailResponse brandDetailResponse) {
-        if (brandLikeRepository.findByUserIdAndBrandId(user.getId(), brandDetailResponse.getId()).isPresent()) {
+        if (brandLikeReadService.isBrandLiked(user.getId(), brandDetailResponse.getId())) {
             brandDetailResponse.setLiked();
         }
     }
 
-    private List<Brand> findAllBrand(Long sortId) throws Exception {
+    private List<Brand> findAllBrand(Long sortId) {
         if (sortId.equals(0L)) {
             return brandRepository.findAllBrandsOrderByScoreDesc();
         } else if (sortId.equals(1L)) {
@@ -84,7 +85,7 @@ public class BrandReadService {
         }
     }
 
-    private List<Brand> findAllLikeBrand(User user, Long sortId) throws Exception {
+    private List<Brand> findAllLikeBrand(User user, Long sortId) {
         List<Brand> likedBrandList = new ArrayList<>();
 
         if (sortId.equals(0L)) {
@@ -117,7 +118,7 @@ public class BrandReadService {
         return BrandDetailResponse.builder()
                 .id(brand.getId())
                 .name(brand.getName())
-                .categoryIds(productRepository.findCategoryIdsByBrandId(brand.getId()))
+                .categoryIds(productUtilService.getCategoryIdsMapping(brand.getId()))
                 .logoUrl(brand.getLogoUrl())
                 .imageUrl(brand.getImageUrl())
                 .isLiked(false)

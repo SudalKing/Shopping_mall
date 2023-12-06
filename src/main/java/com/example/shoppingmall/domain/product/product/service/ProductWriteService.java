@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class ProductWriteService {
     private final ProductRepository productRepository;
     private final BrandProductRepository brandProductRepository;

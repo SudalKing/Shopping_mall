@@ -12,6 +12,7 @@ import com.example.shoppingmall.domain.user.repository.BirthRepository;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class UserReadService {
-
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final BirthRepository birthRepository;
@@ -80,17 +81,5 @@ public class UserReadService {
                 user.getPassword(),
                 user.getCreatedAt(),
                 user.isEnabled());
-    }
-
-    public User toEntity(UserDto userDto){
-        return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .phoneNumber(userDto.getPhoneNumber())
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .createdAt(userDto.getCreatedAt())
-                .enabled(userDto.isEnabled())
-                .build();
     }
 }

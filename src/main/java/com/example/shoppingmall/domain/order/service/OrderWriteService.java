@@ -1,6 +1,5 @@
 package com.example.shoppingmall.domain.order.service;
 
-import com.example.shoppingmall.domain.cart.entity.Cart;
 import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.repository.OrdersRepository;
 import com.example.shoppingmall.domain.user.entity.User;
@@ -9,13 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class OrderWriteService {
     private final OrdersRepository ordersRepository;
-    // OrderRecord 테이블을 만들어 userId, orderId, orderPriceSum 에 넣어주기
 
     @Transactional
     public Orders createOrder(User user){

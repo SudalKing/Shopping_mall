@@ -91,19 +91,24 @@ public class JwtFilter extends OncePerRequestFilter {
     private void authenticationAccessToken(HttpServletRequest request,
                                            HttpServletResponse response,
                                            FilterChain filterChain) throws ServletException, IOException {
-        log.info("authenticationAccessToken 호출");
+//        log.info("authenticationAccessToken 호출");
         Optional<String> accessToken = jwtService.getAccessToken(request);
 
         if (accessToken.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.error("access token is null");
+            log.error("Access token is Null");
             return;
         }
 
         if (!jwtService.verifyToken(accessToken.get())) {
-            log.error("Token 검증 실패");
+//            log.error("Token 검증 실패");
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             String refreshToken = jwtService.findCookie(request).getValue();
+
+            if (refreshToken == null) {
+                log.error("Refresh Token is Null");
+                return;
+            }
 
             validateAndRenewAccessToken(request, response, refreshToken);
             return;

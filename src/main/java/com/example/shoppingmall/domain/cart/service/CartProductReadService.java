@@ -6,12 +6,14 @@ import com.example.shoppingmall.domain.cart.repository.CartProductRepository;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class CartProductReadService {
     private final CartProductRepository cartProductRepository;
 
@@ -24,7 +26,11 @@ public class CartProductReadService {
         return cartProductRepository.findProductIdsByCartId(cart.getId());
     }
 
-    public LocalDateTime getCreatedAt(Product product) {
-        return cartProductRepository.findCartProductByProductId(product.getId()).getCreatedAt();
+    public LocalDateTime getCreatedAt(Long productId) {
+        return cartProductRepository.findCartProductByProductId(productId).getCreatedAt();
+    }
+
+    public int getAmount(Long productId) {
+        return cartProductRepository.findAmountByProductId(productId);
     }
 }

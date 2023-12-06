@@ -1,4 +1,4 @@
-package com.example.shoppingmall.domain.product.product.util;
+package com.example.shoppingmall.domain.product.product.service.cursor.util;
 
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;

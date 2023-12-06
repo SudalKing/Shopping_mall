@@ -24,7 +24,11 @@ public enum ErrorCode {
     BIRTHDATE_INPUT_INVALID(400, "U007", "Check your date of birth"),
 
     // Product
-    OUT_OF_STOCK(400, "P001", "Out of Stock")
+    OUT_OF_STOCK(400, "P001", "Out of Stock"),
+
+    // Cart
+    INVALID_QUANTITY(400, "CA001", "Invalid Quantity of CartProduct")
+
 
     // More
     ;
