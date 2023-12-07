@@ -4,7 +4,7 @@
 ## 사용 기술셋
   * Spring Boot 2.7.2
   * MySQL 8.0.33
-  * Nginx
+  * Nginx 1.18.0(Ubuntu)
 
 ## 배포
   * AWS EC2, S3, RDS, Route53
