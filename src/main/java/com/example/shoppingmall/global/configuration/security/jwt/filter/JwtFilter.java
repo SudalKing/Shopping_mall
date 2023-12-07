@@ -1,10 +1,9 @@
 package com.example.shoppingmall.global.configuration.security.jwt.filter;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.example.shoppingmall.global.configuration.security.jwt.service.JwtService;
-import com.example.shoppingmall.global.configuration.security.jwt.util.PasswordUtil;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
+import com.example.shoppingmall.global.configuration.security.jwt.service.JwtService;
+import com.example.shoppingmall.global.configuration.security.jwt.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -70,23 +68,7 @@ public class JwtFilter extends OncePerRequestFilter {
         authenticationAccessToken(request, response, filterChain);
     }
 
-    private void validateAndRenewAccessToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
 
-        userRepository.findByRefreshToken(refreshToken)
-                .ifPresent(user -> {
-                    String renewRefreshToken = renewRefreshToken(user);
-                    log.info("renewRefreshToken: {}", renewRefreshToken);
-                    try {
-                        jwtService.sendAccessTokenAndRefreshToken(response,
-                                jwtService.createAccessToken(user.getEmail()),
-                                renewRefreshToken);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    log.info("AccessToken 재발급");
-                });
-
-    }
 
     private void authenticationAccessToken(HttpServletRequest request,
                                            HttpServletResponse response,
@@ -119,6 +101,24 @@ public class JwtFilter extends OncePerRequestFilter {
                                 .ifPresent(this::saveAuthentication);
 
         filterChain.doFilter(request, response);
+    }
+
+    private void validateAndRenewAccessToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
+
+        userRepository.findByRefreshToken(refreshToken)
+                .ifPresent(user -> {
+                    String renewRefreshToken = renewRefreshToken(user);
+                    log.info("renewRefreshToken: {}", renewRefreshToken);
+                    try {
+                        jwtService.sendAccessTokenAndRefreshToken(response,
+                                jwtService.createAccessToken(user.getEmail()),
+                                renewRefreshToken);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    log.info("AccessToken 재발급");
+                });
+
     }
 
     private String renewRefreshToken(User user) {

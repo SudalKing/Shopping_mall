@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
+import com.example.shoppingmall.global.error.exception.EntityNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,7 +106,9 @@ public class JwtService {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken),
-                        () -> new Exception("")
+                        () -> {
+                            throw new EntityNotFoundException("Email does not exist");
+                        }
                 );
     }
 
@@ -114,8 +117,6 @@ public class JwtService {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
         } catch (Exception e) {
-//            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
-//            throw new TokenExpiredException("토큰이 만료되었습니다.", Instant.now());
             return false;
         }
     }
@@ -137,7 +138,6 @@ public class JwtService {
     }
 
     private void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-//        response.setHeader(refreshHeader, refreshToken);
         createCookie(response, refreshToken);
     }
 

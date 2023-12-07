@@ -1,6 +1,5 @@
 package com.example.shoppingmall.global.configuration.security.jwt.exception;
 
-import com.example.shoppingmall.global.error.exception.EntityNotFoundException;
 import com.example.shoppingmall.global.error.exception.ErrorCode;
 import com.example.shoppingmall.global.error.exception.JsonLoginAuthenticationException;
 
