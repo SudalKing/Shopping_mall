@@ -13,11 +13,14 @@
 
 
 ## 주요 기능
+> 주요 기능에 관해서는 블로그에 정리해 링크로 남깁니다.
 
 ### 1. JWT 로그인
->
+[JWT 로그인 정리](https://velog.io/@ss412/Spring-Security-JWT-%EB%A1%9C%EA%B7%B8%EC%9D%B8)
+
 ### 2. 무한 스크롤
-> 
+
+
 ### 3. Exception
 > RuntimeException을 상속 받아 서버의 모든 Exception을 관리하는 Class 구조<br>
 
