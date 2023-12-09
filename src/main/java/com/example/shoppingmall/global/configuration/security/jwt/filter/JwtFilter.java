@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -85,12 +86,15 @@ public class JwtFilter extends OncePerRequestFilter {
         if (!jwtService.verifyToken(accessToken.get())) {
 //            log.error("Token 검증 실패");
 //            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            String refreshToken = jwtService.findCookie(request).getValue();
+            Optional<Cookie> cookie = Optional.ofNullable(jwtService.findCookie(request));
 
-            if (refreshToken == null) {
-                log.error("Refresh Token is Null");
+            if (cookie.isEmpty()) {
+                log.error("Cookie is Null");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+
+            String refreshToken = cookie.get().getValue();
 
             validateAndRenewAccessToken(request, response, refreshToken);
             return;

@@ -122,10 +122,13 @@ public class JwtService {
     }
 
     public Cookie findCookie(HttpServletRequest request) {
-        Cookie[] cookies =  request.getCookies();
-        if (cookies == null) {
+        Optional<Cookie[]> settingCookie = Optional.ofNullable(request.getCookies());
+
+        if (settingCookie.isEmpty()) {
             return null;
         }
+
+        Cookie[] cookies = settingCookie.get();
 
         return Arrays.stream(cookies)
                 .filter(c -> c.getName().equals(refreshHeader))
@@ -147,7 +150,7 @@ public class JwtService {
                 .secure(true)
                 .sameSite("None")
                 .httpOnly(true)
-                .maxAge(60 * 60 * 24)
+                .maxAge(refreshTokenExpiration)
                 .domain("orday.shop")
 //                .domain("localhost")
                 .build();
