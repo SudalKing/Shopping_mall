@@ -31,22 +31,15 @@
 
  > https://github.com/SudalKing/Shopping_mall/assets/87001865/19ae12a5-49ab-44be-867a-f59ace02eafd
 
----
 
 ### 조회
 
- > 
+ > https://github.com/SudalKing/Shopping_mall/assets/87001865/7358e56d-dade-4a71-b079-7d5a294118d7
 
-
-
----
 
 ### 주문
 
  > https://github.com/SudalKing/Shopping_mall/assets/87001865/5723bc54-ec7c-4d08-92c1-9a80184790f7
-
-
-
 
 
 ## 프로젝트 기간
