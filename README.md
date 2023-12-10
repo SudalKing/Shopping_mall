@@ -25,5 +25,11 @@
 ### 3. Exception
 [Exception](https://velog.io/@ss412/Exception)
 
+## 실행 예시
+
+### 로그인
+
+![Logout1](https://github.com/SudalKing/Shopping_mall/assets/87001865/62a8e17e-3eda-49a7-9709-725dc43da72d)
+
 ## 프로젝트 기간
 * __23.07.30 ~ 23.11.12__
