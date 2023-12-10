@@ -27,15 +27,9 @@
 
 ## 실행 예시
 
-### 로그인
+### 로그인 - 로그아웃
 
- > 
-
----
-
-### 로그아웃
-
- > 
+ > https://github.com/SudalKing/Shopping_mall/assets/87001865/19ae12a5-49ab-44be-867a-f59ace02eafd
 
 ---
 
