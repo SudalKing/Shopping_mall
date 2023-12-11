@@ -1,6 +1,5 @@
 package com.example.shoppingmall.domain.user.service;
 
-import com.example.shoppingmall.application.usecase.user.CreateUserInfoSetUseCase;
 import com.example.shoppingmall.domain.cart.service.CartWriteService;
 import com.example.shoppingmall.domain.user.dto.AddressInfo;
 import com.example.shoppingmall.domain.user.dto.BirthDate;
@@ -41,7 +40,7 @@ public class UserWriteService {
     private final CartWriteService cartWriteService;
 
     @Transactional
-    public UserDto createUser(RegisterUserRequest registerUserRequest) {
+    public UserDto createUser(final RegisterUserRequest registerUserRequest) {
         validateUser(registerUserRequest);
 
         var user = User.builder()
@@ -69,11 +68,11 @@ public class UserWriteService {
         return toDto(userRepository.save(savedUser));
     }
 
-    public void deleteUser(User user){
+    public void deleteUser(final User user){
         userRepository.deleteById(user.getId());
     }
 
-    public void updateUser(User user, UpdateUserInfoRequest updates) {
+    public void updateUser(final User user, final UpdateUserInfoRequest updates) {
         if (updates != null) {
             if (updates.getName() != null) {
                 user.updateName(updates.getName());
@@ -109,7 +108,7 @@ public class UserWriteService {
         }
     }
 
-    public UserDto toDto(User user){
+    public UserDto toDto(final User user){
         return new UserDto(
                 user.getId(),
                 user.getName(),
@@ -122,7 +121,7 @@ public class UserWriteService {
 
     }
 
-    private void validateUser(RegisterUserRequest registerUserRequest) {
+    private void validateUser(final RegisterUserRequest registerUserRequest) {
         Optional<User> user = userRepository.findByEmailAndSocialType(registerUserRequest.getEmail(), SocialType.GOOGLE);
         // 소셜 이메일을 통해 회원가입을 진행할 때
         if (user.isPresent()) {

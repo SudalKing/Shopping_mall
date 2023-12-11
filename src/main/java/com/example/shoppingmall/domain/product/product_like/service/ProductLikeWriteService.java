@@ -15,7 +15,7 @@ import java.util.Optional;
 public class ProductLikeWriteService {
     private final ProductLikeRepository productLikeRepository;
 
-    public void createOrDeleteProductLike(User user, Long productId){
+    public void createOrDeleteProductLike(final User user, final Long productId){
         Optional<ProductLike> findProductLike = productLikeRepository
                 .findByUserIdAndProductId(user.getId(), productId);
 
@@ -30,7 +30,7 @@ public class ProductLikeWriteService {
         }
     }
 
-    public void deleteProductLikeByUserId(Long userId) {
+    public void deleteProductLikeByUserId(final Long userId) {
         productLikeRepository.deleteAllByUserId(userId);
     }
 }

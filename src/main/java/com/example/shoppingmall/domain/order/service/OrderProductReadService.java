@@ -20,7 +20,7 @@ public class OrderProductReadService {
 
     private final ProductReadService productReadService;
 
-    public List<Long> getOrderProductIdsByOrderIdNotReviewed(Long orderId) {
+    public List<Long> getOrderProductIdsByOrderIdNotReviewed(final Long orderId) {
         return orderProductRepository.findAllProductIdsByOrderIdAndNotReviewed(orderId);
     }
 
@@ -28,11 +28,11 @@ public class OrderProductReadService {
         return orderProductRepository.findAllProductIdsByOrderIdAndReviewed(orderId);
     }
 
-    public OrderProduct getOrderProductByOrderIdAndProductId(Long orderId, Long productId) {
+    public OrderProduct getOrderProductByOrderIdAndProductId(final Long orderId, final Long productId) {
         return orderProductRepository.findOrderProductByOrderIdAndProductId(orderId, productId);
     }
 
-    public OrderStatsResponse getOrderStats(User user) {
+    public OrderStatsResponse getOrderStats(final User user) {
         return OrderStatsResponse.builder()
                 .totalOrdersCount(orderProductRepository.countAllByOrdersCount(user.getId()))
                 .paymentPendingCount(orderProductRepository.countAllByOrdersCountByStatus(user.getId(), 1L))
@@ -44,7 +44,7 @@ public class OrderProductReadService {
     }
 
 
-    public Integer getPriceSum(Orders orders) {
+    public Integer getPriceSum(final Orders orders) {
         List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderId(orders.getId());
 
         int priceSum = 0;

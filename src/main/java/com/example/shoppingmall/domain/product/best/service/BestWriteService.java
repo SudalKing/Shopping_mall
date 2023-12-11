@@ -16,7 +16,7 @@ public class BestWriteService {
     private final ProductLikeRepository productLikeRepository;
     private final ProductReadService productReadService;
 
-    public BestProduct createBest(ProductResponse productResponse){
+    public BestProduct createBest(final ProductResponse productResponse){
         var best = BestProduct.builder()
                 .productId(productResponse.getId())
                 .totalLike(0)
@@ -26,24 +26,24 @@ public class BestWriteService {
         return bestProductRepository.save(best);
     }
 
-    public void updateScore(Long productId){
+    public void updateScore(final Long productId){
         var productBest = bestProductRepository.findBestByProductId(productId);
         Double score = calcScore(productId);
         productBest.updateScore(score);
     }
 
-    public void updateTotalSales(Long productId, int stock){
+    public void updateTotalSales(final Long productId, final int stock){
         var productBest = bestProductRepository.findBestByProductId(productId);
         productBest.updateTotalSales(stock);
     }
 
-    public void updateTotalLike(Long productId){
+    public void updateTotalLike(final Long productId){
         var productBest = bestProductRepository.findBestByProductId(productId);
         int likeCount = productLikeRepository.findLikeCountByProductId(productId);
         productBest.updateTotalLike(likeCount);
     }
 
-    public Double calcScore(Long productId){
+    public Double calcScore(final Long productId){
         var productBest = bestProductRepository.findBestByProductId(productId);
         var productDto = productReadService.getProductResponse(productId);
 

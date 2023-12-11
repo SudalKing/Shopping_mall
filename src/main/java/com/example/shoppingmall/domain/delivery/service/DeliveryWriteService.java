@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeliveryWriteService {
     private final DeliveryRepository deliveryRepository;
 
-    public Long createDelivery(Delivery delivery) {
+    public Long createDelivery(final Delivery delivery) {
         return deliveryRepository.save(delivery).getId();
     }
 }

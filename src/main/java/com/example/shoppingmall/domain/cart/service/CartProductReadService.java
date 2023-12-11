@@ -18,19 +18,19 @@ public class CartProductReadService {
     private final CartProductRepository cartProductRepository;
 
 
-    public List<CartProduct> getCartProductsEntityByCart(Cart cart){
+    public List<CartProduct> getCartProductsEntityByCart(final Cart cart){
         return cartProductRepository.findCartProductsByCartIdAndEnabledTrue(cart.getId());
     }
 
-    public List<Long> getProductIdsInCart(Cart cart) {
+    public List<Long> getProductIdsInCart(final Cart cart) {
         return cartProductRepository.findProductIdsByCartId(cart.getId());
     }
 
-    public LocalDateTime getCreatedAt(Long productId) {
+    public LocalDateTime getCreatedAt(final Long productId) {
         return cartProductRepository.findCartProductByProductId(productId).getCreatedAt();
     }
 
-    public int getAmount(Long productId) {
+    public int getAmount(final Long productId) {
         return cartProductRepository.findAmountByProductId(productId);
     }
 }

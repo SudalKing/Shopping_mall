@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class CartWriteService {
     private final CartRepository cartRepository;
 
-    public Cart createCart(User user) {
+    public Cart createCart(final User user) {
         var findCart = cartRepository.findByUserId(user.getId());
         if(findCart.isPresent()){
             return findCart.get();
@@ -24,7 +24,7 @@ public class CartWriteService {
         }
     }
 
-    public void deleteCart(User user){
+    public void deleteCart(final User user){
         cartRepository.deleteByUserId(user.getId());
     }
 

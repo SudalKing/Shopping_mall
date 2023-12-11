@@ -21,7 +21,7 @@ public class ProductReviewLikeWriteService {
     private final ProductReviewWriteService productReviewWriteService;
 
     @Transactional
-    public void createOrDeleteProductReviewLike(User user, Long productReviewId){
+    public void createOrDeleteProductReviewLike(final User user, final Long productReviewId){
         Optional<ProductReviewLike> findProductReviewLike = productReviewLikeRepository
                 .findByUserIdAndReviewId(user.getId(), productReviewId);
         ProductReview productReview = productReviewRepository.findProductReviewById(productReviewId);

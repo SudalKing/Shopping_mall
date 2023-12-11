@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class CartReadService {
     private final CartRepository cartRepository;
 
-    public Cart getCartInfo(Long userId){
+    public Cart getCartInfo(final Long userId){
         return cartRepository.findCartByUserId(userId);
     }
 

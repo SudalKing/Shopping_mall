@@ -16,7 +16,7 @@ public class OrderWriteService {
     private final OrdersRepository ordersRepository;
 
     @Transactional
-    public Orders createOrder(User user){
+    public Orders createOrder(final User user){
         var orders = Orders.builder()
                 .userId(user.getId())
                 .versionCount(getMinVersionCount(user))
@@ -27,19 +27,16 @@ public class OrderWriteService {
         return ordersRepository.save(orders);
     }
 
-    public void deleteOrder(Long userId) {
+    public void deleteOrder(final Long userId) {
         ordersRepository.deleteAllByUserId(userId);
     }
 
-    public void updateOrderPriceSum(Orders order, int priceSum) {
+    public void updateOrderPriceSum(final Orders order, final int priceSum) {
         order.setPriceSum(priceSum);
     }
 
 
-
-    // 1. userId 로 그룹화 한 후 행 개수 계산
-    // 2. + 1 하여 반환
-    private Long getMinVersionCount(User user) {
+    private Long getMinVersionCount(final User user) {
         Long versionCount = ordersRepository.findOrderCountByUserId(user.getId());
         return versionCount + 1;
     }

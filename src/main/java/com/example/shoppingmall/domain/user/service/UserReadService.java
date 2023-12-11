@@ -27,25 +27,25 @@ public class UserReadService {
     private final BirthRepository birthRepository;
 
 
-    public UserDto getUser(Long id){
+    public UserDto getUser(final Long id){
         var user = userRepository.findUserById(id);
         return toDto(user);
     }
 
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(final String email) {
         return userRepository.findUserByEmail(email);
     }
 
-    public Optional<User> getUserPrincipal(String email) {
+    public Optional<User> getUserPrincipal(final String email) {
         return userRepository.findByEmail(email);
     }
 
-    public User getUserEntity(Long userId){
+    public User getUserEntity(final Long userId){
         return userRepository.findUserById(userId);
     }
 
 
-    public UserInfoResponse findUserInfo(User user) {
+    public UserInfoResponse findUserInfo(final User user) {
         UserAddress userAddress = addressRepository.findByUserId(user.getId());
         AddressInfo addressInfo = AddressInfo.builder()
                 .postcode(userAddress.getPostcode())
@@ -72,7 +72,7 @@ public class UserReadService {
         );
     }
 
-    public UserDto toDto(User user){
+    public UserDto toDto(final User user){
         return new UserDto(
                 user.getId(),
                 user.getName(),

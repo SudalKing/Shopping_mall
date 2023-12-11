@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductLikeReadService {
     private final ProductLikeRepository productLikeRepository;
 
-    public int getProductLikeCount(Long productId){
+    public int getProductLikeCount(final Long productId){
         return productLikeRepository.countAllByProductId(productId);
     }
 
-    public boolean isLiked(Long userId, Long productId) {
+    public boolean isLiked(final Long userId, final Long productId) {
         return productLikeRepository.findByUserIdAndProductId(userId, productId).isPresent();
     }
 }

@@ -29,7 +29,7 @@ public class BrandWriteService {
         return brandRepository.save(brand);
     }
 
-    public void createOrDeleteBrandLike(User user, Long brandId) {
+    public void createOrDeleteBrandLike(final User user, final Long brandId) {
         Optional<BrandLike> findBrandLike = brandLikeRepository.findByUserIdAndBrandId(user.getId(), brandId);
 
         if (findBrandLike.isEmpty()) {
@@ -43,7 +43,7 @@ public class BrandWriteService {
         }
     }
 
-    public void deleteAllBrandLikeByUserId(Long userId) {
+    public void deleteAllBrandLikeByUserId(final Long userId) {
         brandLikeRepository.deleteAllByUserId(userId);
     }
 }

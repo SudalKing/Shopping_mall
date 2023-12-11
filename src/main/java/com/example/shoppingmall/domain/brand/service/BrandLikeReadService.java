@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class BrandLikeReadService {
     private final BrandLikeRepository brandLikeRepository;
 
-    public boolean isBrandLiked(Long userId, Long brandId) {
+    public boolean isBrandLiked(final Long userId, final Long brandId) {
         return brandLikeRepository.findByUserIdAndBrandId(userId, brandId).isPresent();
     }
 }

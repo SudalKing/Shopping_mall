@@ -20,7 +20,7 @@ public class BirthWriteService {
     private final BirthRepository birthRepository;
 
     @Transactional
-    public UserBirth createBirth(BirthDate birthDate, User user){
+    public UserBirth createBirth(final BirthDate birthDate, final User user){
         // 날짜 검증
         validateBirthDate(birthDate);
 
@@ -34,7 +34,7 @@ public class BirthWriteService {
     }
 
     @Transactional
-    public UserBirth createBirthForOauth2(BirthDate birthDate, User user){
+    public UserBirth createBirthForOauth2(final BirthDate birthDate, final User user){
         UserBirth userBirth = UserBirth.builder()
                 .userId(user.getId())
                 .year(birthDate.getYear())
@@ -44,12 +44,12 @@ public class BirthWriteService {
         return birthRepository.save(userBirth);
     }
 
-    public void deleteBirth(User user){
+    public void deleteBirth(final User user){
         birthRepository.deleteByUserId(user.getId());
     }
 
     @Transactional
-    public void updateBirth(User user, BirthDate birthDate) {
+    public void updateBirth(final User user, final BirthDate birthDate) {
         UserBirth userBirth = birthRepository.findByUserId(user.getId());
 
         if (birthDate.getYear() != null) {
@@ -65,7 +65,7 @@ public class BirthWriteService {
         }
     }
 
-    private void validateBirthDate(BirthDate birthDate) {
+    private void validateBirthDate(final BirthDate birthDate) {
         int year = Integer.parseInt(birthDate.getYear());
         int month = Integer.parseInt(birthDate.getMonth());
         int day = Integer.parseInt(birthDate.getDay());

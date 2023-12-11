@@ -37,13 +37,13 @@ public class ProductReadService {
     private final ProductUtilService productUtilService;
 
 
-    public Product getProductEntity(Long productId){
+    public Product getProductEntity(final Long productId){
         Optional<Product> product = productRepository.findById(productId);
 
         return product.orElseGet(() -> toProduct(productDuplicateRepository.findByProductId(productId)));
     }
 
-    public List<Product> getProductListByIds(List<Long> productIds) {
+    public List<Product> getProductListByIds(final List<Long> productIds) {
         List<Product> products = productRepository.findProductsByIdInOrderByCreatedAtDesc(productIds);
         List<ProductDuplicate> dupleProducts = productDuplicateRepository.findProductDuplicatesByProductIdInOrderByCreatedAtDesc(productIds);
 
@@ -56,7 +56,7 @@ public class ProductReadService {
         return products;
     }
 
-    public ProductResponse getProductResponse(Long productId) {
+    public ProductResponse getProductResponse(final Long productId) {
         return toProductResponse(getProductEntity(productId));
     }
 
@@ -64,7 +64,7 @@ public class ProductReadService {
         return productRepository.findTopByOrderByPriceDesc().getPrice();
     }
 
-    public List<ProductInCartReadResponse> getProductsInCartByIds(List<Long> productIds) {
+    public List<ProductInCartReadResponse> getProductsInCartByIds(final List<Long> productIds) {
         List<Product> products = getProductListByIds(productIds);
 
         return products.stream()
@@ -73,7 +73,7 @@ public class ProductReadService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductReadResponse> getProductsByIds(List<Long> productIds) {
+    public List<ProductReadResponse> getProductsByIds(final List<Long> productIds) {
         List<Product> products = getProductListByIds(productIds);
 
         return products.stream()
@@ -81,7 +81,7 @@ public class ProductReadService {
                 .collect(Collectors.toList());
     }
 
-    public ProductDetailResponse getProductDetail(String name) {
+    public ProductDetailResponse getProductDetail(final String name) {
         List<Product> productList = new ArrayList<>();
         Product product = productRepository.findProductByName(name);
         productList.add(product);
@@ -106,7 +106,7 @@ public class ProductReadService {
                 .build();
     }
 
-    private Product toProduct(ProductDuplicate productDuplicate) {
+    private Product toProduct(final ProductDuplicate productDuplicate) {
         return Product.builder()
                 .id(productDuplicate.getProductId())
                 .categoryId(productDuplicate.getCategoryId())
@@ -121,7 +121,7 @@ public class ProductReadService {
                 .build();
     }
 
-    public void validatePrincipalLike(Principal principal, List<ProductResponse> cursorBody){
+    public void validatePrincipalLike(final Principal principal, List<ProductResponse> cursorBody){
         if (principal != null) {
             Optional<User> userOptional = userReadService.getUserPrincipal(principal.getName());
             if (userOptional.isPresent()) {
@@ -157,7 +157,7 @@ public class ProductReadService {
         }
     }
 
-    public ProductInCartReadResponse toProductInCartReadResponse(Product product) {
+    public ProductInCartReadResponse toProductInCartReadResponse(final Product product) {
         Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
 
         return new ProductInCartReadResponse(
@@ -173,7 +173,7 @@ public class ProductReadService {
         );
     }
 
-    public ProductReadResponse toProductReadResponse(Product product) {
+    public ProductReadResponse toProductReadResponse(final Product product) {
         Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
 
         return new ProductReadResponse(
@@ -185,7 +185,7 @@ public class ProductReadService {
         );
     }
 
-    public ProductResponse toProductResponse(Product product) {
+    public ProductResponse toProductResponse(final Product product) {
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -200,7 +200,7 @@ public class ProductReadService {
     }
 
 
-    private List<ClothesInfo> getClothesInfoList(List<Product> productList) {
+    private List<ClothesInfo> getClothesInfoList(final List<Product> productList) {
         List<ClothesInfo> clothesInfoList = new ArrayList<>();
 
         for (Product product: productList) {
@@ -218,11 +218,11 @@ public class ProductReadService {
         return clothesInfoList;
     }
 
-    public String getUrl(Product product) {
+    public String getUrl(final Product product) {
         return productUtilService.getProductImageUrl(product.getId());
     }
 
-    private Double getProductScore(Long productId) {
+    private Double getProductScore(final Long productId) {
         return productRepository.findProductScore(productId);
     }
 }

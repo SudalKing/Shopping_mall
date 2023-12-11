@@ -31,13 +31,13 @@ public class BrandReadService {
     private final ProductUtilService productUtilService;
 
 
-    public BrandDetailResponse getBrandDetail(Long brandId) {
+    public BrandDetailResponse getBrandDetail(final Long brandId) {
         Brand brand = brandRepository.findBrandById(brandId);
 
         return toBrandDetailResponse(brand);
     }
 
-    public List<BrandResponse> getAllBrand(Long sortId) {
+    public List<BrandResponse> getAllBrand(final Long sortId) {
         List<Brand> brandList = findAllBrand(sortId);
 
         return brandList.stream()
@@ -45,7 +45,7 @@ public class BrandReadService {
                 .collect(Collectors.toList());
     }
 
-    public List<BrandResponse> getLikeBrands(User user, Long sortId) {
+    public List<BrandResponse> getLikeBrands(final User user, final Long sortId) {
         List<Brand> likeBrandList = findAllLikeBrand(user, sortId);
 
         return likeBrandList.stream()
@@ -53,7 +53,7 @@ public class BrandReadService {
                 .collect(Collectors.toList());
     }
 
-    public BrandInfoMapping getBrandInfo(Long productId) {
+    public BrandInfoMapping getBrandInfo(final Long productId) {
         return brandRepository.findBrandInfoByProductId(productId);
     }
 
@@ -73,7 +73,7 @@ public class BrandReadService {
         }
     }
 
-    private List<Brand> findAllBrand(Long sortId) {
+    private List<Brand> findAllBrand(final Long sortId) {
         if (sortId.equals(0L)) {
             return brandRepository.findAllBrandsOrderByScoreDesc();
         } else if (sortId.equals(1L)) {
@@ -85,7 +85,7 @@ public class BrandReadService {
         }
     }
 
-    private List<Brand> findAllLikeBrand(User user, Long sortId) {
+    private List<Brand> findAllLikeBrand(User user, final Long sortId) {
         List<Brand> likedBrandList = new ArrayList<>();
 
         if (sortId.equals(0L)) {
@@ -106,7 +106,7 @@ public class BrandReadService {
     }
 
 
-    private BrandResponse toBrandResponse(Brand brand) {
+    private BrandResponse toBrandResponse(final Brand brand) {
         return new BrandResponse(
                 brand.getId(),
                 brand.getName(),
@@ -114,7 +114,7 @@ public class BrandReadService {
         );
     }
 
-    private BrandDetailResponse toBrandDetailResponse(Brand brand) {
+    private BrandDetailResponse toBrandDetailResponse(final Brand brand) {
         return BrandDetailResponse.builder()
                 .id(brand.getId())
                 .name(brand.getName())

@@ -17,7 +17,7 @@ public class AddressWriteService {
 
     private final AddressRepository addressRepository;
 
-    public UserAddress createAddress(AddressInfo addressInfo, User user){
+    public UserAddress createAddress(final AddressInfo addressInfo, final User user){
         UserAddress userAddress = UserAddress.builder()
                 .userId(user.getId())
                 .postcode(addressInfo.getPostcode())
@@ -27,11 +27,11 @@ public class AddressWriteService {
         return addressRepository.save(userAddress);
     }
 
-    public void deleteAddress(User user){
+    public void deleteAddress(final User user){
         addressRepository.deleteByUserId(user.getId());
     }
 
-    public void updateAddress(User user, AddressInfo addressInfo) {
+    public void updateAddress(final User user, final AddressInfo addressInfo) {
         UserAddress userAddress = addressRepository.findByUserId(user.getId());
 
         if (addressInfo.getPostcode() != null) {

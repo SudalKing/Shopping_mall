@@ -16,7 +16,7 @@ import java.util.Map;
 public class ClothesReadService {
     private final ClothesProductRepository clothesProductRepository;
 
-    public Map<String, String> getClothesInfo(Product product) {
+    public Map<String, String> getClothesInfo(final Product product) {
         Long typeId = product.getCategoryId();
         Map<String, String> clothesInfo = new HashMap<>();
         ClothesProduct clothesProduct = clothesProductRepository.findByProductId(product.getId());

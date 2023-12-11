@@ -12,11 +12,11 @@ import java.util.Optional;
 public class ProductReviewLikeReadService {
     private final ProductReviewLikeRepository productReviewLikeRepository;
 
-    public Integer getReviewLikeCount(Long reviewId) {
+    public Integer getReviewLikeCount(final Long reviewId) {
         return productReviewLikeRepository.countAllByReviewId(reviewId);
     }
 
-    public Optional<ProductReviewLike> getByUserIdAndReviewId(Long userId, Long reviewId) {
+    public Optional<ProductReviewLike> getByUserIdAndReviewId(final Long userId, final Long reviewId) {
         return productReviewLikeRepository.findByUserIdAndReviewId(userId, reviewId);
     }
 }

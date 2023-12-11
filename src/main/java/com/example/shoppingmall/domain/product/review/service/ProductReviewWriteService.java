@@ -27,7 +27,7 @@ public class ProductReviewWriteService {
     private final OrderProductReadService orderProductReadService;
 
     @Transactional
-    public ProductReview createProductReview(User user, ProductReviewRequest productReviewRequest){
+    public ProductReview createProductReview(final User user, final ProductReviewRequest productReviewRequest){
         var productReview = ProductReview.builder()
                 .orderId(productReviewRequest.getOrderId())
                 .productId(productReviewRequest.getProductId())
@@ -49,19 +49,19 @@ public class ProductReviewWriteService {
         return savedReview;
     }
 
-    public void deleteProductReview(Long reviewId, Long userId){
+    public void deleteProductReview(final Long reviewId, final Long userId){
         var productReview = productReviewRepository.findById(reviewId).orElseThrow();
         if(productReview.getUserId().equals(userId)) productReviewRepository.deleteById(reviewId);
         else throw new RuntimeException();
     }
 
-    public void deleteAllReview(Long userId) {
+    public void deleteAllReview(final Long userId) {
         productReviewRepository.deleteAllByUserId(userId);
         productReviewRepository.deleteReviewImagesByUserId(userId);
         productReviewLikeRepository.deleteAllByUserId(userId);
     }
 
-    public void updateReview(Long reviewId, UpdateProductReviewRequest updates) {
+    public void updateReview(final Long reviewId, final UpdateProductReviewRequest updates) {
         ProductReview productReview = productReviewRepository.findProductReviewById(reviewId);
 
         if (updates.getContent() != null) {
@@ -73,7 +73,7 @@ public class ProductReviewWriteService {
         }
     }
 
-    public void createReviewLikeScore(Long productReviewId) {
+    public void createReviewLikeScore(final Long productReviewId) {
         ReviewLikeScore reviewLikeScore = ReviewLikeScore.builder()
                 .reviewId(productReviewId)
                 .reviewScore(getReviewScore(productReviewId))
@@ -82,7 +82,7 @@ public class ProductReviewWriteService {
         reviewLikeScoreRepository.save(reviewLikeScore);
     }
 
-    public void updateReviewLikeScore(Long reviewId) {
+    public void updateReviewLikeScore(final Long reviewId) {
         ReviewLikeScore reviewLikeScore = reviewLikeScoreRepository.findReviewLikeScoreByReviewId(reviewId).orElse(null);
 
         if (reviewLikeScore == null) {
@@ -92,9 +92,9 @@ public class ProductReviewWriteService {
         }
     }
 
-    private Double getReviewScore(Long reviewId) {
+    private Double getReviewScore(final Long reviewId) {
         Integer likeCount = productReviewLikeRepository.countAllByReviewId(reviewId);
-        return (likeCount * 0.99999 + reviewId * 0.00001);
+        return (likeCount + reviewId * 0.00001);
     }
 
 }

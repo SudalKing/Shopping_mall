@@ -28,12 +28,12 @@ public class OrderReadService {
     private final ProductReadService productReadService;
     private final ProductUtilService productUtilService;
 
-    public List<Orders> getAllOrdersEntity(User user) {
+    public List<Orders> getAllOrdersEntity(final User user) {
         return ordersRepository.findAllByUserId(user.getId());
     }
 
 
-    public PageCursor<OrderResponse> getAllOrdersByCursor(Number key, int size, User user) {
+    public PageCursor<OrderResponse> getAllOrdersByCursor(final Number key, final int size, User user) {
         CursorRequest cursorRequest = new CursorRequest(key, size);
 
         var orderProductList = findAllOrderProduct(cursorRequest, user.getId());
@@ -41,7 +41,7 @@ public class OrderReadService {
         return getOrderResponseCursor(cursorRequest, orderProductList);
     }
 
-    private List<OrderProduct> findAllOrderProduct(CursorRequest cursorRequest, Long userId) {
+    private List<OrderProduct> findAllOrderProduct(final CursorRequest cursorRequest, final Long userId) {
         if (cursorRequest.hasKey()) {
             return orderProductRepository.findAllByUserIdOrderByIdHasKey(cursorRequest.getKey().longValue(), userId, cursorRequest.getSize());
         } else {
@@ -50,7 +50,7 @@ public class OrderReadService {
     }
 
 
-    private OrderResponse toOrderResponse(OrderProduct orderProduct){
+    private OrderResponse toOrderResponse(final OrderProduct orderProduct){
         Product product = productReadService.getProductEntity(orderProduct.getProductId());
         Map<String, String> clothesInfo = productUtilService.getClothesInfo(product);
 
@@ -76,7 +76,7 @@ public class OrderReadService {
                 .orElse(CursorRequest.NONE_KEY_LONG);
     }
 
-    private PageCursor<OrderResponse> getOrderResponseCursor(CursorRequest cursorRequest, List<OrderProduct> orderProductList) {
+    private PageCursor<OrderResponse> getOrderResponseCursor(final CursorRequest cursorRequest, List<OrderProduct> orderProductList) {
         var orderResponseList = orderProductList.stream()
                 .map(this::toOrderResponse)
                 .collect(Collectors.toList());
@@ -85,7 +85,7 @@ public class OrderReadService {
         return new PageCursor<>(cursorRequest.next(nextKey), orderResponseList);
     }
 
-    private String getStatus(OrderProduct orderProduct) {
+    private String getStatus(final OrderProduct orderProduct) {
         Long orderStatusId = orderProduct.getOrderStatusId();
 
         if (orderStatusId == 1L) {

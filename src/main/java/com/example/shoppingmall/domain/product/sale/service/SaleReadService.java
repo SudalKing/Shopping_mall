@@ -13,7 +13,7 @@ import java.util.Optional;
 public class SaleReadService {
     private final ProductSaleRepository productSaleRepository;
 
-    public int getDiscountPrice(Product product) {
+    public int getDiscountPrice(final Product product) {
         Optional<ProductSale> productSale = productSaleRepository.findByProductId(product.getId());
 
         if (product.isSaled() && productSale.isPresent()) {

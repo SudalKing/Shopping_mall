@@ -21,19 +21,19 @@ public class ProductUtilService {
     private final ClothesReadService clothesReadService;
     private final SaleReadService saleReadService;
 
-    public List<CategoryIdsMapping> getCategoryIdsMapping(Long brandId) {
+    public List<CategoryIdsMapping> getCategoryIdsMapping(final Long brandId) {
         return productRepository.findCategoryIdsByBrandId(brandId);
     }
 
-    public String getProductImageUrl(Long productId) {
+    public String getProductImageUrl(final Long productId) {
         return productImageReadService.getUrl(productId);
     }
 
-    public Map<String, String> getClothesInfo(Product product) {
+    public Map<String, String> getClothesInfo(final Product product) {
         return clothesReadService.getClothesInfo(product);
     }
 
-    public int getDiscountPrice(Product product) {
+    public int getDiscountPrice(final Product product) {
         return saleReadService.getDiscountPrice(product);
     }
 }

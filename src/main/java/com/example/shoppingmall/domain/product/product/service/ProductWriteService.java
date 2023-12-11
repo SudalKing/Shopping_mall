@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 public class ProductWriteService {
     private final ProductRepository productRepository;
     private final BrandProductRepository brandProductRepository;
-    //
+
     @Transactional
-    public Product createProduct(ProductCommand productCommand){
+    public Product createProduct(final ProductCommand productCommand){
         BrandCategoryRequest brandCategoryRequest = productCommand.getBrandCategoryRequest();
 
         var product = Product.builder()
@@ -43,7 +43,7 @@ public class ProductWriteService {
         return savedProduct;
     }
 
-    public void deleteProduct(Long productId){
+    public void deleteProduct(final Long productId){
         productRepository.deleteById(productId);
     }
 

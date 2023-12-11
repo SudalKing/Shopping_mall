@@ -14,7 +14,7 @@ public class OrderProductWriteService {
     private final OrderProductRepository orderProductRepository;
 
     @Transactional
-    public OrderProduct createOrderProduct(ProductsInfo productsInfo, Orders orders){
+    public OrderProduct createOrderProduct(final ProductsInfo productsInfo, final Orders orders){
         var orderProduct = OrderProduct.builder()
                 .orderId(orders.getId())
                 .productId(productsInfo.getId())
@@ -24,7 +24,7 @@ public class OrderProductWriteService {
         return orderProductRepository.save(orderProduct);
     }
 
-    public void deleteOrderProduct(Long userId) {
+    public void deleteOrderProduct(final Long userId) {
         orderProductRepository.deleteAllByUserId(userId);
     }
 }
