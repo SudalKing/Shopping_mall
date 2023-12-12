@@ -1,6 +1,6 @@
 package com.example.shoppingmall.domain.brand.dto.req;
 
-import com.example.shoppingmall.util.CursorRequest;
+import com.example.shoppingmall.util.cursor.CursorRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

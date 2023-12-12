@@ -15,6 +15,7 @@ import com.example.shoppingmall.domain.order.entity.Orders;
 import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderProductWriteService;
 import com.example.shoppingmall.domain.order.service.OrderWriteService;
+import com.example.shoppingmall.domain.product.best.service.BestWriteService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.exception.OutOfStockException;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
@@ -39,6 +40,7 @@ public class CreateOrderUseCase {
     private final CartProductReadService cartProductReadService;
     private final CartProductWriteService cartProductWriteService;
     private final DeliveryWriteService deliveryWriteService;
+    private final BestWriteService bestWriteService;
 
     @Transactional
     public OrderResultResponse execute(User user, OrderRequest orderRequest) {
@@ -68,6 +70,7 @@ public class CreateOrderUseCase {
         for (ProductsInfo productInfo : productsInfo) {
             OrderProduct orderProduct = orderProductWriteService.createOrderProduct(productInfo, order);
             Product product = productReadService.getProductEntity(productInfo.getId());
+            bestWriteService.updateTotalSales(product.getId(), productInfo.getAmount());
 
             if (orderProduct.getCount() > product.getStock()) {
                 throw new OutOfStockException("Out of Stock", ErrorCode.OUT_OF_STOCK);

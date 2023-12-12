@@ -6,8 +6,8 @@ import com.example.shoppingmall.domain.product.product.repository.ProductReposit
 import com.example.shoppingmall.domain.product.product.service.cursor.util.ProductCursorUtilService;
 import com.example.shoppingmall.global.error.exception.ErrorCode;
 import com.example.shoppingmall.global.error.exception.InvalidValueException;
-import com.example.shoppingmall.util.CursorRequest;
-import com.example.shoppingmall.util.PageCursor;
+import com.example.shoppingmall.util.cursor.CursorRequest;
+import com.example.shoppingmall.util.cursor.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

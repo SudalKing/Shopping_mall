@@ -3,8 +3,8 @@ package com.example.shoppingmall.domain.product.product.service.cursor.util;
 import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
-import com.example.shoppingmall.util.CursorRequest;
-import com.example.shoppingmall.util.PageCursor;
+import com.example.shoppingmall.util.cursor.CursorRequest;
+import com.example.shoppingmall.util.cursor.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

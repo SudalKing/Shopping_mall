@@ -2,11 +2,9 @@ package com.example.shoppingmall.domain.awsS3.service;
 
 import com.example.shoppingmall.domain.awsS3.entity.ProductReviewImage;
 import com.example.shoppingmall.domain.awsS3.repository.ProductReviewImageRepository;
-import com.example.shoppingmall.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor

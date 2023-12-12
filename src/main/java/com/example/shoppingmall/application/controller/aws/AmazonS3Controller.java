@@ -1,6 +1,6 @@
 package com.example.shoppingmall.application.controller.aws;
 
-import com.example.shoppingmall.util.AmazonS3Service;
+import com.example.shoppingmall.domain.awsS3.service.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

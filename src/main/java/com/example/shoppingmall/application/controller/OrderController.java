@@ -9,7 +9,7 @@ import com.example.shoppingmall.domain.order.service.OrderProductReadService;
 import com.example.shoppingmall.domain.order.service.OrderReadService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
-import com.example.shoppingmall.util.PageCursor;
+import com.example.shoppingmall.util.cursor.PageCursor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.security.Principal;
 
 @RequiredArgsConstructor

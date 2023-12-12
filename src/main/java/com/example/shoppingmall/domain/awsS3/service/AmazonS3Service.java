@@ -1,4 +1,4 @@
-package com.example.shoppingmall.util;
+package com.example.shoppingmall.domain.awsS3.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;

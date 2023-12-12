@@ -95,9 +95,14 @@ public class BrandReadService {
              }
         } else if (sortId.equals(1L)) {
             var findBrand = brandRepository.findLikeBrandsOrderByNameAsc(user.getId());
-
+            if (findBrand.isPresent()) {
+                return findBrand.get();
+            }
         } else if (sortId.equals(2L)) {
-            return brandRepository.findLikeBrandsOrderByNameDesc(user.getId());
+            var findBrand = brandRepository.findLikeBrandsOrderByNameDesc(user.getId());
+            if (findBrand.isPresent()) {
+                return findBrand.get();
+            }
         } else {
             throw new InvalidValueException("Wrong SortId", ErrorCode.INVALID_INPUT_VALUE);
         }

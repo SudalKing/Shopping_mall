@@ -6,7 +6,7 @@ import com.example.shoppingmall.domain.product.review.dto.req.ProductReviewReque
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.service.ProductReviewWriteService;
 import com.example.shoppingmall.domain.user.entity.User;
-import com.example.shoppingmall.util.AmazonS3Service;
+import com.example.shoppingmall.domain.awsS3.service.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

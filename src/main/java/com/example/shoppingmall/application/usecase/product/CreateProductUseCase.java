@@ -6,7 +6,7 @@ import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import com.example.shoppingmall.domain.product.product.dto.req.ProductCommand;
 import com.example.shoppingmall.domain.product.product.service.ProductReadService;
 import com.example.shoppingmall.domain.product.product.service.ProductWriteService;
-import com.example.shoppingmall.util.AmazonS3Service;
+import com.example.shoppingmall.domain.awsS3.service.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

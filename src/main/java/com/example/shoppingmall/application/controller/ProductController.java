@@ -12,7 +12,7 @@ import com.example.shoppingmall.domain.product.product.service.ProductReadServic
 import com.example.shoppingmall.domain.product.product.service.cursor.*;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
-import com.example.shoppingmall.util.PageCursor;
+import com.example.shoppingmall.util.cursor.PageCursor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;

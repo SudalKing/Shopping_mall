@@ -24,12 +24,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query(value = "select * from brand order by name asc", nativeQuery = true)
     List<Brand> findAllBrandsOrderByNameAsc();
     // ========================================
-//@Query(value = "SELECT b.id, b.name, COUNT(bl.brand_id) as likeCount " +
-//        "FROM brand as b " +
-//        "LEFT JOIN brand_like as bl on b.id = bl.brand_id " +
-//        "WHERE bl.user_id = :userId " +
-//        "GROUP BY b.id, b.name " +
-//        "ORDER BY likeCount DESC", nativeQuery = true)
+
     @Query(value = "select * from brand as b " +
             "left join brand_like as bl on b.id = bl.brand_id " +
             "where bl.user_id = :userId " +
@@ -39,11 +34,11 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     @Query(value = "select b.* from brand as b left join brand_like as bl on b.id = bl.brand_id " +
             "where bl.user_id = :userId order by b.name asc", nativeQuery = true)
-    List<Brand> findLikeBrandsOrderByNameAsc(@Param("userId") Long userId);
+    Optional<List<Brand>> findLikeBrandsOrderByNameAsc(@Param("userId") Long userId);
 
     @Query(value = "select b.* from brand as b left join brand_like as bl on b.id = bl.brand_id " +
             "where bl.user_id = :userId order by b.name desc", nativeQuery = true)
-    List<Brand> findLikeBrandsOrderByNameDesc(@Param("userId") Long userId);
+    Optional<List<Brand>> findLikeBrandsOrderByNameDesc(@Param("userId") Long userId);
 
     // ==================================================================
 

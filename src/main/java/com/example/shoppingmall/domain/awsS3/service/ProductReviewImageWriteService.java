@@ -3,7 +3,6 @@ package com.example.shoppingmall.domain.awsS3.service;
 import com.example.shoppingmall.domain.awsS3.dto.S3FileDto;
 import com.example.shoppingmall.domain.awsS3.entity.ProductReviewImage;
 import com.example.shoppingmall.domain.awsS3.repository.ProductReviewImageRepository;
-import com.example.shoppingmall.util.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

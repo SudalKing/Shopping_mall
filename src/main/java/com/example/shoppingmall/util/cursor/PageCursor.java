@@ -1,6 +1,5 @@
-package com.example.shoppingmall.util;
+package com.example.shoppingmall.util.cursor;
 
-import com.example.shoppingmall.domain.product.product.dto.ProductResponse;
 import lombok.Builder;
 import lombok.Getter;
 

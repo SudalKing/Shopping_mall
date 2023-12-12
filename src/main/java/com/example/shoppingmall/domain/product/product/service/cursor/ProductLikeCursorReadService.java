@@ -7,8 +7,8 @@ import com.example.shoppingmall.domain.product.product.service.ProductReadServic
 import com.example.shoppingmall.domain.product.product.service.cursor.util.ProductCursorUtilService;
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
-import com.example.shoppingmall.util.CursorRequest;
-import com.example.shoppingmall.util.PageCursor;
+import com.example.shoppingmall.util.cursor.CursorRequest;
+import com.example.shoppingmall.util.cursor.PageCursor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
