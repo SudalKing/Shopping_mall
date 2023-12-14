@@ -5,7 +5,7 @@
 ## 프로젝트 링크
 [프로젝트 링크](https://orday.vercel.app/)
 
-## 사용 기술
+## 프로젝트 환경
   * Spring Boot 2.7.2
   * MySQL 8.0.33
   * Ubuntu 20.04
