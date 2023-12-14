@@ -8,7 +8,9 @@
 ## 사용 기술셋
   * Spring Boot 2.7.2
   * MySQL 8.0.33
-  * Nginx 1.18.0(Ubuntu)
+  * Ubuntu 20.04
+  * Nginx 1.18.0
+  * Redis 5.0.7
 
 ## 배포
   * AWS EC2, S3, RDS, Route53
@@ -24,6 +26,9 @@
 
 ### 3. Exception
 [Exception](https://velog.io/@ss412/Exception)
+
+### 4. Redis
+ [Redis](https://velog.io/@ss412/Redis-%EB%8F%84%EC%9E%85)
 
 ## 실행 예시
 
