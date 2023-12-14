@@ -11,6 +11,8 @@ import com.example.shoppingmall.domain.user.repository.AddressRepository;
 import com.example.shoppingmall.domain.user.repository.BirthRepository;
 import com.example.shoppingmall.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,22 +22,24 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 public class UserReadService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final BirthRepository birthRepository;
 
-
     public UserDto getUser(final Long id){
         var user = userRepository.findUserById(id);
         return toDto(user);
     }
 
+    @Cacheable(value = "User", key = "#email", cacheManager = "redisCacheManager")
     public User getUserByEmail(final String email) {
         return userRepository.findUserByEmail(email);
     }
 
+    @Cacheable(value = "User", key = "#email", unless = "#result == null", cacheManager = "redisCacheManager")
     public Optional<User> getUserPrincipal(final String email) {
         return userRepository.findByEmail(email);
     }
@@ -46,6 +50,7 @@ public class UserReadService {
 
 
     public UserInfoResponse findUserInfo(final User user) {
+        log.info("findUserInfo 호출");
         UserAddress userAddress = addressRepository.findByUserId(user.getId());
         AddressInfo addressInfo = AddressInfo.builder()
                 .postcode(userAddress.getPostcode())

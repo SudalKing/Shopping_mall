@@ -22,6 +22,7 @@ application-jwt.yml
 application-oauth.yml
 application-s3.yml
 application-db.yml
+application-redis.yml
 
 .ebextensions
 #.github

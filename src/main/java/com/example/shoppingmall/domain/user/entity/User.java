@@ -2,6 +2,7 @@ package com.example.shoppingmall.domain.user.entity;
 
 import com.example.shoppingmall.domain.user.util.Role;
 import com.example.shoppingmall.domain.user.util.SocialType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +42,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)

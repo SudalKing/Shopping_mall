@@ -39,7 +39,12 @@ public class BestWriteService {
 
     public void updateTotalLike(final Long productId){
         var productBest = bestProductRepository.findBestByProductId(productId);
-        int likeCount = productLikeRepository.findLikeCountByProductId(productId);
+        Integer likeCount = productLikeRepository.findLikeCountByProductId(productId);
+
+        if (likeCount == null) {
+            likeCount = 0;
+        }
+
         productBest.updateTotalLike(likeCount);
     }
 

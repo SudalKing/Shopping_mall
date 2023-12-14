@@ -25,7 +25,7 @@ public class SchedulerService {
     private final BestWriteService bestWriteService;
 
 
-    @Scheduled(cron = "0 0 0/1 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 23 * * *", zone = "Asia/Seoul")
     public void reviewLikeScoreScheduler() {
         log.info("리뷰 좋아요 점수 계산 스케쥴러 실행");
         List<ProductReview> productReviewList = productReviewRepository.findAll();
@@ -35,7 +35,7 @@ public class SchedulerService {
         }
     }
 
-    @Scheduled(cron = "0 0 0/1 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 23 * * *", zone = "Asia/Seoul")
     public void bestScoreScheduler() {
         log.info("베스트 상품 계산 스케쥴러 실행");
         List<Product> productList = productRepository.findAll();
