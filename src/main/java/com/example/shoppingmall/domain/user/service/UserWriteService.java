@@ -16,6 +16,8 @@ import com.example.shoppingmall.domain.user.util.SocialType;
 import com.example.shoppingmall.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,10 +70,12 @@ public class UserWriteService {
         return toDto(userRepository.save(savedUser));
     }
 
+    @CacheEvict(value = "User", key = "#user.id", cacheManager = "redisCacheManager")
     public void deleteUser(final User user){
         userRepository.deleteById(user.getId());
     }
 
+    @CachePut(value = "User", key = "#result.id", cacheManager = "redisCacheManager")
     public void updateUser(final User user, final UpdateUserInfoRequest updates) {
         if (updates != null) {
             if (updates.getName() != null) {

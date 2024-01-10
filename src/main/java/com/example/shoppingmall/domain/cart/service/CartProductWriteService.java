@@ -26,7 +26,7 @@ public class CartProductWriteService {
     private final CartReadService cartReadService;
 
     @Transactional
-    public void createCartProduct(final Cart cart, final Product product, final int amount){
+    public CartProduct createCartProduct(final Cart cart, final Product product, final int amount){
         Optional<CartProduct> findCartProduct = cartProductRepository.findCartProductByProductIdAndCartId(product.getId(), cart.getId());
 
         if(findCartProduct.isEmpty()){
@@ -37,8 +37,12 @@ public class CartProductWriteService {
                     .createdAt(LocalDateTime.now())
                     .enabled(true)
                     .build();
-            cartProductRepository.save(cartProduct);
-        } else {findCartProduct.get().addCount(amount);}
+            return cartProductRepository.save(cartProduct);
+        } else {
+            findCartProduct.get().addCount(amount);
+
+            return findCartProduct.get();
+        }
     }
 
     @Transactional

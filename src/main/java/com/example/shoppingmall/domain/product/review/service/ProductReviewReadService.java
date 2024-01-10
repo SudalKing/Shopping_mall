@@ -282,7 +282,7 @@ public class ProductReviewReadService {
                 .productImageUrl(productReadService.getUrl(product))
                 .price(product.getPrice())
                 .content(productReview.getContent())
-                .reviewImageUrl(productReviewImageReadService.getUrl(product.getId()))
+                .reviewImageUrl(productReviewImageReadService.getUrl(productReview.getId()))
                 .reviewLikeCount(productReviewLikeReadService.getReviewLikeCount(productReview.getId()))
                 .liked(false)
                 .createdAt(productReview.getCreatedAt())
