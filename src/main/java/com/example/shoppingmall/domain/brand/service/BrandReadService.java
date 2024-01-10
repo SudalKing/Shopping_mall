@@ -11,6 +11,7 @@ import com.example.shoppingmall.domain.user.service.UserReadService;
 import com.example.shoppingmall.global.error.exception.ErrorCode;
 import com.example.shoppingmall.global.error.exception.InvalidValueException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,7 @@ public class BrandReadService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "BrandInfoMapping", key = "#productId", cacheManager = "redisCacheManager")
     public BrandInfoMapping getBrandInfo(final Long productId) {
         return brandRepository.findBrandInfoByProductId(productId);
     }

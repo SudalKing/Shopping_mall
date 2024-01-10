@@ -4,6 +4,7 @@ import com.example.shoppingmall.domain.product.clothes.entity.ClothesProduct;
 import com.example.shoppingmall.domain.product.clothes.repository.ClothesProductRepository;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 public class ClothesReadService {
     private final ClothesProductRepository clothesProductRepository;
 
+    @Cacheable(value = "ClothesInfo", key = "#product.id", cacheManager = "redisCacheManager")
     public Map<String, String> getClothesInfo(final Product product) {
         Long typeId = product.getCategoryId();
         Map<String, String> clothesInfo = new HashMap<>();

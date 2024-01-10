@@ -15,6 +15,7 @@ import com.example.shoppingmall.domain.product.product_like.service.ProductLikeR
 import com.example.shoppingmall.domain.user.entity.User;
 import com.example.shoppingmall.domain.user.service.UserReadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class ProductReadService {
     private final ProductUtilService productUtilService;
 
 
+    @Cacheable(value = "Product", key = "#productId", cacheManager = "redisCacheManager")
     public Product getProductEntity(final Long productId){
         Optional<Product> product = productRepository.findById(productId);
 
@@ -218,6 +220,7 @@ public class ProductReadService {
         return clothesInfoList;
     }
 
+    @Cacheable(value = "ProductImage", key = "#product.id", cacheManager = "redisCacheManager")
     public String getUrl(final Product product) {
         return productUtilService.getProductImageUrl(product.getId());
     }
