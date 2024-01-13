@@ -19,22 +19,20 @@
 > 구현 과정에서 생긴 문제 상황에 대해서는 블로그에 정리해 링크로 남깁니다.
 
 ### 1. JWT 로그인
- [JWT 로그인](https://velog.io/@ss412/Spring-Security-JWT-%EB%A1%9C%EA%B7%B8%EC%9D%B8)
-
- <br>
-
  [![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=ss412&slug=Spring-Security-JWT-로그인)](https://velog.io/@ss412/Spring-Security-JWT-%EB%A1%9C%EA%B7%B8%EC%9D%B8)
 
-<br>
 
 ### 2. 무한 스크롤
- [무한 스크롤](https://velog.io/@ss412/%EB%AC%B4%ED%95%9C-%EC%8A%A4%ED%81%AC%EB%A1%A4)
+ [![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=ss412&slug=무한-스크롤)](https://velog.io/@ss412/%EB%AC%B4%ED%95%9C-%EC%8A%A4%ED%81%AC%EB%A1%A4)
+
 
 ### 3. Exception
- [Exception](https://velog.io/@ss412/Exception)
+ [![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=ss412&slug=Exception)](https://velog.io/@ss412/Exception)
+ 
 
 ### 4. Redis
- [Redis](https://velog.io/@ss412/Redis-%EB%8F%84%EC%9E%85)
+ [![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=ss412&slug=Redis-도입)](https://velog.io/@ss412/Redis-%EB%8F%84%EC%9E%85)
+ 
 
 ## 실행 예시
 
