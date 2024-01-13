@@ -23,7 +23,7 @@
 
  <br>
 
- [![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=velopert)](https://github.com/eungyeole/velog-readme-stats)
+ [![Velog's GitHub stats](https://velog-readme-stats.vercel.app/api?name=velopert)](https://velog.io/@ss412/Spring-Security-JWT-%EB%A1%9C%EA%B7%B8%EC%9D%B8)
 
 <br>
 
