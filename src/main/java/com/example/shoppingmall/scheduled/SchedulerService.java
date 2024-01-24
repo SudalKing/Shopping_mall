@@ -3,6 +3,8 @@ package com.example.shoppingmall.scheduled;
 import com.example.shoppingmall.domain.product.best.service.BestWriteService;
 import com.example.shoppingmall.domain.product.product.entity.Product;
 import com.example.shoppingmall.domain.product.product.repository.ProductRepository;
+import com.example.shoppingmall.domain.product.product.service.ProductWriteService;
+import com.example.shoppingmall.domain.product.product_like.service.ProductLikeReadService;
 import com.example.shoppingmall.domain.product.review.entity.ProductReview;
 import com.example.shoppingmall.domain.product.review.repository.ProductReviewRepository;
 import com.example.shoppingmall.domain.product.review.service.ProductReviewWriteService;
@@ -21,9 +23,10 @@ public class SchedulerService {
     private final ProductRepository productRepository;
     private final ProductReviewRepository productReviewRepository;
 
+    private final ProductWriteService productWriteService;
+    private final ProductLikeReadService productLikeReadService;
     private final ProductReviewWriteService productReviewWriteService;
     private final BestWriteService bestWriteService;
-
 
     @Scheduled(cron = "0 0 23 * * *", zone = "Asia/Seoul")
     public void reviewLikeScoreScheduler() {
@@ -46,4 +49,13 @@ public class SchedulerService {
         }
     }
 
+    @Scheduled(cron = "0 0 23 * * *", zone = "Asia/Seoul")
+    public void productLikeScheduler() {
+        log.info("상품 좋아요 집계 스케쥴러 실행");
+        List<Product> productList = productRepository.findAll();
+
+        for (Product product: productList) {
+            product.setLikeCount(productLikeReadService.getProductLikeCount(product.getId()));
+        }
+    }
 }

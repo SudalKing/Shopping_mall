@@ -48,6 +48,9 @@ public class Product {
     @Column(nullable = false)
     private boolean deleted;
 
+    @Column(nullable = false)
+    private Integer likeCount = 0;
+
     @Version
     private Long version;
 
@@ -59,5 +62,8 @@ public class Product {
     }
     public void doSale(){
         saled = true;
+    }
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
     }
 }
