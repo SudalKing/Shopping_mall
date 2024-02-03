@@ -17,6 +17,11 @@
 ## 배포
   * AWS EC2, S3, RDS, Route53
 
+## 서버 아키텍쳐
+
+![image](https://github.com/SudalKing/Shopping_mall/assets/87001865/2d3df3b2-2d73-404e-9441-99f44ee87784)
+
+
 ## 문제 상황
 > 구현 과정에서 생긴 문제 상황에 대해서는 블로그에 정리해 링크로 남깁니다.
 
